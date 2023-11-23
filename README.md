@@ -90,18 +90,17 @@ the expected state of each running container instance must be *Up*. Following co
 - a container running the mongoDB-database by the name of *event_service_mongodb*
 - a container running the rabbitmq-message-broker by the name of *rabbitmq*
 
-to stop those containers just enter the command
 
+
+**Note:** The rabbitmq and database credentials can be found and adjusted in the respectively `yml` file of each service.
+To stop those containers just enter the command
 ```sh
 $ docker compose stop
 ```
 After stopping the containers, remove the created volumes by entering the command
-
 ```sh
 $ docker compose rm -v
 ```
-
-**Note:** The rabbitmq and database credentials can be found and adjusted in the respectively `yml` file of each service
 
 ## Running The employee-service and the employee event-service
 
