@@ -1,0 +1,44 @@
+spring.profiles.active: ${mode:local}
+server.port: 8083
+spring:
+  application.name: eventservice
+  output.ansi.enabled: ALWAYS
+
+  rabbitmq:
+    port: 5672
+    host: localhost
+    username: rabbitmq
+    password: rabbitmq
+
+  data:
+    mongodb:
+      uri: mongodb://${database.username}:${database.password}@${database.host}:${database.port}/${database.dbname}?authSource=${database.authdbname}
+
+logging:
+  level:
+    root: INFO
+    de.stminko: DEBUG
+
+
+amqp:
+  exchange-name: employee
+  routing-key: employee.message
+  queue-name: employee
+  concurrent-consumers: 2
+  max-concurrent-consumers: 20
+
+---
+spring.config.activate.on-profile: local
+database:
+  host: localhost
+  port: 27017
+  username: user
+  password: pwd
+  dbname: employeeevents
+  authdbname: admin
+
+
+
+
+
+

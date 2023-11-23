@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.5</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>de.stminko</groupId>
+    <artifactId>yourcompany</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>employeeservice</module>
+        <module>eventservice</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.1.5</spring-boot.version>
+        <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
+        <springdoc.openapi.version>2.1.0</springdoc.openapi.version>
+        <spring.data.envers.version>3.0.5</spring.data.envers.version>
+        <lombok.version>1.18.30</lombok.version>
+        <mockito.java8.version>2.5.0</mockito.java8.version>
+        <stacksrc-junit5.version>0.6.0</stacksrc-junit5.version>
+        <!-- Default Surefire Plugin activation -->
+        <skipTests>false</skipTests>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

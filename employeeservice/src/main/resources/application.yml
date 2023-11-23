@@ -1,0 +1,80 @@
+spring.profiles.active: ${mode:local}
+server.port: 8081
+datasource-debug.enabled: true
+spring:
+  banner:
+    location: classpath:/banner.txt
+  application.name: employee-service
+  output.ansi.enabled: ALWAYS
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    generate-ddl: false
+    properties:
+      org:
+        hibernate:
+          envers:
+            store_data_at_delete: true
+            default_schema: history
+            audit_table_suffix: _history
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://${database.host}:${database.port}/${database.dbname}
+    username: ${database.username}
+    password: ${database.password}
+
+  rabbitmq:
+    host: ${rabbitMQ.host}
+    port: ${rabbitMQ.port}
+    username: ${rabbitMQ.username}
+    password: ${rabbitMQ.password}
+
+logging:
+  level:
+    root: INFO
+    de.stminko: DEBUG
+amqp:
+  exchange-name: employee
+  routing-key: employee.message
+
+rabbitMQ:
+  host: localhost
+  port: 5672
+  username: rabbitmq
+  password: rabbitmq
+
+---
+spring.config.activate.on-profile: local
+database:
+  host: localhost
+  port: 5432
+  username: user
+  password: pwd
+  dbname: employee
+spring:
+  liquibase:
+    enabled: true
+    change-log: 'classpath:liquibase/employee-master-changelog.xml'
+    contexts: ${mode:${spring.profiles.active:}}
+
+
+---
+spring.config.activate.on-profile: local-hibernate
+database:
+  host: localhost
+  port: 5434
+  username: user_hibernate
+  password: pwd_hibernate
+  dbname: employee_hibernate
+spring:
+  liquibase:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    

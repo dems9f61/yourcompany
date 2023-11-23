@@ -1,0 +1,26 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="CreateDataSchema" author="Stéphan.Minko">
+        <sql>
+            CREATE SCHEMA data;
+
+            CREATE SCHEMA history;
+
+            -- Fügt die 'uuid-ossp' Erweiterung hinzu, speziell für PostgreSQL
+            -- Diese Erweiterung bietet Funktionen zur Erzeugung von UUIDs
+            CREATE EXTENSION "uuid-ossp";
+        </sql>
+        <rollback>
+            DROP SCHEMA IF EXISTS data CASCADE;
+
+            DROP SCHEMA IF EXISTS history CASCADE;
+
+            DROP EXTENSION IF EXISTS "uuid-ossp";
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>

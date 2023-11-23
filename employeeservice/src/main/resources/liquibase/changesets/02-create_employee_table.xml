@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="CreateEmployeeTable" author="Stéphan.Minko">
+        <sql>
+            create table data.employee
+            (
+                id            VARCHAR(36)  NOT NULL PRIMARY KEY,
+                created_at    TIMESTAMP(6) NOT NULL,
+                modified_at   TIMESTAMP(6) NOT NULL,
+                version       BIGINT       NOT NULL,
+                birthday      TIMESTAMP(6),
+                email_address VARCHAR(255)
+                    CONSTRAINT uk_employee_emailAddress UNIQUE,
+                first_name    VARCHAR(255),
+                last_name     VARCHAR(255),
+                department_id BIGINT       NOT NULL
+                    CONSTRAINT fk_department_to_employee REFERENCES data.department
+            );
+        </sql>
+        <rollback>
+            <sql>DROP TABLE IF EXISTS data.employee;</sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

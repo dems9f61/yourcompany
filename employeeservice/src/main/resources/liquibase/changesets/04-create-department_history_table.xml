@@ -1,0 +1,24 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet id="CreateDepartmentHistoryTable" author="Stéphan.Minko">
+        <sql>
+            create table history.department_history
+            (
+                id              BIGINT NOT NULL,
+                rev             BIGINT NOT NULL
+                    CONSTRAINT fk_department_history_to_audit_trail REFERENCES history.audit_trail,
+                revtype         SMALLINT,
+                department_name VARCHAR(50),
+                created_at      TIMESTAMP,
+                modified_at     TIMESTAMP,
+                CONSTRAINT departments_history_pkey PRIMARY KEY (id, rev)
+            );
+        </sql>
+        <rollback>
+            <sql>DROP TABLE IF EXISTS history.departments_history;</sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

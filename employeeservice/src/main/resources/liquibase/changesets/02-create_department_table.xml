@@ -1,0 +1,26 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet id="CreateDepartmentTable" author="Stéphan.Minko">
+        <sql>
+            CREATE SEQUENCE data.department_sequence;
+            CREATE TABLE data.department
+            (
+                id              BIGINT       NOT NULL DEFAULT NEXTVAL('data.department_sequence') PRIMARY KEY,
+                created_at      TIMESTAMP(6) NOT NULL,
+                modified_at     TIMESTAMP(6) NOT NULL,
+                version         BIGINT       NOT NULL,
+                department_name VARCHAR(50)  NOT NULL
+                    CONSTRAINT uk_department_department_name
+                        UNIQUE
+            );
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS data.department;
+                DROP SEQUENCE IF EXISTS data.department_sequence;
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
