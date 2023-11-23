@@ -90,30 +90,45 @@ the expected state of each running container instance must be *Up*. Following co
 - a container running the mongoDB-database by the name of *event_service_mongodb*
 - a container running the rabbitmq-message-broker by the name of *rabbitmq*
 
+to stop those containers just enter the command
+
+```sh
+$ docker compose stop
+```
+After stopping the containers, remove the created volumes by entering the command
+
+```sh
+$ docker compose rm -v
+```
+
 **Note:** The rabbitmq and database credentials can be found and adjusted in the respectively `yml` file of each service
 
-## The employee-service and the employee event-service
+## Running The employee-service and the employee event-service
 
 Since starting the employee event-service will create all needed queues and exchanges on the rabbitmq server, it might
 appear more preferable to start the employee event-service first.
 
 **Note:** Each service port can also be found and adjusted in the `yml` file of each service.
-By default, the employee-service will be running at port 8081 and the employee event-service will be running at port
-
-8083.
+By default, the employee-service will be running at port 8081 and the employee event-service will be running at port 8083.
 
 ### The employee event-service
 
 **Reminder:** Starting the employee event-service will get all needed queues and exchanges on the rabbitmq server
 automatically created
 
-- To start the employee event-service, run the `eventservice` bootRun task.
+- To start the employee event-service, switch to the `eventservice` directory and enter the command 
+```sh
+$ mvn spring-boot:run
+```
 - Once started, all employee events related endpoints can be triggered using <http://localhost:8083/api/v1/events/>
 - The Swagger API can be inspected here <http://localhost:8083/swagger-ui.html>
 
 ### The employee-service
 
-- To start the employee-service, run the `empoyeeservice` bootRun task.
+- To start the employee-service, switch to the `empoyeeservice` directory and enter the command 
+```sh
+$ mvn spring-boot:run
+```
 - Once started, all employee related endpoints can be reached using <http://localhost:8081/api/v1/employees/> and all
   department related endpoints can be triggered using <http://localhost:8081/api/v1/departments/>
 - The Swagger API can be inspected here <http://localhost:8081/swagger-ui.html>
