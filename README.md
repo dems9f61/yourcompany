@@ -48,8 +48,9 @@ The event-service must expose a REST API that contains just one endpoint to:
 ## Requirements
 
 - Install [Docker](https://docs.docker.com/) and start the docker deamon
+- Install [Java 17](https://adoptium.net/de/temurin/archive/?version=17)
 - Install [IntelliJ IDEA](https://www.jetbrains.com/idea/)
-- Import the project as a maven project
+- Import the project as a maven project ([Maven](https://maven.apache.org/) 3.8+)
 
 ## The databases
 
@@ -115,7 +116,7 @@ By default, the employee-service will be running at port 8081 and the employee e
 **Reminder:** Starting the employee event-service will get all needed queues and exchanges on the rabbitmq server
 automatically created
 
-- To start the employee event-service, switch to the `eventservice` directory and enter the command 
+- To start the employee event-service, navigate to the `eventservice` directory and enter the command 
 ```sh
 $ mvn spring-boot:run
 ```
@@ -124,7 +125,7 @@ $ mvn spring-boot:run
 
 ### The employee-service
 
-- To start the employee-service, switch to the `empoyeeservice` directory and enter the command 
+- To start the employee-service, navigate to the `empoyeeservice` directory and enter the command 
 ```sh
 $ mvn spring-boot:run
 ```

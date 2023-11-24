@@ -1,6 +1,6 @@
 package de.stminko.employeeservice.department.control;
 
-import java.util.List;
+import java.util.Optional;
 
 import de.stminko.employeeservice.department.entity.Department;
 
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DepartmentRepository
-		extends JpaRepository<Department, Long>, RevisionRepository<Department, Long, Long> {
+        extends JpaRepository<Department, Long>, RevisionRepository<Department, Long, Long> {
 
-	List<Department> findByDepartmentName(String departmentName);
+    Optional<Department> findByDepartmentName(String departmentName);
 
 }

@@ -2,6 +2,7 @@ package de.stminko.employeeservice.department.boundary;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import de.stminko.employeeservice.department.control.DepartmentRepository;
@@ -30,10 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
  * Spring's transactional management to ensure data consistency and integrity.
  * </p>
  *
+ * @author Stéphan Minko
  * @see Department
  * @see DepartmentRepository
- *
- * @author Stéphan Minko
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -131,38 +131,28 @@ public class DepartmentService {
         }
 
         String departmentName = departmentRequest.departmentName();
-        List<Department> foundDepartment = this.repository.findByDepartmentName(departmentName);
-        if (!foundDepartment.isEmpty()) {
-            String errorMessage = String.format("Department name [%s] already exists!", departmentName);
-            throw new BadRequestException(errorMessage);
-        }
+        Optional<Department> foundDepartment = this.repository.findByDepartmentName(departmentName);
+        this.repository.findByDepartmentName(departmentName)
+                .ifPresent(dept -> {
+                    throw new BadRequestException(String.format("Department name [%s] already exists!", departmentName));
+                });
         Department department = new Department();
         department.setDepartmentName(departmentName);
         return this.repository.save(department);
     }
 
     private Department findDepartmentOrThrow(String departmentName, Class<? extends RuntimeException> exceptionClass) {
-        List<Department> departments = this.repository.findByDepartmentName(departmentName);
-        if (departments.size() > 1) {
-            String errorMessage = String.format("There are multiple departments by the name [%s] already exists!",
-                    departmentName);
-            return throwExceptionFor(exceptionClass, errorMessage);
-        }
-        if (departments.isEmpty()) {
-            String errorMessage = String.format("Could not find Department by the name [%s]!", departmentName);
-            return throwExceptionFor(exceptionClass, errorMessage);
-        }
-
-        return departments.get(0);
+        return this.repository.findByDepartmentName(departmentName)
+                .orElseThrow(() -> createException(exceptionClass,
+                        String.format("Could not find Department by the name [%s]!", departmentName)));
     }
 
-    private Department throwExceptionFor(@NonNull Class<? extends RuntimeException> exceptionClass,
-                                         String errorMessage) {
+    private <E extends RuntimeException> E createException(Class<E> exceptionClass, String errorMessage) {
         try {
-            throw exceptionClass.getConstructor(String.class).newInstance(errorMessage);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
-            throw new RuntimeException(errorMessage);
+            return exceptionClass.getDeclaredConstructor(String.class).newInstance(errorMessage);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException exception) {
+            throw new RuntimeException("Error instantiating exception: " + exception.getMessage(), exception);
         }
     }
 

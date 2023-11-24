@@ -17,17 +17,17 @@ public class DepartmentTestFactory extends AbstractTestFactory<Department, Depar
 
     public static class Builder implements AbstractTestFactory.Builder<Department>
     {
-        private long id;
+        private Long id;
 
         private String departmentName;
 
         Builder()
         {
-            this.id = RandomUtils.nextInt(10, 10_000);
+            this.id = RandomUtils.nextLong(10, 10_000);
             this.departmentName = RandomStringUtils.randomAlphabetic(24);
         }
 
-        public Builder id(long id)
+        public Builder id(Long id)
         {
             this.id = id;
             return this;

@@ -91,6 +91,19 @@ public class AmqpConfig {
      */
     private final ConnectionFactory connectionFactory;
 
+
+    /**
+     * Constructor for AmqpConfig class.
+     * <p>
+     * This constructor initializes the AmqpConfig class with an instance of {@link ConnectionFactory}.
+     * The ConnectionFactory is used to establish connections to an AMQP broker (such as RabbitMQ)
+     * and is essential for configuring AMQP communication within a Spring application.
+     * </p>
+     *
+     * @param connectionFactory the ConnectionFactory instance used for creating connections
+     *                          to the AMQP broker. It is a crucial component in setting up the
+     *                          AMQP messaging infrastructure.
+     */
     @Autowired
     public AmqpConfig(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
