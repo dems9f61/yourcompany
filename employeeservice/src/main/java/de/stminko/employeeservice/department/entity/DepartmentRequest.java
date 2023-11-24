@@ -24,7 +24,9 @@ import jakarta.validation.constraints.NotBlank;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DepartmentRequest(
-		@JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class}) @NullOrNotBlank(groups = {DataView.PATCH.class}) @NotBlank(message = "The department name must not be blank", groups = {DataView.POST.class, DataView.PUT.class})
+		@JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class})
+		@NullOrNotBlank(groups = {DataView.PATCH.class})
+		@NotBlank(message = "{errors.department.name.not-blank}", groups = {DataView.POST.class, DataView.PUT.class})
 		@Schema(description = "Name of the department", example = "Human Resources", requiredMode = Schema.RequiredMode.REQUIRED)
 		String departmentName) {
 

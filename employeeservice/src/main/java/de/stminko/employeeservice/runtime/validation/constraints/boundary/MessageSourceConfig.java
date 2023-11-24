@@ -1,15 +1,17 @@
 package de.stminko.employeeservice.runtime.validation.constraints.boundary;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
  * Configuration class for custom validation message sources in Spring.
@@ -30,27 +32,40 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * @author Stéphan Minko
  */
 @Configuration
-public class ValidationConfig {
+public class MessageSourceConfig {
 
     static final String VALIDATION_MESSAGES_CATALOG_NAME = "classpath:stminko-validation-messages";
 
     @Bean
     LocalValidatorFactoryBean customValidationFactoryBean(MessageSource customValidationMessageSource) {
-        LocalValidatorFactoryBean retVal = new LocalValidatorFactoryBean();
-        retVal.setValidationMessageSource(customValidationMessageSource);
-        return retVal;
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        localValidatorFactoryBean.setValidationMessageSource(customValidationMessageSource);
+        return localValidatorFactoryBean;
     }
 
     @Bean
     MessageSource customValidationMessageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         // Set our own validation message property so we only have english version
-        List<String> finalMessageCatalogList = new ArrayList<>();
-        finalMessageCatalogList.add(VALIDATION_MESSAGES_CATALOG_NAME);
-        messageSource.setBasenames(finalMessageCatalogList.toArray(new String[0]));
+        messageSource.setBasenames(VALIDATION_MESSAGES_CATALOG_NAME);
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
         messageSource.setDefaultLocale(Locale.ENGLISH);
         return messageSource;
     }
+
+    @Bean
+    LocaleResolver localeResolver() {
+        SessionLocaleResolver cookieLocaleResolver = new SessionLocaleResolver();
+        cookieLocaleResolver.setDefaultLocale(Locale.ENGLISH);
+        return cookieLocaleResolver;
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setParamName("localeData");
+        return localeChangeInterceptor;
+    }
+
 
 }

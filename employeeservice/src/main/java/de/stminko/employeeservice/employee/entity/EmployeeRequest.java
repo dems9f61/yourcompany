@@ -48,29 +48,29 @@ import org.springframework.format.annotation.DateTimeFormat;
 public record EmployeeRequest(
         @JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class, DataView.GET.class})
         @NullOrNotBlank(groups = {DataView.GET.class, DataView.POST.class})
-        @NotBlank(groups = DataView.PUT.class)
+        @NotBlank(groups = DataView.PUT.class, message = "{errors.employee.email.not-blank}")
         @Pattern(regexp = EMAIL_REGEX, groups = {DataView.PATCH.class, DataView.POST.class, DataView.PUT.class})
         @Schema(description = "Employee's email address", example = "employee@example.com")
         String emailAddress,
         @JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class})
         @NullOrNotBlank(groups = {DataView.PATCH.class, DataView.POST.class})
-        @NotBlank(groups = DataView.PUT.class)
+        @NotBlank(groups = DataView.PUT.class, message = "{errors.employee.first-name.not-blank}")
         @Schema(description = "Employee's first name", example = "John")
         String firstName,
         @JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class})
         @NullOrNotBlank(groups = {DataView.PATCH.class, DataView.POST.class})
-        @NotBlank(groups = DataView.PUT.class)
+        @NotBlank(groups = DataView.PUT.class, message = "{errors.employee.last-name.not-blank}")
         @Schema(description = "Employee's last name", example = "Doe")
         String lastName,
         @JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class})
         @JsonDeserialize(using = JsonDateDeSerializer.class) @JsonSerialize(using = JsonDateSerializer.class)
         @DateTimeFormat(pattern = UsableDateFormat.Constants.DEFAULT_DATE_FORMAT)
-        @NotNull(groups = {DataView.PUT.class})
+        @NotNull(groups = {DataView.PUT.class}, message = "{errors.employee.birthday.not-null}")
         @Schema(description = "Employee's birthday", example = "1990-01-01")
         ZonedDateTime birthday,
         @JsonView({DataView.POST.class, DataView.PUT.class, DataView.PATCH.class})
         @NullOrNotBlank(groups = {DataView.PATCH.class})
-        @NotBlank(groups = {DataView.POST.class, DataView.PUT.class})
+        @NotBlank(groups = {DataView.POST.class, DataView.PUT.class}, message = "{errors.employee.department-name.not-blank}")
         @Schema(description = "Name of the employee's department", example = "Human Resources")
         String departmentName) {
 

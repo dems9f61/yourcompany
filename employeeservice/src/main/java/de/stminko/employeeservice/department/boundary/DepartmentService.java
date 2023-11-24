@@ -2,7 +2,6 @@ package de.stminko.employeeservice.department.boundary;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import de.stminko.employeeservice.department.control.DepartmentRepository;
@@ -11,6 +10,7 @@ import de.stminko.employeeservice.department.entity.DepartmentRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
+import de.stminko.employeeservice.runtime.validation.constraints.boundary.MessageSourceHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -44,6 +44,8 @@ public class DepartmentService {
     private final DepartmentRepository repository;
 
     private final Validator validator;
+
+    private final MessageSourceHelper messageSourceHelper;
 
 
     /**
@@ -123,7 +125,7 @@ public class DepartmentService {
      * @throws BadRequestException          if a department with the given name already exists.
      */
     public Department create(@NonNull DepartmentRequest departmentRequest) {
-        log.info("create( departmentRequest=[{}] )", departmentRequest);
+        log.info("create( [{}] )", departmentRequest);
         Set<ConstraintViolation<DepartmentRequest>> constraintViolations = this.validator.validate(departmentRequest,
                 DataView.POST.class);
         if (!constraintViolations.isEmpty()) {
@@ -131,10 +133,9 @@ public class DepartmentService {
         }
 
         String departmentName = departmentRequest.departmentName();
-        Optional<Department> foundDepartment = this.repository.findByDepartmentName(departmentName);
         this.repository.findByDepartmentName(departmentName)
                 .ifPresent(dept -> {
-                    throw new BadRequestException(String.format("Department name [%s] already exists!", departmentName));
+                    throw new BadRequestException(messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
                 });
         Department department = new Department();
         department.setDepartmentName(departmentName);
@@ -142,9 +143,10 @@ public class DepartmentService {
     }
 
     private Department findDepartmentOrThrow(String departmentName, Class<? extends RuntimeException> exceptionClass) {
+
         return this.repository.findByDepartmentName(departmentName)
                 .orElseThrow(() -> createException(exceptionClass,
-                        String.format("Could not find Department by the name [%s]!", departmentName)));
+                        messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
     }
 
     private <E extends RuntimeException> E createException(Class<E> exceptionClass, String errorMessage) {

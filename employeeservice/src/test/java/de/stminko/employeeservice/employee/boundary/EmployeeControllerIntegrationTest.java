@@ -182,7 +182,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.BAD_REQUEST.name())))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("Could not find Department by the name [%s]".formatted(toPersist.departmentName()))));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("The department with the name [%s] could not be found!".formatted(toPersist.departmentName()))));
         }
 
         @Test
@@ -235,7 +235,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.BAD_REQUEST.name())))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("Email [%s] is already used"
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("The email address [%s] already exists!"
                             .formatted(secondEmployeeRequest.emailAddress()))));
         }
 
@@ -266,7 +266,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.BAD_REQUEST.name())))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("departmentName: must not be blank")));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString("The employee department name must not be blank!")));
         }
     }
 
@@ -286,7 +286,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString(String.format("Could not find employee for Id [%s]", unknownId))));
+                            .containsString(String.format("The employee with the ID [%s] could not be found!", unknownId))));
         }
 
         @Test
@@ -370,7 +370,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("Could not find employee for Id [%s]!".formatted(wrongId))));
+                            .containsString("The employee with the ID [%s] could not be found!".formatted(wrongId))));
         }
 
         @Test
@@ -402,7 +402,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("Could not find Department by the name [%s]!".formatted(newDepartmentName))));
+                            .containsString("The department with the name [%s] could not be found!".formatted(newDepartmentName))));
         }
 
         @Test
@@ -768,7 +768,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("birthday: must not be null")));
+                            .containsString("The employee's birthday must not be null!")));
         }
 
         @Test
@@ -835,7 +835,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("emailAddress: must not be blank")));
+                            .containsString("The employee's email address must not be empty!")));
         }
 
         @Test
@@ -868,7 +868,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("firstName: must not be blank")));
+                            .containsString("The employee's first name must not be empty!")));
         }
 
         @Test
@@ -901,7 +901,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("lastName: must not be blank")));
+                            .containsString("The employee's last name must not be empty!")));
         }
 
         @Test
@@ -933,7 +933,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("departmentName: must not be blank")));
+                            .containsString("The employee department name must not be blank!")));
         }
     }
 
@@ -960,7 +960,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-                            .containsString("Could not find employee for Id [%s]!".formatted(unknownId))));
+                            .containsString("The employee with the ID [%s] could not be found!".formatted(unknownId))));
         }
 
         @Test

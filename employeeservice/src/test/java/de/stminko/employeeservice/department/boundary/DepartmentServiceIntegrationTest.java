@@ -129,8 +129,8 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("Finding a department with a wrong department name returns nothing")
-		void givenNotExistingDepartmentName_whenFindByDepartmentName_thenReturnNothing() {
+		@DisplayName("Finding a department with a wrong department name throws NotFoundException")
+		void givenNotExistingDepartmentName_whenFindByDepartmentName_thenThrowNotFoundException() {
 			// Arrange
 			List<DepartmentRequest> creationParameters = departmentRequestTestFactory
 					.createManyDefault(RandomUtils.nextInt(10, 50));

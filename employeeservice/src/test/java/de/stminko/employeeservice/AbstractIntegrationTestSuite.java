@@ -1,5 +1,6 @@
 package de.stminko.employeeservice;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,6 +12,7 @@ import de.stminko.employeeservice.employee.control.EmployeeEventPublisher;
 import de.stminko.employeeservice.employee.entity.EmployeeRequestTestFactory;
 import de.stminko.employeeservice.employee.entity.EmployeeTestFactory;
 import lombok.extern.slf4j.Slf4j;
+import nz.lae.stacksrc.junit5.ErrorDecorator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +24,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 import org.springframework.util.StopWatch;
 
 @ExtendWith(SpringExtension.class)
+@ExtendWith(ErrorDecorator.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = {EmployeeServiceApplication.class})
 @ActiveProfiles("local")
@@ -66,6 +70,7 @@ public abstract class AbstractIntegrationTestSuite {
 
     @BeforeEach
     public final void onBeforeEach(TestInfo testInfo) {
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
         log.info("BEFORE TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         String taskName = "TEST_SCOPE";
         StopWatch stopWatch = getStopWatch(taskName);
@@ -76,6 +81,7 @@ public abstract class AbstractIntegrationTestSuite {
 
     @AfterEach
     public final void onAfterEach() {
+        LocaleContextHolder.resetLocaleContext();
         StopWatch stopWatch = getStopWatch("TEST_SCOPE");
         stopWatch.stop();
         log.info(stopWatch.shortSummary());

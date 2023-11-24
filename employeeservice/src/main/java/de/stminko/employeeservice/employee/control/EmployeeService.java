@@ -1,6 +1,5 @@
 package de.stminko.employeeservice.employee.control;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +13,7 @@ import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
+import de.stminko.employeeservice.runtime.validation.constraints.boundary.MessageSourceHelper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -36,14 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
  * it uses {@link EmployeeEventPublisher} for publishing events related to employee actions.
  * </p>
  *
+ * @author Stéphan Minko
  * @see EmployeeRepository for data persistence
  * @see DepartmentService for handling department-related operations
  * @see EmployeeEventPublisher for publishing employee-related events
  * @see Employee for the entity representing an employee
  * @see EmployeeRequest for the request object used in employee operations
  * @see Validator for validating request objects
- *
- * @author Stéphan Minko
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -58,6 +57,8 @@ public class EmployeeService {
     private final EmployeeEventPublisher messagePublisher;
 
     private final Validator validator;
+
+    private final MessageSourceHelper messageSourceHelper;
 
     /**
      * Creates a new employee from the given request.
@@ -114,7 +115,9 @@ public class EmployeeService {
     @Transactional(propagation = Propagation.SUPPORTS)
     public Employee findById(@NonNull String id) {
         log.info("findById( id= [{}] )", id);
-        return findByIdOrElseThrow(id, NotFoundException.class);
+        return this.repository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
     }
 
     /**
@@ -162,7 +165,9 @@ public class EmployeeService {
 
     private Employee update(String id, EmployeeRequest updateRequest, Class<? extends DataView> validationGroup) {
         validateRequest(updateRequest, validationGroup);
-        Employee employeeToUpdate = findByIdOrElseThrow(id, NotFoundException.class);
+        Employee employeeToUpdate = this.repository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 
         boolean hasChanged = hasEmailAddressChangedAfterUpdate(updateRequest, employeeToUpdate);
         hasChanged = hasFullNameChangedAfterUpdate(updateRequest, employeeToUpdate) || hasChanged;
@@ -189,31 +194,18 @@ public class EmployeeService {
      */
     public void deleteById(@NonNull String id) {
         log.info("deleteById( id= [{}] )", id);
-        Employee employee = findByIdOrElseThrow(id, NotFoundException.class);
+        Employee employee = this.repository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
         this.repository.deleteById(id);
         this.messagePublisher.employeeDeleted(employee);
-    }
-
-    private Employee findByIdOrElseThrow(@NonNull String id,
-                                         @NonNull Class<? extends RuntimeException> exceptionClass) {
-        return this.repository.findById(id).orElseThrow(() -> {
-            String message = "Could not find employee for Id [%s]!".formatted(id);
-            try {
-                return exceptionClass.getConstructor(String.class).newInstance(message);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                     | InvocationTargetException e) {
-                log.warn("Could not instantiate Exception of Type [{}] on {}.findByIdOrElseThrow ( {} ,  {}.class )",
-                        exceptionClass.getName(), getClass().getSimpleName(), id, exceptionClass.getSimpleName());
-                return new RuntimeException(message);
-            }
-        });
     }
 
     private void validateUniquenessOfEmail(String emailAddress) {
         List<Employee> employeesWithSameEmail = StringUtils.isBlank(emailAddress) ? Collections.emptyList()
                 : this.repository.findByEmailAddress(emailAddress);
         if (!employeesWithSameEmail.isEmpty()) {
-            throw new BadRequestException("Email [%s] is already used".formatted(emailAddress));
+            throw new BadRequestException(messageSourceHelper.getMessage("errors.employee.email.already-exists", emailAddress));
         }
     }
 

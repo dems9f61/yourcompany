@@ -21,7 +21,7 @@ import jakarta.validation.Payload;
 @Documented
 public @interface NullOrNotBlank {
 
-	String message() default "{errors.nullOrNotBlank}";
+	String message() default "{errors.must-be-either-null-or-not-blank}";
 
 	Class<?>[] groups() default {};
 

@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -194,32 +195,26 @@ public class GlobalExceptionHandler {
      * Log the handled Exception.
      *
      * @param status  the HttpStatus resolved for the exception
-     * @param e       the exception handled
+     * @param caught  the exception handled
      * @param request the {@link HttpServletRequest} context
      */
-    private void logHandledException(HttpStatus status, Throwable e, HttpServletRequest request) {
-        String message = String.format("HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]", request.getRequestURI(),
-                (request.getQueryString() != null) ? ("?" + request.getQueryString()) : "", request.getMethod(),
-                e.getMessage());
-        switch (this.configuration.getHttpStatusLogLevel().getOrDefault(status.value(),
-                this.configuration.getDefaultLogLevel())) {
-            case OFF:
-                break;
-            case TRACE:
-                log.trace(message, e);
-                break;
-            case DEBUG:
-                log.debug(message, e);
-                break;
-            case INFO:
-                log.info(message, e);
-                break;
-            case WARN:
-                log.warn(message, e);
-                break;
-            default:
-                log.error(message, e);
-                break;
+    private void logHandledException(HttpStatus status, Throwable caught, HttpServletRequest request) {
+        String queryString = Optional.ofNullable(request.getQueryString()).map(q -> "?" + q).orElse("");
+        String message = String.format("HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]",
+                request.getRequestURI(), queryString, request.getMethod(), caught.getMessage());
+
+        LogLevel logLevel = this.configuration.getHttpStatusLogLevel()
+                .getOrDefault(status.value(), this.configuration.getDefaultLogLevel());
+
+        switch (logLevel) {
+            case TRACE -> log.trace(message, caught);
+            case DEBUG -> log.debug(message, caught);
+            case INFO -> log.info(message, caught);
+            case WARN -> log.warn(message, caught);
+            case ERROR -> log.error(message, caught);
+            case OFF -> {
+            } // No operation
+            // No default needed as all cases are covered
         }
     }
 
@@ -241,7 +236,7 @@ public class GlobalExceptionHandler {
             // Accept headers values. Will fall back to the default response content type
             // if it is the only Accept header value provided.
             List<MediaType> requestMediaTypes = MediaType.parseMediaTypes(acceptHeaders).stream()
-                    .filter((MediaType m) -> !m.equals(MediaType.ALL)).toList();
+                    .filter((MediaType mediaType) -> !mediaType.equals(MediaType.ALL)).toList();
             for (MediaType currentRequestedMediaType : requestMediaTypes) {
                 // Find the first supported non wildcard type / subtype MediaType that is
                 // supported by the runtime environment and return it.
@@ -256,9 +251,9 @@ public class GlobalExceptionHandler {
                     break;
                 }
             }
-        } catch (InvalidMediaTypeException ex) {
+        } catch (InvalidMediaTypeException caught) {
             log.debug("Invalid Media Types: [{}] have been provided for REST URL: [{}]. Error was: [{}]", acceptHeaders,
-                    request.getRequestURI(), ex.getMessage(), ex);
+                    request.getRequestURI(), caught.getMessage(), caught);
             responseHeaders.add(REQUESTED_CONTENT_TYPE_NOT_SUPPORTED_HEADER,
                     String.format(REQUESTED_CONTENT_TYPE_NOT_SUPPORTED_ERROR_MESSAGE,
                             request.getHeaders(HttpHeaders.ACCEPT), this.configuration.getDefaultErrorMediaType()));
@@ -273,13 +268,13 @@ public class GlobalExceptionHandler {
      * Extract a {@link Set} of a {@link ConstraintViolationInfo} from given
      * {@link ConstraintViolationException}.
      *
-     * @param e the {@link ConstraintViolationException} source to extract
-     *          {@link ConstraintViolationInfo}s from
+     * @param constraintViolationException the {@link ConstraintViolationException} source to extract
+     *                                     {@link ConstraintViolationInfo}s from
      * @return a {@link Set} of {@link ConstraintViolationInfo} one for each
      * {@link ConstraintViolation} on the {@link ConstraintViolationException}
      */
-    private Set<ConstraintViolationInfo> getConstraintViolationInfos(ConstraintViolationException e) {
-        return e.getConstraintViolations().stream()
+    private Set<ConstraintViolationInfo> getConstraintViolationInfos(ConstraintViolationException constraintViolationException) {
+        return constraintViolationException.getConstraintViolations().stream()
                 .map((ConstraintViolation<?> constraintViolation) -> ConstraintViolationInfo.builder()
                         .invalidValue(
                                 Optional.ofNullable(constraintViolation.getInvalidValue()).orElse("null").toString())
