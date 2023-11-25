@@ -16,7 +16,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,19 +25,20 @@ import org.hibernate.envers.Audited;
 /**
  * Entity class representing a department.
  * <p>
- * This class defines the department entity with its attributes and relationships. It includes
- * fields like the department's identifier and name, and a set of employees associated with
- * the department. It extends {@link AbstractEntity} to inherit common audit fields and lifecycle callbacks.
+ * This class defines the department entity with its attributes and relationships. It
+ * includes fields like the department's identifier and name, and a set of employees
+ * associated with the department. It extends {@link AbstractEntity} to inherit common
+ * audit fields and lifecycle callbacks.
  * </p>
  *
  * <p>
- * The class uses annotations to configure ORM (Object-Relational Mapping) via JPA (Jakarta Persistence API),
- * and it's audited using Hibernate Envers for maintaining historical data.
+ * The class uses annotations to configure ORM (Object-Relational Mapping) via JPA
+ * (Jakarta Persistence API), and it's audited using Hibernate Envers for maintaining
+ * historical data.
  * </p>
  *
  * @see AbstractEntity
  * @see Employee
- *
  * @author Stéphan Minko
  */
 @Audited
@@ -49,34 +49,34 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "DEPARTMENT", schema = "data")
 @SequenceGenerator(name = "department_sequence", allocationSize = 1, sequenceName = "department_sequence",
-        schema = "data")
+		schema = "data")
 public class Department extends AbstractEntity<Long> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_sequence")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_sequence")
+	private Long id;
 
-    @Column(name = "DEPARTMENT_NAME", length = 50, nullable = false, unique = true)
-    private String departmentName;
+	@Column(name = "DEPARTMENT_NAME", length = 50, nullable = false, unique = true)
+	private String departmentName;
 
-    @JsonBackReference
-    @ToString.Exclude
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Employee> employees = new HashSet<>();
+	@JsonBackReference
+	@ToString.Exclude
+	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Employee> employees = new HashSet<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Department that = (Department) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getDepartmentName(), that.getDepartmentName());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Department that = (Department) o;
+		return Objects.equals(getId(), that.getId()) && Objects.equals(getDepartmentName(), that.getDepartmentName());
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getDepartmentName());
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getDepartmentName());
+	}
 
 }

@@ -9,8 +9,11 @@ import lombok.ToString;
 /**
  * Represents a department entity.
  *
- * <p>This class models the department data. It is designed to be serializable to allow for easy storage and retrieval
- * from various data streams, and it is integrated with Jackson for JSON processing.</p>
+ * <p>
+ * This class models the department data. It is designed to be serializable to allow for
+ * easy storage and retrieval from various data streams, and it is integrated with Jackson
+ * for JSON processing.
+ * </p>
  *
  * @author Stéphan Minko
  */
@@ -19,8 +22,8 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Department implements Serializable {
 
-    private long id;
+	private long id;
 
-    private String departmentName;
+	private String departmentName;
 
 }

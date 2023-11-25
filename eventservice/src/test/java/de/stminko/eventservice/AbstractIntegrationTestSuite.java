@@ -27,74 +27,73 @@ import org.springframework.util.Assert;
 import org.springframework.util.StopWatch;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {EventServiceApplication.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = { EventServiceApplication.class })
 @Slf4j
 @ActiveProfiles("local")
 public abstract class AbstractIntegrationTestSuite {
 
-    @Autowired
-    protected EmployeeTestFactory employeeTestFactory;
+	@Autowired
+	protected EmployeeTestFactory employeeTestFactory;
 
-    @Autowired
-    protected EmployeeEventTestFactory employeeEventTestFactory;
+	@Autowired
+	protected EmployeeEventTestFactory employeeEventTestFactory;
 
-    @Autowired
-    protected EmployeeMessageTestFactory employeeMessageTestFactory;
+	@Autowired
+	protected EmployeeMessageTestFactory employeeMessageTestFactory;
 
-    @Autowired
-    protected DatabaseCleaner databaseCleaner;
+	@Autowired
+	protected DatabaseCleaner databaseCleaner;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+	@Autowired
+	protected ObjectMapper objectMapper;
 
-    @Autowired
-    private EmployeeMessageReceiver employeeMessageReceiver;
+	@Autowired
+	private EmployeeMessageReceiver employeeMessageReceiver;
 
+	private final Map<String, StopWatch> stopWatches = new ConcurrentHashMap<>();
 
-    private final Map<String, StopWatch> stopWatches = new ConcurrentHashMap<>();
+	public void receiveRandomMessageFor(String id) {
+		receiveRandomMessageFor(id, 0);
+	}
 
-    public void receiveRandomMessageFor(String id) {
-        receiveRandomMessageFor(id, 0);
-    }
+	public void receiveRandomMessageFor(int count) {
+		receiveRandomMessageFor(null, 0);
+	}
 
-    public void receiveRandomMessageFor(int count) {
-        receiveRandomMessageFor(null, 0);
-    }
+	public void receiveRandomMessageFor(String id, int count) {
+		List<Employee> employees = employeeTestFactory
+				.createManyDefault(count <= 0 ? RandomUtils.nextInt(30, 100) : count);
+		employees.forEach(employee -> {
+			employee.setId(id);
+			EmployeeMessage employeeMessage = employeeMessageTestFactory.builder().employee(employee).create();
+			employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
+		});
+	}
 
-    public void receiveRandomMessageFor(String id, int count) {
-        List<Employee> employees = employeeTestFactory.createManyDefault(count <= 0 ? RandomUtils.nextInt(30, 100) : count);
-        employees.forEach(employee -> {
-            employee.setId(id);
-            EmployeeMessage employeeMessage = employeeMessageTestFactory.builder().employee(employee).create();
-            employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
-        });
-    }
+	@BeforeEach
+	public final void onBeforeEach(TestInfo testInfo) {
+		log.info("BEFORE TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		String taskName = "TEST_SCOPE";
+		StopWatch stopWatch = getStopWatch(taskName);
+		log.info("Starting Test: [{}]",
+				StringUtils.isBlank(testInfo.getDisplayName()) ? testInfo.getTestMethod() : testInfo.getDisplayName());
+		stopWatch.start(taskName);
+	}
 
-    @BeforeEach
-    public final void onBeforeEach(TestInfo testInfo) {
-        log.info("BEFORE TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        String taskName = "TEST_SCOPE";
-        StopWatch stopWatch = getStopWatch(taskName);
-        log.info("Starting Test: [{}]",
-                StringUtils.isBlank(testInfo.getDisplayName()) ? testInfo.getTestMethod() : testInfo.getDisplayName());
-        stopWatch.start(taskName);
-    }
+	private StopWatch getStopWatch(String name) {
+		Assert.notNull(name, "stop watch name cannot be null");
+		StopWatch stopWatch = this.stopWatches.getOrDefault(name, new StopWatch(name));
+		this.stopWatches.put(name, stopWatch);
+		return stopWatch;
+	}
 
-    private StopWatch getStopWatch(String name) {
-        Assert.notNull(name, "stop watch name cannot be null");
-        StopWatch stopWatch = this.stopWatches.getOrDefault(name, new StopWatch(name));
-        this.stopWatches.put(name, stopWatch);
-        return stopWatch;
-    }
-
-    @AfterEach
-    public final void onAfterEach() {
-        StopWatch stopWatch = getStopWatch("TEST_SCOPE");
-        stopWatch.stop();
-        log.info(stopWatch.shortSummary());
-        log.info("AFTER TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        databaseCleaner.cleanDatabases();
-    }
-
+	@AfterEach
+	public final void onAfterEach() {
+		StopWatch stopWatch = getStopWatch("TEST_SCOPE");
+		stopWatch.stop();
+		log.info(stopWatch.shortSummary());
+		log.info("AFTER TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		databaseCleaner.cleanDatabases();
+	}
 
 }

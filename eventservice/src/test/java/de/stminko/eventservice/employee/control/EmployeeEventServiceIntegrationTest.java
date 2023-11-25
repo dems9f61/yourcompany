@@ -19,77 +19,78 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @DisplayName("Integration tests for employee event service")
 class EmployeeEventServiceIntegrationTest extends AbstractIntegrationTestSuite {
-    @Autowired
-    private EmployeeEventRepository employeeEventRepository;
 
-    @Autowired
-    private EmployeeEventService employeeEventService;
+	@Autowired
+	private EmployeeEventRepository employeeEventRepository;
 
-    @DisplayName("All published employee events to a specific id appear in ascending order")
-    @Test
-    void givenPublishedEmployeeEventsForAnyEmployee_whenFindAll_thenReturnDescendingOrderedList() {
-        // Arrange
-        String employeeId = UUID.randomUUID().toString();
-        int eventCount = RandomUtils.nextInt(50, 60);
-        receiveRandomMessageFor(employeeId, eventCount);
-        PageRequest pageRequest = PageRequest.of(0, 10);
+	@Autowired
+	private EmployeeEventService employeeEventService;
 
-        // Act
-        Page<PersistentEmployeeEvent> allDescOrderedByCreatedAt
-                = employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageRequest);
+	@DisplayName("All published employee events to a specific id appear in ascending order")
+	@Test
+	void givenPublishedEmployeeEventsForAnyEmployee_whenFindAll_thenReturnDescendingOrderedList() {
+		// Arrange
+		String employeeId = UUID.randomUUID().toString();
+		int eventCount = RandomUtils.nextInt(50, 60);
+		receiveRandomMessageFor(employeeId, eventCount);
+		PageRequest pageRequest = PageRequest.of(0, 10);
 
-        // Assert
-        List<PersistentEmployeeEvent> sortedPersistentEmployeeEvents = allDescOrderedByCreatedAt.stream().toList();
-        IntStream.range(0, sortedPersistentEmployeeEvents.size() - 1)
-                .forEach(i -> {
-                    Instant current = sortedPersistentEmployeeEvents.get(i).getCreatedAt();
-                    Instant next = sortedPersistentEmployeeEvents.get(i + 1).getCreatedAt();
-                    assertThat(current).isBefore(next);
-                });
-    }
+		// Act
+		Page<PersistentEmployeeEvent> allDescOrderedByCreatedAt = employeeEventService
+				.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageRequest);
 
-    @DisplayName("Finding published employee events returns an empty collection For unknown id ")
-    @Test
-    void givenUnknownUuid_whenFindAll_thenReturnEmptyList() {
-        // Arrange
-        int eventCount = RandomUtils.nextInt(10, 20);
-        receiveRandomMessageFor(eventCount);
-        String unknownEmployeeId = UUID.randomUUID().toString();
-        PageRequest pageRequest = PageRequest.of(0, eventCount);
+		// Assert
+		List<PersistentEmployeeEvent> sortedPersistentEmployeeEvents = allDescOrderedByCreatedAt.stream().toList();
+		IntStream.range(0, sortedPersistentEmployeeEvents.size() - 1).forEach(i -> {
+			Instant current = sortedPersistentEmployeeEvents.get(i).getCreatedAt();
+			Instant next = sortedPersistentEmployeeEvents.get(i + 1).getCreatedAt();
+			assertThat(current).isBefore(next);
+		});
+	}
 
-        // Act
-        Page<PersistentEmployeeEvent> events = employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(unknownEmployeeId, pageRequest);
+	@DisplayName("Finding published employee events returns an empty collection For unknown id ")
+	@Test
+	void givenUnknownUuid_whenFindAll_thenReturnEmptyList() {
+		// Arrange
+		int eventCount = RandomUtils.nextInt(10, 20);
+		receiveRandomMessageFor(eventCount);
+		String unknownEmployeeId = UUID.randomUUID().toString();
+		PageRequest pageRequest = PageRequest.of(0, eventCount);
 
-        // Assert
-        assertThat(events).isNotNull().isEmpty();
-    }
+		// Act
+		Page<PersistentEmployeeEvent> events = employeeEventService
+				.findByEmployeeIdOrderByCreatedAtAsc(unknownEmployeeId, pageRequest);
 
-    @DisplayName("Handling an employee events makes it persistent")
-    @Test
-    void givenEmployeeEvent_whenHandle_thenPersistEvent() {
-        // Arrange
-        employeeEventRepository.deleteAll();
-        Employee employee = employeeTestFactory.createDefault();
-        EmployeeEvent employeeEvent = employeeEventTestFactory.builder().employee(employee).create();
+		// Assert
+		assertThat(events).isNotNull().isEmpty();
+	}
 
-        // Act
-        employeeEventService.handleEmployeeEvent(employeeEvent);
+	@DisplayName("Handling an employee events makes it persistent")
+	@Test
+	void givenEmployeeEvent_whenHandle_thenPersistEvent() {
+		// Arrange
+		employeeEventRepository.deleteAll();
+		Employee employee = employeeTestFactory.createDefault();
+		EmployeeEvent employeeEvent = employeeEventTestFactory.builder().employee(employee).create();
 
-        // Assert
-        List<PersistentEmployeeEvent> allEvents = employeeEventRepository.findAll();
-        assertThat(allEvents).isNotEmpty().hasSize(1);
-        PersistentEmployeeEvent persistentEmployeeEvent = allEvents.get(0);
-        assertThat(persistentEmployeeEvent.getId()).isNotNull();
-        assertThat(persistentEmployeeEvent.getCreatedAt()).isNotNull().isBefore(Instant.now());
-        assertThat(persistentEmployeeEvent.getBirthday()).isEqualTo(Date.from(employee.getBirthday().toInstant()));
-        assertThat(persistentEmployeeEvent.getDepartmentName()).isEqualTo(employee.getDepartment().getDepartmentName());
-        assertThat(persistentEmployeeEvent.getEmailAddress()).isEqualTo(employee.getEmailAddress());
-        assertThat(persistentEmployeeEvent.getEventType()).isNotNull().isEqualTo(employeeEvent.getEventType());
-        assertThat(persistentEmployeeEvent.getEmployeeId()).isEqualTo(employee.getId());
-        assertThat(persistentEmployeeEvent.getFirstName()).isEqualTo(employee.getFullName().getFirstName());
-        assertThat(persistentEmployeeEvent.getLastName()).isEqualTo(employee.getFullName().getLastName());
-    }
+		// Act
+		employeeEventService.handleEmployeeEvent(employeeEvent);
+
+		// Assert
+		List<PersistentEmployeeEvent> allEvents = employeeEventRepository.findAll();
+		assertThat(allEvents).isNotEmpty().hasSize(1);
+		PersistentEmployeeEvent persistentEmployeeEvent = allEvents.get(0);
+		assertThat(persistentEmployeeEvent.getId()).isNotNull();
+		assertThat(persistentEmployeeEvent.getCreatedAt()).isNotNull().isBefore(Instant.now());
+		assertThat(persistentEmployeeEvent.getBirthday()).isEqualTo(Date.from(employee.getBirthday().toInstant()));
+		assertThat(persistentEmployeeEvent.getDepartmentName()).isEqualTo(employee.getDepartment().getDepartmentName());
+		assertThat(persistentEmployeeEvent.getEmailAddress()).isEqualTo(employee.getEmailAddress());
+		assertThat(persistentEmployeeEvent.getEventType()).isNotNull().isEqualTo(employeeEvent.getEventType());
+		assertThat(persistentEmployeeEvent.getEmployeeId()).isEqualTo(employee.getId());
+		assertThat(persistentEmployeeEvent.getFirstName()).isEqualTo(employee.getFullName().getFirstName());
+		assertThat(persistentEmployeeEvent.getLastName()).isEqualTo(employee.getFullName().getLastName());
+	}
+
 }

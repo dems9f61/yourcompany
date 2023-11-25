@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DepartmentRepository
-        extends JpaRepository<Department, Long>, RevisionRepository<Department, Long, Long> {
+		extends JpaRepository<Department, Long>, RevisionRepository<Department, Long, Long> {
 
-    Optional<Department> findByDepartmentName(String departmentName);
+	Optional<Department> findByDepartmentName(String departmentName);
 
 }

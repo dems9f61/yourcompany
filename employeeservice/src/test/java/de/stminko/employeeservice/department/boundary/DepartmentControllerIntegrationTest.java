@@ -93,7 +93,8 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String contentAsString = mvcResult.getResponse().getContentAsString();
 			DepartmentResponse departmentResponse = objectMapper.readValue(contentAsString, DepartmentResponse.class);
 			Optional<Department> optionalDepartment = departmentRepository.findById(departmentResponse.id());
-			Assertions.assertThat(optionalDepartment).hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());
+			Assertions.assertThat(optionalDepartment)
+					.hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());
 		}
 
 	}

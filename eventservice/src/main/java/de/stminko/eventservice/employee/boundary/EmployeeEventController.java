@@ -26,10 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST Controller for managing employee events.
  *
- * <p>This controller handles HTTP requests related to employee events. It provides endpoints for retrieving employee events in a paginated format.
+ * <p>
+ * This controller handles HTTP requests related to employee events. It provides endpoints
+ * for retrieving employee events in a paginated format.
  *
- * <p>This controller uses {@code EmployeeEventService} for business logic and data retrieval.
- * The service layer abstraction helps maintain a clean separation between the web layer and the service layer.</p>
+ * <p>
+ * This controller uses {@code EmployeeEventService} for business logic and data
+ * retrieval. The service layer abstraction helps maintain a clean separation between the
+ * web layer and the service layer.
+ * </p>
  *
  * @author Stéphan Minko
  */
@@ -40,43 +45,56 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeEventController {
 
-    public static final String BASE_URI = ApiVersions.V1 + "/events";
+	public static final String BASE_URI = ApiVersions.V1 + "/events";
 
-    private final EmployeeEventService employeeEventService;
+	private final EmployeeEventService employeeEventService;
 
-    /**
-     * Retrieves a paginated list of employee events for a specified employee, ordered by creation date in ascending order.
-     *
-     * <p>This endpoint responds to GET requests at '/{employeeId}' and returns a page of {@code EmployeeEventResponse} objects.
-     * The events are specifically related to the employee identified by the provided employee ID.
-     * Pagination and sorting are supported, with sorting by the creation date of the events in ascending order.</p>
-     *
-     * <p>The default pagination setting is configured to return up to 50 records per page if not specified in the request.
-     * The client can modify pagination settings by providing standard Spring Data pagination parameters in the request (e.g., page, size, sort).</p>
-     *
-     * <p>This method  maps the retrieved data to {@code EmployeeEventResponse} objects, providing a clean and structured response format suitable for client consumption.</p>
-     *
-     * @param employeeId the unique identifier of the employee for whom events are being retrieved
-     * @param pageable   the pagination information (page number, page size, sorting criteria)
-     * @return a {@link Page} of {@link EmployeeEventResponse} containing the employee events
-     */
-    @Operation(summary = "Find employee events by UUID",
-            description = "Retrieves a paginated list of employee events for a specified employee, ordered by creation date in ascending order.",
-            responses = @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of employee events",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EmployeeEventResponse.class)))
-    )
-    @GetMapping("/{employeeId}")
-    @ResponseStatus(HttpStatus.OK)
-    Page<EmployeeEventResponse> findByUuidOrderByCreatedAtAsc(
-            @Parameter(description = "Unique identifier of the employee", required = true)
-            @PathVariable("employeeId") String employeeId,
+	/**
+	 * Retrieves a paginated list of employee events for a specified employee, ordered by
+	 * creation date in ascending order.
+	 *
+	 * <p>
+	 * This endpoint responds to GET requests at '/{employeeId}' and returns a page of
+	 * {@code EmployeeEventResponse} objects. The events are specifically related to the
+	 * employee identified by the provided employee ID. Pagination and sorting are
+	 * supported, with sorting by the creation date of the events in ascending order.
+	 * </p>
+	 *
+	 * <p>
+	 * The default pagination setting is configured to return up to 50 records per page if
+	 * not specified in the request. The client can modify pagination settings by
+	 * providing standard Spring Data pagination parameters in the request (e.g., page,
+	 * size, sort).
+	 * </p>
+	 *
+	 * <p>
+	 * This method maps the retrieved data to {@code EmployeeEventResponse} objects,
+	 * providing a clean and structured response format suitable for client consumption.
+	 * </p>
+	 * @param employeeId the unique identifier of the employee for whom events are being
+	 * retrieved
+	 * @param pageable the pagination information (page number, page size, sorting
+	 * criteria)
+	 * @return a {@link Page} of {@link EmployeeEventResponse} containing the employee
+	 * events
+	 */
+	@Operation(summary = "Find employee events by UUID",
+			description = "Retrieves a paginated list of employee events for a specified employee, ordered by creation date in ascending order.",
+			responses = @ApiResponse(responseCode = "200",
+					description = "Successfully retrieved the list of employee events",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = EmployeeEventResponse.class))))
+	@GetMapping("/{employeeId}")
+	@ResponseStatus(HttpStatus.OK)
+	Page<EmployeeEventResponse> findByUuidOrderByCreatedAtAsc(
+			@Parameter(description = "Unique identifier of the employee",
+					required = true) @PathVariable("employeeId") String employeeId,
 
-            @Parameter(description = "Pagination and sorting parameters", required = true)
-            @PageableDefault(50) Pageable pageable) {
-        log.info("findByUuidOrderByCreatedAtAsc( employeeId= [{}])", employeeId);
-        return this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageable)
-                .map(EmployeeEventResponse::new);
-    }
+			@Parameter(description = "Pagination and sorting parameters",
+					required = true) @PageableDefault(50) Pageable pageable) {
+		log.info("findByUuidOrderByCreatedAtAsc( employeeId= [{}])", employeeId);
+		return this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageable)
+				.map(EmployeeEventResponse::new);
+	}
 
 }

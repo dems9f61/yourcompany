@@ -1,6 +1,5 @@
 package de.stminko.eventservice.employee.boundary;
 
-
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +8,6 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.stminko.eventservice.AbstractIntegrationTestSuite;
 import de.stminko.eventservice.employee.entity.EmployeeEventResponse;
-import de.stminko.eventservice.employee.entity.PersistentEmployeeEvent;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,37 +29,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class EmployeeEventControllerIntegrationTest extends AbstractIntegrationTestSuite {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Test
-    @DisplayName("GET: 'http://.../events/{employeeId}' returns OK and an list ")
-    void givenEmployeeVents_whenFindByEmployeeId_thenStatus200AndContent() throws Exception {
-        // Arrange
-        String employeeId = UUID.randomUUID().toString();
-        int expectedEventCount = RandomUtils.nextInt(10, 20);
-        receiveRandomMessageFor(employeeId, expectedEventCount);
+	@Test
+	@DisplayName("GET: 'http://.../events/{employeeId}' returns OK and an list ")
+	void givenEmployeeVents_whenFindByEmployeeId_thenStatus200AndContent() throws Exception {
+		// Arrange
+		String employeeId = UUID.randomUUID().toString();
+		int expectedEventCount = RandomUtils.nextInt(10, 20);
+		receiveRandomMessageFor(employeeId, expectedEventCount);
 
-        String uri = String.format("%s/{employeeId}", EmployeeEventController.BASE_URI);
+		String uri = String.format("%s/{employeeId}", EmployeeEventController.BASE_URI);
 
-        // Act / Assert
-        MvcResult mvcResult = mockMvc.perform(get(uri, employeeId))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.content", hasSize(expectedEventCount))).andReturn();
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        Page<EmployeeEventResponse> employeeResponsePage = objectMapper.readValue(contentAsString, new TypeReference<>() {
-        });
+		// Act / Assert
+		MvcResult mvcResult = mockMvc.perform(get(uri, employeeId)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", notNullValue()))
+				.andExpect(jsonPath("$.content", hasSize(expectedEventCount))).andReturn();
+		String contentAsString = mvcResult.getResponse().getContentAsString();
+		Page<EmployeeEventResponse> employeeResponsePage = objectMapper.readValue(contentAsString,
+				new TypeReference<>() {
+				});
 
-        List<EmployeeEventResponse> employeeEventResponses = employeeResponsePage.stream().toList();
-        IntStream.range(0, employeeEventResponses.size() - 1)
-                .forEach(i -> {
-                    Instant current = employeeEventResponses.get(i).getCreatedAt();
-                    Instant next = employeeEventResponses.get(i + 1).getCreatedAt();
-                    assertThat(current).isBefore(next);
-                });
+		List<EmployeeEventResponse> employeeEventResponses = employeeResponsePage.stream().toList();
+		IntStream.range(0, employeeEventResponses.size() - 1).forEach(i -> {
+			Instant current = employeeEventResponses.get(i).getCreatedAt();
+			Instant next = employeeEventResponses.get(i + 1).getCreatedAt();
+			assertThat(current).isBefore(next);
+		});
 
-    }
+	}
 
 }

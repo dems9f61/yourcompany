@@ -12,7 +12,8 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 
 /**
- * This is the Object that is JSON Serialized by all RestControllers in case of any Exception.
+ * This is the Object that is JSON Serialized by all RestControllers in case of any
+ * Exception.
  *
  * @author Stéphan Minko
  */
@@ -22,20 +23,20 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor
 public class ErrorInfo {
 
-    private String url;
+	private String url;
 
-    private String urlQueryString;
+	private String urlQueryString;
 
-    private String httpMethod;
+	private String httpMethod;
 
-    private HttpStatus httpStatus;
+	private HttpStatus httpStatus;
 
-    private int httpStatusCode;
+	private int httpStatusCode;
 
-    private ZonedDateTime errorDateTime;
+	private ZonedDateTime errorDateTime;
 
-    private String errorMessage;
+	private String errorMessage;
 
-    private Set<ConstraintViolationInfo> constraintViolations;
+	private Set<ConstraintViolationInfo> constraintViolations;
 
 }

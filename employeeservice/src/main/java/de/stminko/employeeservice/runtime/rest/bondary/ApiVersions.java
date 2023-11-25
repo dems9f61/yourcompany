@@ -7,7 +7,7 @@ package de.stminko.employeeservice.runtime.rest.bondary;
  * It is designed as a utility class (final class with a private constructor) and should
  * not be instantiated.
  *
- *  @author Stéphan Minko
+ * @author Stéphan Minko
  */
 public final class ApiVersions {
 

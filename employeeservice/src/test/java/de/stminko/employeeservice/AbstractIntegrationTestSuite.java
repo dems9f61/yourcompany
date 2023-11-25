@@ -33,81 +33,80 @@ import org.springframework.util.StopWatch;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(ErrorDecorator.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {EmployeeServiceApplication.class})
+		classes = { EmployeeServiceApplication.class })
 @ActiveProfiles("local")
 @Slf4j
 public abstract class AbstractIntegrationTestSuite {
 
-    @Autowired
-    protected DepartmentRequestTestFactory departmentRequestTestFactory;
+	@Autowired
+	protected DepartmentRequestTestFactory departmentRequestTestFactory;
 
-    @Autowired
-    protected DepartmentTestFactory departmentTestFactory;
+	@Autowired
+	protected DepartmentTestFactory departmentTestFactory;
 
-    @Autowired
-    protected EmployeeRequestTestFactory employeeRequestTestFactory;
+	@Autowired
+	protected EmployeeRequestTestFactory employeeRequestTestFactory;
 
-    @Autowired
-    protected EmployeeTestFactory employeeTestFactory;
+	@Autowired
+	protected EmployeeTestFactory employeeTestFactory;
 
-    @Autowired
-    protected DatabaseCleaner databaseCleaner;
+	@Autowired
+	protected DatabaseCleaner databaseCleaner;
 
-    @SpyBean
-    protected EmployeeEventPublisher employeeEventPublisher;
+	@SpyBean
+	protected EmployeeEventPublisher employeeEventPublisher;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+	@Autowired
+	protected ObjectMapper objectMapper;
 
-    private final Map<String, StopWatch> stopWatches = new ConcurrentHashMap<>();
+	private final Map<String, StopWatch> stopWatches = new ConcurrentHashMap<>();
 
-    @BeforeEach
-    void setUp() {
-        Mockito.doNothing().when(this.employeeEventPublisher).employeeCreated(ArgumentMatchers.any());
-        Mockito.doNothing().when(this.employeeEventPublisher).employeeDeleted(ArgumentMatchers.any());
-        Mockito.doNothing().when(this.employeeEventPublisher).employeeUpdated(ArgumentMatchers.any());
-    }
+	@BeforeEach
+	void setUp() {
+		Mockito.doNothing().when(this.employeeEventPublisher).employeeCreated(ArgumentMatchers.any());
+		Mockito.doNothing().when(this.employeeEventPublisher).employeeDeleted(ArgumentMatchers.any());
+		Mockito.doNothing().when(this.employeeEventPublisher).employeeUpdated(ArgumentMatchers.any());
+	}
 
-    @BeforeEach
-    public final void onBeforeEach(TestInfo testInfo) {
-        LocaleContextHolder.setLocale(Locale.ENGLISH);
-        log.info("BEFORE TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        String taskName = "TEST_SCOPE";
-        StopWatch stopWatch = getStopWatch(taskName);
-        log.info("Starting Test: [{}]",
-                StringUtils.isBlank(testInfo.getDisplayName()) ? testInfo.getTestMethod() : testInfo.getDisplayName());
-        stopWatch.start(taskName);
-    }
+	@BeforeEach
+	public final void onBeforeEach(TestInfo testInfo) {
+		LocaleContextHolder.setLocale(Locale.ENGLISH);
+		log.info("BEFORE TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		String taskName = "TEST_SCOPE";
+		StopWatch stopWatch = getStopWatch(taskName);
+		log.info("Starting Test: [{}]",
+				StringUtils.isBlank(testInfo.getDisplayName()) ? testInfo.getTestMethod() : testInfo.getDisplayName());
+		stopWatch.start(taskName);
+	}
 
-    @AfterEach
-    public final void onAfterEach() {
-        LocaleContextHolder.resetLocaleContext();
-        StopWatch stopWatch = getStopWatch("TEST_SCOPE");
-        stopWatch.stop();
-        log.info(stopWatch.shortSummary());
-        log.info("AFTER TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-        this.databaseCleaner.cleanDatabases();
-    }
+	@AfterEach
+	public final void onAfterEach() {
+		LocaleContextHolder.resetLocaleContext();
+		StopWatch stopWatch = getStopWatch("TEST_SCOPE");
+		stopWatch.stop();
+		log.info(stopWatch.shortSummary());
+		log.info("AFTER TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		this.databaseCleaner.cleanDatabases();
+	}
 
-    protected String transformRequestToJSON(Object object) throws Exception {
-        return transformRequestToJSONByView(object, null);
-    }
+	protected String transformRequestToJSON(Object object) throws Exception {
+		return transformRequestToJSONByView(object, null);
+	}
 
-    protected String transformRequestToJSONByView(Object object, Class<?> serializationView) throws Exception {
-        ObjectWriter objectWriter = (serializationView != null)
-                ? this.objectMapper.writerWithView(serializationView).withDefaultPrettyPrinter()
-                : this.objectMapper.writer().withDefaultPrettyPrinter();
-        String result = objectWriter.writeValueAsString(object);
-        this.objectMapper.writer().withDefaultPrettyPrinter();
-        return result;
-    }
+	protected String transformRequestToJSONByView(Object object, Class<?> serializationView) throws Exception {
+		ObjectWriter objectWriter = (serializationView != null)
+				? this.objectMapper.writerWithView(serializationView).withDefaultPrettyPrinter()
+				: this.objectMapper.writer().withDefaultPrettyPrinter();
+		String result = objectWriter.writeValueAsString(object);
+		this.objectMapper.writer().withDefaultPrettyPrinter();
+		return result;
+	}
 
-
-    private StopWatch getStopWatch(String name) {
-        Assert.notNull(name, "stop watch name cannot be null");
-        StopWatch stopWatch = this.stopWatches.getOrDefault(name, new StopWatch(name));
-        this.stopWatches.put(name, stopWatch);
-        return stopWatch;
-    }
+	private StopWatch getStopWatch(String name) {
+		Assert.notNull(name, "stop watch name cannot be null");
+		StopWatch stopWatch = this.stopWatches.getOrDefault(name, new StopWatch(name));
+		this.stopWatches.put(name, stopWatch);
+		return stopWatch;
+	}
 
 }

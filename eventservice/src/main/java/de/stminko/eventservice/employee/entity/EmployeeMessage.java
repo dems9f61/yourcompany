@@ -9,8 +9,11 @@ import lombok.ToString;
 /**
  * Data object for employee messages.
  *
- * <p>This class encapsulates the data for employee-related messages, including the type of event and the employee details.
- * It is used in message-driven operations, particularly in interaction with message queues like RabbitMQ.</p>
+ * <p>
+ * This class encapsulates the data for employee-related messages, including the type of
+ * event and the employee details. It is used in message-driven operations, particularly
+ * in interaction with message queues like RabbitMQ.
+ * </p>
  *
  * @author Stéphan Minko
  */
@@ -21,8 +24,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class EmployeeMessage {
 
-    private EventType eventType;
+	private EventType eventType;
 
-    private Employee employee;
+	private Employee employee;
 
 }

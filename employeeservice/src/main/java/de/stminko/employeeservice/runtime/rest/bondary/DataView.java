@@ -9,33 +9,33 @@ package de.stminko.employeeservice.runtime.rest.bondary;
  */
 public interface DataView {
 
-    /**
-     * Interface for HTTP GET Requests.
-     */
-    interface GET extends DataView {
+	/**
+	 * Interface for HTTP GET Requests.
+	 */
+	interface GET extends DataView {
 
-    }
+	}
 
-    /**
-     * Interface for HTTP POST Requests.
-     */
-    interface POST extends DataView {
+	/**
+	 * Interface for HTTP POST Requests.
+	 */
+	interface POST extends DataView {
 
-    }
+	}
 
-    /**
-     * Interface for HTTP PUT Requests.
-     */
+	/**
+	 * Interface for HTTP PUT Requests.
+	 */
 
-    interface PUT extends DataView {
+	interface PUT extends DataView {
 
-    }
+	}
 
-    /**
-     * Interface for HTTP PATCH Requests.
-     */
-    interface PATCH extends DataView {
+	/**
+	 * Interface for HTTP PATCH Requests.
+	 */
+	interface PATCH extends DataView {
 
-    }
+	}
 
 }
