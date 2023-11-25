@@ -94,6 +94,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
+                            <doclint>all,-missing</doclint>
                             <sourceFileExcludes>
                                 <sourceFileExclude>target/**</sourceFileExclude>
                             </sourceFileExcludes>
