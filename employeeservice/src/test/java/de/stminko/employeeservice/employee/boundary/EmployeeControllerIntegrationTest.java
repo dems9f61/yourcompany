@@ -343,6 +343,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())));
         }
 
+
+        @Test
+        @DisplayName("GET: 'https://.../employees' returns OK and all employees")
+        void givenEmployees_whenFindAll_thenStatus200AndReturnAll() throws Exception {
+            // Arrange
+            List<EmployeeResponse> employeeResponses = saveRandomEmployees(RandomUtils.nextInt(10, 20));
+            String uri = "%s".formatted(EmployeeController.BASE_URI);
+
+            // Act / Assert
+            mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(employeeResponses.size())));
+        }
     }
 
     @Nested
