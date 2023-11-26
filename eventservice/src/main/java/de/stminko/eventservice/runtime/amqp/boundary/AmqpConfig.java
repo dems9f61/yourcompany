@@ -81,13 +81,13 @@ public class AmqpConfig {
 	/**
 	 * Minimum number of concurrent consumers for RabbitMQ.
 	 */
-	@Min(value = 1)
+	@Min(1)
 	private int concurrentConsumers;
 
 	/**
 	 * Maximum number of concurrent consumers for RabbitMQ.
 	 */
-	@Max(value = 20)
+	@Max(20)
 	private int maxConcurrentConsumers;
 
 	/**

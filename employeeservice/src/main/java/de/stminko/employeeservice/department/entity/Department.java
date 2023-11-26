@@ -37,9 +37,9 @@ import org.hibernate.envers.Audited;
  * historical data.
  * </p>
  *
+ * @author Stéphan Minko
  * @see AbstractEntity
  * @see Employee
- * @author Stéphan Minko
  */
 @Audited
 @AuditOverride(forClass = AbstractEntity.class)

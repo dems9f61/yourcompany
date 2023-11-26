@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @ExtendWith(MockitoExtension.class)
-class EmployeeEventPublisherTest {
+class EmployeeEventPublisherTests {
 
 	@Mock
 	private RabbitTemplate template;

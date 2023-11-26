@@ -8,7 +8,7 @@ import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * Custom event representing actions or changes related to an {@link Employee}.
+ * custom event representing actions or changes related to an {@link Employee}.
  *
  * <p>
  * This class extends {@link ApplicationEvent} and is used to encapsulate details about
@@ -29,8 +29,8 @@ public class EmployeeEvent extends ApplicationEvent {
 
 	/**
 	 * Constructs a new EmployeeEvent.
-	 * @param employee The {@link Employee} object associated with this event.
-	 * @param eventType The type of the event, represented by the {@link EventType} enum.
+	 * @param employee the {@link Employee} object associated with this event.
+	 * @param eventType the type of the event, represented by the {@link EventType} enum.
 	 */
 	public EmployeeEvent(@NonNull Employee employee, @NonNull EventType eventType) {
 		super(employee);

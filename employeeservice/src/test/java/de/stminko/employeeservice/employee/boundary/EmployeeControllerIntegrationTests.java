@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @AutoConfigureMockMvc
-class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
+class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -98,16 +98,16 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenValidRequest_whenCreateEmployee_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest toPersist = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(toPersist, DataView.POST.class);
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
-			String formattedBirthday = EmployeeControllerIntegrationTest.this.dateFormatter
+			String formattedBirthday = EmployeeControllerIntegrationTests.this.dateFormatter
 				.format(toPersist.birthday());
 
 			// Act / Assert
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -124,9 +124,9 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(toPersist.departmentName())))
 				.andReturn();
 			String contentAsString = mvcResult.getResponse().getContentAsString();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
-			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id());
 			Assertions.assertThat(optionalEmployee)
 				.hasValueSatisfying((Employee value) -> Assertions.assertThat(value).isNotNull());
@@ -138,7 +138,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenOnlyDepartment_whenCreateEmployee_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest toPersist = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
 				.birthday(null)
 				.emailAddress(null)
 				.firstName(null)
@@ -150,7 +150,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isCreated())
@@ -167,9 +167,9 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(toPersist.departmentName())))
 				.andReturn();
 			String contentAsString = mvcResult.getResponse().getContentAsString();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
-			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id());
 			Assertions.assertThat(optionalEmployee)
 				.hasValueSatisfying((Employee value) -> Assertions.assertThat(value).isNotNull());
@@ -179,13 +179,13 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified department name doesn't exist ")
 		void givenUnknownDepartment_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
-			EmployeeRequest toPersist = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.createDefault();
 			String requestAsJson = transformRequestToJSONByView(toPersist, DataView.POST.class);
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -205,14 +205,14 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified email is not valid ")
 		void givenInvalidEmail_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
-			EmployeeRequest toPersist = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(RandomStringUtils.randomAlphabetic(10))
 				.create();
 			String requestAsJson = transformRequestToJSONByView(toPersist, DataView.POST.class);
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -232,24 +232,24 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenAlreadyUsedEmail_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest firstEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest firstEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 
 			String requestAsJson = transformRequestToJSONByView(firstEmployeeRequest, DataView.POST.class);
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
-			EmployeeControllerIntegrationTest.this.mockMvc.perform(
+			EmployeeControllerIntegrationTests.this.mockMvc.perform(
 					MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson));
 
-			EmployeeRequest secondEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest secondEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.emailAddress(firstEmployeeRequest.emailAddress())
 				.create();
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -268,7 +268,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if no field is set")
 		void givenEmptyRequest_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
-			EmployeeRequest toPersist = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
 				.birthday(null)
 				.emailAddress(null)
 				.firstName(null)
@@ -280,7 +280,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(
 						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -309,7 +309,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.get(uri, unknownId).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isNotFound())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -323,11 +323,11 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			// Arrange
 			EmployeeResponse persisted = saveRandomEmployees(1).get(0);
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
-			String formattedBirthday = EmployeeControllerIntegrationTest.this.dateFormatter
+			String formattedBirthday = EmployeeControllerIntegrationTests.this.dateFormatter
 				.format(persisted.birthday());
 
 			// Act / Assert
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.get(uri, persisted.id()).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -340,7 +340,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 				.andReturn();
 
 			String contentAsString = mvcResult.getResponse().getContentAsString();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
 			Assertions.assertThat(employeeResponse).isNotNull();
 			Assertions.assertThat(employeeResponse.id()).isEqualTo(persisted.id());
@@ -359,14 +359,15 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.get(uri, persisted.id()).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(persisted.id())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.birthday",
-						Matchers.is(EmployeeControllerIntegrationTest.this.dateFormatter.format(persisted.birthday()))))
+						Matchers
+							.is(EmployeeControllerIntegrationTests.this.dateFormatter.format(persisted.birthday()))))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(persisted.firstName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(persisted.lastName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())));
@@ -380,7 +381,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.get(uri).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -397,14 +398,14 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("PATCH: 'http://.../employees/{id}' returns NOT FOUND if the specified employee doesn't exist ")
 		void givenUnknownEmployeeId_whenPartialUpdateEmployee_thenStatus404() throws Exception {
 			// Arrange
-			EmployeeRequest updateRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.createDefault();
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 			String requestAsJson = transformRequestToJSONByView(updateRequest, DataView.PATCH.class);
 			String wrongId = UUID.randomUUID().toString();
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(uri, wrongId)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
@@ -425,22 +426,22 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenUnknownDepartment_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
 			String newDepartmentName = RandomStringUtils.randomAlphabetic(10);
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(newDepartmentName)
 				.create();
@@ -448,7 +449,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -469,22 +470,22 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenValidRequestWithAllFieldsSet_whenPartialUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
 			DepartmentResponse otherDepartmentResponse = saveRandomDepartment();
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(otherDepartmentResponse.departmentName())
 				.create();
@@ -492,19 +493,19 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
 				.isEqualTo(
-						EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployeeRequest.birthday()));
+						EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployeeRequest.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName())
 				.isEqualTo(updateEmployeeRequest.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName())
@@ -519,23 +520,23 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewBirthDay_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyBirthDay() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			LocalDate localDate = LocalDate.parse("1979-12-03", EmployeeControllerIntegrationTest.this.dateFormatter);
+			LocalDate localDate = LocalDate.parse("1979-12-03", EmployeeControllerIntegrationTests.this.dateFormatter);
 			ZonedDateTime newBirthDay = localDate.atStartOfDay(ZoneId.systemDefault());
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(null)
@@ -547,19 +548,19 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
 				.isEqualTo(
-						EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployeeRequest.birthday()));
+						EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployeeRequest.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName()).isEqualTo(employeeResponse.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName()).isEqualTo(employeeResponse.lastName());
 			Assertions.assertThat(updateEmployee.getEmailAddress()).isEqualTo(employeeResponse.emailAddress());
@@ -573,21 +574,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewFirstName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyFirstName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String newFirstName = RandomStringUtils.randomAlphabetic(23);
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(null)
@@ -599,18 +600,18 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
-				.isEqualTo(EmployeeControllerIntegrationTest.this.dateFormatter.format(employeeResponse.birthday()));
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.isEqualTo(EmployeeControllerIntegrationTests.this.dateFormatter.format(employeeResponse.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName())
 				.isEqualTo(updateEmployeeRequest.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName()).isEqualTo(employeeResponse.lastName());
@@ -625,20 +626,20 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenBlankFirstName_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(null)
@@ -650,7 +651,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -671,21 +672,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewLastName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyLastName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String newLastName = RandomStringUtils.randomAlphabetic(23);
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(null)
@@ -697,18 +698,18 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
-				.isEqualTo(EmployeeControllerIntegrationTest.this.dateFormatter.format(employeeResponse.birthday()));
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.isEqualTo(EmployeeControllerIntegrationTests.this.dateFormatter.format(employeeResponse.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName()).isEqualTo(employeeResponse.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName())
 				.isEqualTo(updateEmployeeRequest.lastName());
@@ -723,21 +724,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewEmail_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyEmail() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String newEmail = generateRandomEmail();
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(newEmail)
@@ -749,18 +750,18 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
-				.isEqualTo(EmployeeControllerIntegrationTest.this.dateFormatter.format(employeeResponse.birthday()));
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.isEqualTo(EmployeeControllerIntegrationTests.this.dateFormatter.format(employeeResponse.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName()).isEqualTo(employeeResponse.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName()).isEqualTo(employeeResponse.lastName());
 			Assertions.assertThat(updateEmployee.getEmailAddress()).isEqualTo(updateEmployeeRequest.emailAddress());
@@ -774,21 +775,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewInvalidEmail_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String newEmail = RandomStringUtils.randomAlphabetic(23);
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.emailAddress(newEmail)
@@ -800,7 +801,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -822,22 +823,22 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNewDepartment_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyDeparmtent() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
 			DepartmentResponse newDepartmentResponse = saveRandomDepartment();
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(newDepartmentResponse.departmentName())
 				.emailAddress(null)
@@ -849,18 +850,18 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
-				.isEqualTo(EmployeeControllerIntegrationTest.this.dateFormatter.format(employeeResponse.birthday()));
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.isEqualTo(EmployeeControllerIntegrationTests.this.dateFormatter.format(employeeResponse.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName()).isEqualTo(employeeResponse.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName()).isEqualTo(employeeResponse.lastName());
 			Assertions.assertThat(updateEmployee.getEmailAddress()).isEqualTo(employeeResponse.emailAddress());
@@ -880,22 +881,22 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenValidRequestWithAllFieldsSet_whenFullUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
 			DepartmentResponse otherDepartmentResponse = saveRandomDepartment();
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(otherDepartmentResponse.departmentName())
 				.create();
@@ -903,19 +904,19 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Employee updateEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id())
 				.orElseThrow();
 			Assertions
-				.assertThat(EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployee.getBirthday()))
+				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
 				.isEqualTo(
-						EmployeeControllerIntegrationTest.this.dateFormatter.format(updateEmployeeRequest.birthday()));
+						EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployeeRequest.birthday()));
 			Assertions.assertThat(updateEmployee.getFullName().getFirstName())
 				.isEqualTo(updateEmployeeRequest.firstName());
 			Assertions.assertThat(updateEmployee.getFullName().getLastName())
@@ -930,21 +931,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullBirthDay_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.birthday(null)
@@ -953,7 +954,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -974,21 +975,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenInvalidEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.emailAddress(RandomStringUtils.randomAlphabetic(10))
@@ -997,7 +998,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -1018,21 +1019,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.emailAddress(null)
@@ -1041,7 +1042,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -1062,21 +1063,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullFirstName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.firstName(null)
@@ -1085,7 +1086,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -1106,21 +1107,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullLastName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.lastName(null)
@@ -1129,7 +1130,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -1150,21 +1151,21 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullDepartmentName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 
-			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(null)
 				.create();
@@ -1172,7 +1173,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
@@ -1202,7 +1203,7 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.delete(uri, unknownId).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isNotFound())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -1222,28 +1223,28 @@ class EmployeeControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenEmployee_whenDeleteEmployeeById_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(departmentResponse.departmentName())
 				.create();
 			String requestAsJson = transformRequestToJSONByView(initialEmployeeRequest, DataView.POST.class);
 			String createUri = "%s".formatted(EmployeeController.BASE_URI);
-			MvcResult mvcResult = EmployeeControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(createUri)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
 				.andReturn();
-			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTest.this.objectMapper
+			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
 			// Acr / Assert
-			EmployeeControllerIntegrationTest.this.mockMvc
+			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.delete(uri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
-			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTest.this.employeeRepository
+			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
 				.findById(employeeResponse.id());
 			Assertions.assertThat(optionalEmployee).isEmpty();
 		}

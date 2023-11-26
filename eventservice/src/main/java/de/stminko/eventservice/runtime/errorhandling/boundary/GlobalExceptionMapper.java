@@ -38,7 +38,7 @@ public class GlobalExceptionMapper {
 	 * @param exception the caught exception
 	 * @return a ResponseEntity containing an {@link ErrorInfo} object detailing the error
 	 */
-	@ExceptionHandler(value = { Exception.class })
+	@ExceptionHandler({ Exception.class })
 	protected ResponseEntity<ErrorInfo> handleException(HttpServletRequest httpServletRequest, Exception exception) {
 		return serializeExceptionToResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, httpServletRequest);
 	}

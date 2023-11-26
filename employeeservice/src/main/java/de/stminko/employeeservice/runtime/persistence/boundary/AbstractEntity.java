@@ -49,7 +49,7 @@ public abstract class AbstractEntity<ID extends Serializable> implements Persist
 	/**
 	 * Version number for optimistic locking.
 	 */
-	@Setter(value = AccessLevel.PRIVATE)
+	@Setter(AccessLevel.PRIVATE)
 	@Column(nullable = false)
 	@Version
 	private Long version;

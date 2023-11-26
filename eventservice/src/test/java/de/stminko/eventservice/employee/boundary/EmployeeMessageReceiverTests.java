@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(OutputCaptureExtension.class)
 @DisplayName("Unit tests for the employee message receiver ")
-class EmployeeMessageReceiverTest extends AbstractUnitTestSuite {
+class EmployeeMessageReceiverTests extends AbstractUnitTestSuite {
 
 	@Mock
 	private ApplicationEventPublisher eventPublisher;

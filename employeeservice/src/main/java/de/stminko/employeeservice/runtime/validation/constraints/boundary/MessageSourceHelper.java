@@ -12,7 +12,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
- * Helper component to simplify accessing messages from a {@link MessageSource}. This
+ * helper component to simplify accessing messages from a {@link MessageSource}. This
  * component provides methods to retrieve messages based on a code and optional arguments,
  * automatically considering the current Locale from the {@link LocaleContextHolder}.
  *
@@ -35,10 +35,10 @@ public class MessageSourceHelper {
 	 * Retrieves a localized message based on the provided message code and arguments.
 	 * Uses the current Locale from the {@link LocaleContextHolder}, or if unavailable,
 	 * the default system Locale.
-	 * @param code The message code used to identify the message in the MessageSource.
-	 * @param args An array of objects that serve as arguments for message formatting; can
+	 * @param code the message code used to identify the message in the MessageSource.
+	 * @param args an array of objects that serve as arguments for message formatting; can
 	 * be null.
-	 * @return The localized message as a {@link String}.
+	 * @return the localized message as a {@link String}.
 	 */
 	public String getMessage(String code, Object... args) {
 		log.debug("getMessage(code= [{}], args= [{}])", code, ArrayUtils.toString(args));
@@ -62,8 +62,8 @@ public class MessageSourceHelper {
 	 * This method is ideal for retrieving simple messages without placeholders for
 	 * dynamic content.
 	 * </p>
-	 * @param code The unique identifier for the desired message in the message source.
-	 * @return A localized String corresponding to the message code.
+	 * @param code the unique identifier for the desired message in the message source.
+	 * @return a localized String corresponding to the message code.
 	 */
 	public String getMessage(String code) {
 		log.debug("getMessage(code= [{}])", code);

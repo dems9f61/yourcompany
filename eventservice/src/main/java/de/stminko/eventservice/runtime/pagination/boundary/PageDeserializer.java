@@ -59,7 +59,6 @@ class PageDeserializer extends JsonDeserializer<Page<?>> implements ContextualDe
 	 * @param deserializationContext the context of deserialization
 	 * @return a deserialized {@link Page} object
 	 * @throws IOException if an error occurs during reading from the {@code jsonParser}
-	 *
 	 * @author Stéphan Minko
 	 */
 	@Override

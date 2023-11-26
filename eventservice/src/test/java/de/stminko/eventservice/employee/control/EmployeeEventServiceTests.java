@@ -22,7 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @DisplayName("Unit tests for the employee event service")
-class EmployeeEventServiceTest extends AbstractUnitTestSuite {
+class EmployeeEventServiceTests extends AbstractUnitTestSuite {
 
 	@Mock
 	private EmployeeEventRepository employeeEventRepository;
@@ -38,16 +38,16 @@ class EmployeeEventServiceTest extends AbstractUnitTestSuite {
 		@DisplayName("Handle an employee events persists that event")
 		void givenEmployeeVent_whenHandle_thenPersist() {
 			// Arrange
-			EmployeeEvent employeeEvent = EmployeeEventServiceTest.this.employeeEventTestFactory.createDefault();
+			EmployeeEvent employeeEvent = EmployeeEventServiceTests.this.employeeEventTestFactory.createDefault();
 			Mockito.doReturn(null)
-				.when(EmployeeEventServiceTest.this.employeeEventRepository)
+				.when(EmployeeEventServiceTests.this.employeeEventRepository)
 				.save(ArgumentMatchers.any());
 
 			// Act
-			EmployeeEventServiceTest.this.employeeEventService.handleEmployeeEvent(employeeEvent);
+			EmployeeEventServiceTests.this.employeeEventService.handleEmployeeEvent(employeeEvent);
 
 			// Assert
-			Mockito.verify(EmployeeEventServiceTest.this.employeeEventRepository)
+			Mockito.verify(EmployeeEventServiceTests.this.employeeEventRepository)
 				.save(AssertionMatcher.assertArg((PersistentEmployeeEvent persistentEmployeeEvent) -> {
 					Employee employee = employeeEvent.getEmployee();
 					Assertions.assertThat(persistentEmployeeEvent.getDepartmentName())
@@ -83,15 +83,15 @@ class EmployeeEventServiceTest extends AbstractUnitTestSuite {
 
 			Page<PersistentEmployeeEvent> mockPageableResult = (Page<PersistentEmployeeEvent>) Mockito.mock(Page.class);
 			Mockito.doReturn(mockPageableResult)
-				.when(EmployeeEventServiceTest.this.employeeEventRepository)
+				.when(EmployeeEventServiceTests.this.employeeEventRepository)
 				.findByEmployeeId(ArgumentMatchers.eq(employeeId), ArgumentMatchers.any(Pageable.class));
 
 			// Act
-			EmployeeEventServiceTest.this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId,
+			EmployeeEventServiceTests.this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId,
 					mockPageable);
 
 			// Assert
-			Mockito.verify(EmployeeEventServiceTest.this.employeeEventRepository)
+			Mockito.verify(EmployeeEventServiceTests.this.employeeEventRepository)
 				.findByEmployeeId(ArgumentMatchers.eq(employeeId), AssertionMatcher.assertArg((Pageable pageable) -> {
 					Assertions.assertThat(pageable.getPageNumber()).isEqualTo(expectedPageNumber);
 					Assertions.assertThat(pageable.getPageSize()).isEqualTo(EmployeeEventService.MAX_PAGE_SIZE);

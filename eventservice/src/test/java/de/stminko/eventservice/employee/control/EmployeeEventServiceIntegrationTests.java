@@ -20,7 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 @DisplayName("Integration tests for employee event service")
-class EmployeeEventServiceIntegrationTest extends AbstractIntegrationTestSuite {
+class EmployeeEventServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private EmployeeEventRepository employeeEventRepository;

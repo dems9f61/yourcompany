@@ -77,13 +77,13 @@ public class DepartmentService {
 	 * the specified class. It operates within a transactional context defined by
 	 * {@link org.springframework.transaction.annotation.Propagation#SUPPORTS}.
 	 * </p>
-	 * @param departmentName The name of the department to be retrieved. Must not be
+	 * @param departmentName the name of the department to be retrieved. Must not be
 	 * {@code null}.
-	 * @param exceptionClass The class of the exception to be thrown if the department is
+	 * @param exceptionClass the class of the exception to be thrown if the department is
 	 * not found. Must be a subclass of {@link RuntimeException} and not be {@code null}.
-	 * @return The {@link Department} object corresponding to the provided department
+	 * @return the {@link Department} object corresponding to the provided department
 	 * name.
-	 * @throws RuntimeException Throws an exception of the specified class if the
+	 * @throws RuntimeException throws an exception of the specified class if the
 	 * department is not found.
 	 * @see #findDepartmentOrThrow
 	 */
@@ -103,7 +103,7 @@ public class DepartmentService {
 	 * does not require a transaction to be executed. If no transaction exists, the method
 	 * will still be executed, but without transactional support.
 	 * </p>
-	 * @return A list of {@link Department} objects representing all departments in the
+	 * @return a list of {@link Department} objects representing all departments in the
 	 * repository. The list may be empty if no departments are found.
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
@@ -120,8 +120,8 @@ public class DepartmentService {
 	 * given name already exists. If it does, a {@link BadRequestException} is thrown.
 	 * Otherwise, a new department is created and saved in the repository.
 	 * </p>
-	 * @param departmentRequest The request object containing the department details.
-	 * @return The created {@link Department} object.
+	 * @param departmentRequest the request object containing the department details.
+	 * @return the created {@link Department} object.
 	 * @throws ConstraintViolationException if the validation of the department request
 	 * fails.
 	 * @throws BadRequestException if a department with the given name already exists.

@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
- * REST Controller for handling employee-related operations.
+ * rest controller for handling employee-related operations.
  * <p>
  * Provides endpoints for managing employees, including creating new employees, finding
  * employees by ID, listing all employees, updating employee information, and deleting
@@ -54,7 +54,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Slf4j
 @RestController
 @Tag(name = "Employee", description = "The Employee API")
-@RequestMapping(value = EmployeeController.BASE_URI)
+@RequestMapping(EmployeeController.BASE_URI)
 @RequiredArgsConstructor
 public class EmployeeController {
 
@@ -84,8 +84,8 @@ public class EmployeeController {
 	 * created employee along with a 'Location' header in the response pointing to the URI
 	 * of the new employee.
 	 * </p>
-	 * @param employeeRequest The request object containing the new employee's details.
-	 * @return A {@link ResponseEntity} containing the created {@link EmployeeResponse}
+	 * @param employeeRequest the request object containing the new employee's details.
+	 * @return a {@link ResponseEntity} containing the created {@link EmployeeResponse}
 	 * and the HTTP status code.
 	 */
 	@Operation(summary = "Create a new employee", description = "Creates a new employee and returns it")
@@ -125,8 +125,8 @@ public class EmployeeController {
 	 * the employee is found, their information is returned; otherwise, a 404 error is
 	 * generated.
 	 * </p>
-	 * @param id The unique identifier of the employee.
-	 * @return The {@link EmployeeResponse} containing the employee's details.
+	 * @param id the unique identifier of the employee.
+	 * @return the {@link EmployeeResponse} containing the employee's details.
 	 */
 	@Operation(summary = "Find an employee by ID", description = "Returns a single employee by their ID")
 	@ApiResponses({
@@ -153,7 +153,7 @@ public class EmployeeController {
 	 * This endpoint returns a list of all employees currently stored in the system. If no
 	 * employees are found, an empty list is returned.
 	 * </p>
-	 * @return A list of {@link EmployeeResponse} representing all the employees.
+	 * @return a list of {@link EmployeeResponse} representing all the employees.
 	 */
 	@Operation(summary = "List all employees", description = "Returns a list of all employees")
 	@ApiResponse(responseCode = "200", description = "Successfully retrieved and returned the list of all employees",
@@ -180,8 +180,8 @@ public class EmployeeController {
 	 * provided fields in the request will be updated. If the employee is not found, a 404
 	 * error is generated.
 	 * </p>
-	 * @param id The unique identifier of the employee to be updated.
-	 * @param employeeRequest The request object containing the fields to be updated.
+	 * @param id the unique identifier of the employee to be updated.
+	 * @param employeeRequest the request object containing the fields to be updated.
 	 */
 	@Operation(summary = "Partially update an employee", description = "Updates a subset of an employee's data")
 	@ApiResponses({
@@ -210,8 +210,8 @@ public class EmployeeController {
 	 * will be updated to the values provided in the request. If the employee is not
 	 * found, a 404 error is generated.
 	 * </p>
-	 * @param id The unique identifier of the employee to be updated.
-	 * @param employeeRequest The request object containing the new details of the
+	 * @param id the unique identifier of the employee to be updated.
+	 * @param employeeRequest the request object containing the new details of the
 	 * employee.
 	 */
 	@Operation(summary = "Fully update an employee", description = "Updates an employee's entire data")
@@ -240,7 +240,7 @@ public class EmployeeController {
 	 * This endpoint removes an employee from the system based on the provided ID. If the
 	 * employee is not found, a 404 error is generated.
 	 * </p>
-	 * @param id The unique identifier of the employee to be deleted.
+	 * @param id the unique identifier of the employee to be deleted.
 	 */
 	@Operation(summary = "Delete an employee", description = "Deletes an employee by their ID")
 	@ApiResponses({

@@ -25,7 +25,7 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Configuration class for setting up AMQP (Advanced Message Queuing Protocol) with
+ * configuration class for setting up AMQP (Advanced Message Queuing Protocol) with
  * RabbitMQ in Spring. This class defines beans for RabbitTemplate, message converters,
  * retry policies, and other related settings.
  * <p>
@@ -88,13 +88,13 @@ public class AmqpConfig {
 	 * <p>
 	 * This template handles the operations for sending and receiving messages with
 	 * RabbitMQ, including retries, message conversion, and pre-publish processing.
-	 * @param connectionFactory The factory for creating connections to the RabbitMQ
+	 * @param connectionFactory the factory for creating connections to the RabbitMQ
 	 * broker.
-	 * @param messageConverter The converter used for converting between Java objects and
+	 * @param messageConverter the converter used for converting between Java objects and
 	 * AMQP messages.
-	 * @param messagePostProcessor Processor that modifies messages before they are
+	 * @param messagePostProcessor processor that modifies messages before they are
 	 * published.
-	 * @return A configured instance of {@link RabbitTemplate}.
+	 * @return a configured instance of {@link RabbitTemplate}.
 	 */
 	@Bean
 	@Primary
@@ -111,7 +111,7 @@ public class AmqpConfig {
 	 * Provides a {@link MessagePostProcessor} that adds a timestamp header to each AMQP
 	 * message. This post-processor is used in conjunction with RabbitTemplate to
 	 * automatically add a timestamp indicating when the message was sent.
-	 * @return A {@link MessagePostProcessor} that modifies the message properties.
+	 * @return a {@link MessagePostProcessor} that modifies the message properties.
 	 */
 	@Bean
 	public MessagePostProcessor messagePostProcessor() {
@@ -130,7 +130,7 @@ public class AmqpConfig {
 	 * <p>
 	 * The retry policy is a simple retry policy with a maximum number of attempts. The
 	 * backoff policy uses an exponential strategy to increase the delay between retries.
-	 * @return A configured {@link RetryTemplate} instance.
+	 * @return a configured {@link RetryTemplate} instance.
 	 */
 	@Bean
 	public RetryTemplate retryTemplate() {
@@ -156,9 +156,9 @@ public class AmqpConfig {
 	 * <p>
 	 * It uses a custom {@link ClassMapper} for type mapping and an {@link ObjectMapper}
 	 * for JSON processing, which is configured to handle Java time objects properly.
-	 * @param classMapper The mapper used for class type information in messages.
-	 * @param objectMapper The Jackson object mapper configured for JSON processing.
-	 * @return A configured instance of {@link Jackson2JsonMessageConverter}.
+	 * @param classMapper the mapper used for class type information in messages.
+	 * @param objectMapper the Jackson object mapper configured for JSON processing.
+	 * @return a configured instance of {@link Jackson2JsonMessageConverter}.
 	 * @author Stéphan Minko
 	 */
 	@Bean
@@ -174,7 +174,7 @@ public class AmqpConfig {
 	 * messaging. This mapper is used by the {@link Jackson2JsonMessageConverter} to
 	 * include and process class type information within AMQP messages, facilitating the
 	 * correct serialization and deserialization of objects.
-	 * @return An instance of {@link DefaultJackson2JavaTypeMapper}, a default
+	 * @return an instance of {@link DefaultJackson2JavaTypeMapper}, a default
 	 * implementation of ClassMapper.
 	 */
 	@Bean

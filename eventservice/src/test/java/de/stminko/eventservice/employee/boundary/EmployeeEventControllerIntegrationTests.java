@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @AutoConfigureMockMvc
-class EmployeeEventControllerIntegrationTest extends AbstractIntegrationTestSuite {
+class EmployeeEventControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private MockMvc mockMvc;

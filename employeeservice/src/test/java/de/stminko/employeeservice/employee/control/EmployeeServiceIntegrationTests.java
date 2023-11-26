@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("Integration tests for the employee service")
-class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
+class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private DepartmentService departmentService;
@@ -47,15 +47,15 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Creating an employee with valid parameters succeeds")
 		void givenValidRequestParams_whenCreate_thenSucceed() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
 
 			// Act
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
 			// Assert
 			Assertions.assertThat(employee).isNotNull();
@@ -68,35 +68,35 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(department.getDepartmentName()).isEqualTo(employeeRequest.departmentName());
 			ZonedDateTime birthday = employee.getBirthday();
 			Assertions.assertThat(birthday).isNotNull().isEqualTo(employeeRequest.birthday());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher).employeeCreated(employee);
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher).employeeCreated(employee);
 		}
 
 		@Test
 		@DisplayName("Creating an employee with a wrong department name fails")
 		void givenWrongDepartmentName_whenCreate_thenThrowBadRequestException() {
 			// Arrange
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(RandomStringUtils.randomAlphabetic(4))
 				.create();
 			// Act/ Assert
 			Assertions.assertThatExceptionOfType(BadRequestException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest));
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest));
 		}
 
 		@Test
 		@DisplayName("Creating two employees with the same email fails")
 		void givenEmailAddressToUseForTwoEmployees_whenCreate_thenThrowBadRequestException() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			Department department = EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest firstEmployeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory
+			Department department = EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest firstEmployeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(department.getDepartmentName())
 				.create();
-			EmployeeServiceIntegrationTest.this.employeeService.create(firstEmployeeRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.create(firstEmployeeRequest);
 
-			EmployeeRequest secondEmployeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest secondEmployeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory
 				.builder()
 				.departmentName(department.getDepartmentName())
 				.emailAddress(firstEmployeeRequest.emailAddress())
@@ -104,7 +104,7 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(BadRequestException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService.create(secondEmployeeRequest));
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.create(secondEmployeeRequest));
 		}
 
 	}
@@ -117,42 +117,42 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Finding an employee with a wrong uuid fails")
 		void givenUnknownUuid_whenFind_thenThrowResourceNotFoundException() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
 			List<EmployeeRequest> EmployeeRequests = new LinkedList<>();
 			IntStream.range(0, RandomUtils.nextInt(20, 30))
 				.forEach((int value) -> EmployeeRequests
-					.add(EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+					.add(EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 						.departmentName(departmentRequest.departmentName())
 						.create()));
 
 			for (EmployeeRequest employeeRequest : EmployeeRequests) {
-				EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+				EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 			}
 			String unknownId = UUID.randomUUID().toString();
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService.findById(unknownId));
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.findById(unknownId));
 		}
 
 		@Test
 		@DisplayName("Finding an employee with a correct employee uuid returns the related employee")
 		void givenEmployee_whenFind_thenReturnEmployee() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 			String id = employee.getId();
 			assert id != null;
 
 			// Act
-			Employee foundEmployee = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee foundEmployee = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 
 			// Assert
 			Assertions.assertThat(foundEmployee.getId()).isEqualTo(id);
@@ -165,21 +165,21 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Finding all employee returns all persisted employees")
 		void givenEmployees_whenFindAll_thenReturnAllEmployees() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			Department department = EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
+			Department department = EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
 
 			List<Employee> employees = new LinkedList<>();
 			IntStream.range(0, RandomUtils.nextInt(10, 20)).forEach((int i) -> {
-				EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory
+				EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory
 					.builder()
 					.departmentName(department.getDepartmentName())
 					.create();
-				employees.add(EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest));
+				employees.add(EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest));
 			});
 
 			// Act
-			List<Employee> all = EmployeeServiceIntegrationTest.this.employeeService.findAll();
+			List<Employee> all = EmployeeServiceIntegrationTests.this.employeeService.findAll();
 
 			// Assert
 			Assertions.assertThat(all).hasSameSizeAs(employees);
@@ -195,35 +195,35 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Full) Updating employee fields with valid parameters succeeds")
 		void givenValidRequestParams_whenFullUpdate_thenSucceed() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
-			EmployeeRequest updateRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest updateRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory
 				.createDefault();
-			DepartmentRequest newDepartmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest newDepartmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.builder()
 				.departmentName(updateRequest.departmentName())
 				.create();
-			EmployeeServiceIntegrationTest.this.departmentService.create(newDepartmentRequest);
+			EmployeeServiceIntegrationTests.this.departmentService.create(newDepartmentRequest);
 			String id = employee.getId();
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doFullUpdate(id, updateRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.doFullUpdate(id, updateRequest);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(updateRequest.emailAddress());
 			Assertions.assertThat(updated.getFullName().getFirstName()).isEqualTo(updateRequest.firstName());
 			Assertions.assertThat(updated.getFullName().getLastName()).isEqualTo(updateRequest.lastName());
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(updateRequest.birthday());
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(updateRequest.departmentName());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeUpdated(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(updated.getId())));
@@ -233,19 +233,19 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating employee full name with valid parameters succeeds")
 		void givenEmployeeWithNoFullName_whenPartialUpdate_thenSucceed() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.firstName(null)
 				.lastName(null)
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
 			String newFirstName = RandomStringUtils.randomAlphabetic(23);
 			String lastLastName = RandomStringUtils.randomAlphabetic(23);
-			EmployeeRequest updateRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest updateRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(null)
 				.departmentName(null)
 				.firstName(newFirstName)
@@ -255,17 +255,17 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			String id = employee.getId();
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(id, updateRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(employee.getEmailAddress());
 			Assertions.assertThat(updated.getFullName().getFirstName()).isEqualTo(updateRequest.firstName());
 			Assertions.assertThat(updated.getFullName().getLastName()).isEqualTo(updateRequest.lastName());
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(employee.getBirthday());
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(employee.getDepartment().getDepartmentName());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeUpdated(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(updated.getId())));
@@ -275,15 +275,15 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating employee with no change does nothing")
 		void givenNoChange_whenPartialUpdate_thenDoNothing() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
-			EmployeeRequest updateRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest updateRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(null)
 				.departmentName(null)
 				.firstName(null)
@@ -293,10 +293,10 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			String id = employee.getId();
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(id, updateRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(employee.getEmailAddress());
 			Assertions.assertThat(updated.getFullName().getFirstName())
 				.isEqualTo(employee.getFullName().getFirstName());
@@ -304,7 +304,7 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(employee.getBirthday());
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(employee.getDepartment().getDepartmentName());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher, Mockito.never())
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher, Mockito.never())
 				.employeeUpdated(ArgumentMatchers.any());
 		}
 
@@ -312,18 +312,18 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating an employee birthday succeeds without affecting other values")
 		void givenValidBirthday_whenPartialUpdate_thenUpdateOnlyBirthDay() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
 			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
 			LocalDate localDate = LocalDate.parse("1979-12-03", dateFormatter);
 			ZonedDateTime newBirthDay = localDate.atStartOfDay(ZoneOffset.UTC);
-			EmployeeRequest updateParameters = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest updateParameters = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(null)
 				.departmentName(null)
 				.firstName(null)
@@ -334,10 +334,10 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			assert id != null;
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(id, updateParameters);
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateParameters);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(employee.getEmailAddress());
 			Employee.FullName fullName = updated.getFullName();
 			Assertions.assertThat(fullName.getFirstName()).isEqualTo(employee.getFullName().getFirstName());
@@ -345,7 +345,7 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(employee.getDepartment().getDepartmentName());
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(newBirthDay);
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeUpdated(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(updated.getId())));
@@ -355,18 +355,18 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating an employee full name succeeds without affecting other values")
 		void givenValidFullName_whenPartialUpdate_thenUpdateOnlyFullName() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 
 			String expectedFirstName = RandomStringUtils.randomAlphabetic(23);
 			String expectedLastName = RandomStringUtils.randomAlphabetic(23);
 
-			EmployeeRequest updateParameters = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest updateParameters = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(null)
 				.departmentName(null)
 				.firstName(expectedFirstName)
@@ -376,17 +376,17 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			String id = employee.getId();
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(id, updateParameters);
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateParameters);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(employee.getEmailAddress());
 			Assertions.assertThat(updated.getFullName().getFirstName()).isEqualTo(expectedFirstName);
 			Assertions.assertThat(updated.getFullName().getLastName()).isEqualTo(expectedLastName);
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(employee.getDepartment().getDepartmentName());
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(employee.getBirthday());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeUpdated(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(updated.getId())));
@@ -396,17 +396,17 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating an employee email succeeds without affecting other values")
 		void givenValidEmail_whenPartialUpdate_thenUpdateOnlyEmail() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
-			String expectedEmail = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
+			String expectedEmail = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.generateRandomEmail();
 
-			EmployeeRequest updateRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeRequest updateRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.emailAddress(expectedEmail)
 				.departmentName(null)
 				.firstName(null)
@@ -416,10 +416,10 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			String id = employee.getId();
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(id, updateRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
 
 			// Assert
-			Employee updated = EmployeeServiceIntegrationTest.this.employeeService.findById(id);
+			Employee updated = EmployeeServiceIntegrationTests.this.employeeService.findById(id);
 			Assertions.assertThat(updated.getEmailAddress()).isEqualTo(expectedEmail);
 			Assertions.assertThat(updated.getFullName().getFirstName())
 				.isEqualTo(employee.getFullName().getFirstName());
@@ -427,7 +427,7 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(updated.getDepartment().getDepartmentName())
 				.isEqualTo(employee.getDepartment().getDepartmentName());
 			Assertions.assertThat(updated.getBirthday()).isEqualTo(employee.getBirthday());
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeUpdated(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(updated.getId())));
@@ -437,12 +437,12 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("(Partial) Updating an employee with wrong uuid fails")
 		void givenUnknownUuid_whenPartialUpdate_thenThrowNotFoundException() {
 			// Arrange
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory
 				.createDefault();
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService
 					.doPartialUpdate(UUID.randomUUID().toString(), employeeRequest));
 		}
 
@@ -450,18 +450,18 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Updating an employee with unknown department fails")
 		void givenUnknownDepartment_whenUpdate_thenThrowBadRequestException() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
-			EmployeeRequest update = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.createDefault();
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
+			EmployeeRequest update = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.createDefault();
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(BadRequestException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService.doPartialUpdate(employee.getId(),
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(employee.getId(),
 						update));
 		}
 
@@ -475,23 +475,23 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Deleting an employee with a wrong uuid fails")
 		void givenUnknownUuid_whenFind_thenThrowNotFoundException() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
 			List<EmployeeRequest> employeeRequests = new LinkedList<>();
 			IntStream.range(0, RandomUtils.nextInt(30, 50))
 				.forEach((int value) -> employeeRequests
-					.add(EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+					.add(EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 						.departmentName(departmentRequest.departmentName())
 						.create()));
 
 			for (EmployeeRequest employeeRequest : employeeRequests) {
-				EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+				EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 			}
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService
 					.deleteById(UUID.randomUUID().toString()));
 		}
 
@@ -499,23 +499,23 @@ class EmployeeServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("Deleting an employee with a correct employee uuid succeeds")
 		void givenEmployee_whenDelete_thenSucceed() {
 			// Arrange
-			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
-			EmployeeServiceIntegrationTest.this.departmentService.create(departmentRequest);
-			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTest.this.employeeRequestTestFactory.builder()
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest employeeRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 				.departmentName(departmentRequest.departmentName())
 				.create();
-			Employee employee = EmployeeServiceIntegrationTest.this.employeeService.create(employeeRequest);
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 			String uuid = employee.getId();
 			assert uuid != null;
 
 			// Act
-			EmployeeServiceIntegrationTest.this.employeeService.deleteById(uuid);
+			EmployeeServiceIntegrationTests.this.employeeService.deleteById(uuid);
 
 			// Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTest.this.employeeService.findById(uuid));
-			Mockito.verify(EmployeeServiceIntegrationTest.this.employeeEventPublisher)
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.findById(uuid));
+			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeDeleted(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
 						.isEqualTo(uuid)));

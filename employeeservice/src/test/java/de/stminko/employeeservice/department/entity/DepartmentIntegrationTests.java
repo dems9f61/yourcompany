@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
+class DepartmentIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private DepartmentRepository departmentRepository;

@@ -38,10 +38,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * when the entity is persisted.
  * </p>
  *
+ * @author Stéphan Minko
  * @see org.springframework.data.mongodb.core.mapping.Document
  * @see org.springframework.data.annotation.Id
  * @see org.springframework.data.annotation.CreatedDate
- * @author Stéphan Minko
  */
 @Getter
 @Setter

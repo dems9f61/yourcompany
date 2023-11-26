@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @AutoConfigureMockMvc
-class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
+class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -40,16 +40,16 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on empty department name")
 		void givenEmptyDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
-			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
 				.builder()
 				.departmentName("")
 				.create();
 
 			// Act / Assert
-			DepartmentControllerIntegrationTest.this.mockMvc
+			DepartmentControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
 					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.content(DepartmentControllerIntegrationTest.this.objectMapper
+					.content(DepartmentControllerIntegrationTests.this.objectMapper
 						.writeValueAsString(departmentRequest)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
@@ -58,16 +58,16 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on blank department name")
 		void givenBlankDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
-			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
 				.builder()
 				.departmentName("  ")
 				.create();
 
 			// Act / Assert
-			DepartmentControllerIntegrationTest.this.mockMvc
+			DepartmentControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
 					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.content(DepartmentControllerIntegrationTest.this.objectMapper
+					.content(DepartmentControllerIntegrationTests.this.objectMapper
 						.writeValueAsString(departmentRequest)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
@@ -76,16 +76,16 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on null department name")
 		void givenNullDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
-			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
 				.builder()
 				.departmentName("")
 				.create();
 
 			// Act / Assert
-			DepartmentControllerIntegrationTest.this.mockMvc
+			DepartmentControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
 					.contentType(MediaType.APPLICATION_JSON_UTF8)
-					.content(DepartmentControllerIntegrationTest.this.objectMapper
+					.content(DepartmentControllerIntegrationTests.this.objectMapper
 						.writeValueAsString(departmentRequest)))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
@@ -94,12 +94,12 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		@DisplayName("POST: 'http://.../departments' returns CREATED on valid request")
 		void givenValidDepartmentRequest_whenCreate_thenStatus201() throws Exception {
 			// Arrange
-			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
+			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
 			String requestAsJson = transformRequestToJSONByView(departmentRequest, DataView.POST.class);
 
 			// Act / Assert
-			MvcResult mvcResult = DepartmentControllerIntegrationTest.this.mockMvc
+			MvcResult mvcResult = DepartmentControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(requestAsJson))
@@ -113,9 +113,9 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 					.string(HttpHeaders.LOCATION, Matchers.containsString(DepartmentController.BASE_URI)))
 				.andReturn();
 			String contentAsString = mvcResult.getResponse().getContentAsString();
-			DepartmentResponse departmentResponse = DepartmentControllerIntegrationTest.this.objectMapper
+			DepartmentResponse departmentResponse = DepartmentControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, DepartmentResponse.class);
-			Optional<Department> optionalDepartment = DepartmentControllerIntegrationTest.this.departmentRepository
+			Optional<Department> optionalDepartment = DepartmentControllerIntegrationTests.this.departmentRepository
 				.findById(departmentResponse.id());
 			Assertions.assertThat(optionalDepartment)
 				.hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());

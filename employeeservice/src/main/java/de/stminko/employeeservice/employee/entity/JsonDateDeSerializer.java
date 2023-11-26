@@ -11,10 +11,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
- * Custom deserializer for converting JSON date strings into {@link ZonedDateTime}
- * objects. Extends {@link JsonDeserializer<ZonedDateTime>} and utilizes
- * {@link DateTimeFormatter} for parsing date strings according to the specified format in
- * {@link UsableDateFormat}.
+ * custom deserializer for converting JSON date strings into {@link ZonedDateTime}
+ * objects. Extends {@link JsonDeserializer} and utilizes {@link DateTimeFormatter} for
+ * parsing date strings according to the specified format in {@link UsableDateFormat}.
  * <p>
  * Method: - deserialize: Parses a JSON string and converts it into a
  * {@link ZonedDateTime}. Assumes the date is in local date format and converts it to the

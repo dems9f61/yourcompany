@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
  * exchange name and routing key.
  * </p>
  *
+ * @author Stéphan Minko
  * @see RabbitTemplate for AMQP-based messaging
  * @see AmqpConfig for configuration of AMQP settings
  * @see Employee for the entity representing an employee
- * @author Stéphan Minko
  */
 @Slf4j
 @RequiredArgsConstructor

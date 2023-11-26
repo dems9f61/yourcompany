@@ -36,9 +36,9 @@ import org.hibernate.envers.Audited;
  * 'data' schema.
  * </p>
  *
+ * @author Stéphan Minko
  * @see AbstractEntity for base entity functionalities
  * @see Department for the associated department entity
- * @author Stéphan Minko
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Audited
@@ -58,7 +58,7 @@ public class Employee extends AbstractEntity<String> {
 	private String emailAddress;
 
 	@Embedded
-	@AttributeOverrides(value = { @AttributeOverride(name = "firstName", column = @Column(name = "FIRST_NAME")),
+	@AttributeOverrides({ @AttributeOverride(name = "firstName", column = @Column(name = "FIRST_NAME")),
 			@AttributeOverride(name = "lastName", column = @Column(name = "LAST_NAME")) })
 	private FullName fullName = new FullName();
 
@@ -74,19 +74,6 @@ public class Employee extends AbstractEntity<String> {
 		if (isNew()) {
 			setId(UUID.randomUUID().toString());
 		}
-	}
-
-	@Setter
-	@Getter
-	@Embeddable
-	@ToString
-	@EqualsAndHashCode
-	public static class FullName {
-
-		private String firstName;
-
-		private String lastName;
-
 	}
 
 	@Override
@@ -108,6 +95,19 @@ public class Employee extends AbstractEntity<String> {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getId(), getEmailAddress(), getFullName(), getBirthday(), getDepartment());
+	}
+
+	@Setter
+	@Getter
+	@Embeddable
+	@ToString
+	@EqualsAndHashCode
+	public static class FullName {
+
+		private String firstName;
+
+		private String lastName;
+
 	}
 
 }

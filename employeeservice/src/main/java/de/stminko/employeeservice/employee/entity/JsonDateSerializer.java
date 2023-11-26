@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * Custom serializer for converting {@link ZonedDateTime} objects to JSON date strings.
- * Extends {@link JsonSerializer<ZonedDateTime>} and is responsible for formatting
- * {@link ZonedDateTime} objects into string representations suitable for JSON.
+ * custom serializer for converting {@link ZonedDateTime} objects to JSON date strings.
+ * Extends {@link JsonSerializer} and is responsible for formatting {@link ZonedDateTime}
+ * objects into string representations suitable for JSON.
  * <p>
  * Method: - serialize: Converts a {@link ZonedDateTime} object into a string
  * representation. The output format is the local date in ISO-8601 format (yyyy-MM-dd).

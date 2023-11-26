@@ -25,6 +25,13 @@ import org.springframework.format.annotation.DateTimeFormat;
  * according to UsableDateFormat.Constants.DEFAULT_DATE_FORMAT. - departmentName: The name
  * of the department the employee belongs to.
  *
+ * @param id The unique identifier of the employee. It's non-null.
+ * @param emailAddress The email address of the employee.
+ * @param firstName The first name of the employee.
+ * @param lastName The last name of the employee.
+ * @param birthday The birthday of the employee, formatted according to
+ * UsableDateFormat.Constants.DEFAULT_DATE_FORMAT.
+ * @param departmentName The name of the department the employee belongs to.
  * @author Stéphan Minko
  */
 @JsonView(DataView.GET.class)
@@ -42,10 +49,9 @@ public record EmployeeResponse(
 				example = "Human Resources") String departmentName) {
 
 	@JsonCreator
-	public EmployeeResponse(@JsonProperty(value = "id") String id,
-			@JsonProperty(value = "emailAddress") String emailAddress,
-			@JsonProperty(value = "firstName") String firstName, @JsonProperty(value = "lastName") String lastName,
-			@JsonProperty(value = "birthday") ZonedDateTime birthday,
+	public EmployeeResponse(@JsonProperty("id") String id, @JsonProperty("emailAddress") String emailAddress,
+			@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
+			@JsonProperty("birthday") ZonedDateTime birthday,
 			@JsonProperty(value = "departmentName", required = true) String departmentName) {
 		this.id = id;
 		this.emailAddress = emailAddress;

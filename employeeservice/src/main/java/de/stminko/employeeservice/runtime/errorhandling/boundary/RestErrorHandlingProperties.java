@@ -39,7 +39,7 @@ public class RestErrorHandlingProperties {
 
 	/**
 	 * A map of FQDN Java Exception Classes to their desired HTTP Response Status code for
-	 * dedicated Exception types
+	 * dedicated Exception types.
 	 */
 	private Map<String, Integer> runtimeHttpErrorCodes;
 

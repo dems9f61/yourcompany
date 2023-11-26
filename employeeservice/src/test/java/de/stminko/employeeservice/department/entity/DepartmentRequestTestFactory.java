@@ -14,7 +14,7 @@ public class DepartmentRequestTestFactory
 		return new Builder();
 	}
 
-	public static class Builder implements AbstractTestFactory.Builder<DepartmentRequest> {
+	public static final class Builder implements AbstractTestFactory.Builder<DepartmentRequest> {
 
 		private String departmentName;
 

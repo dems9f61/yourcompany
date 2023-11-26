@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
+class EmployeeIntegrationTests extends AbstractIntegrationTestSuite {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;

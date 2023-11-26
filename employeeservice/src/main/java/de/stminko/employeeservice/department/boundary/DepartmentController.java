@@ -45,7 +45,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Slf4j
 @RestController
 @Tag(name = "Department", description = "The Department API")
-@RequestMapping(value = DepartmentController.BASE_URI)
+@RequestMapping(DepartmentController.BASE_URI)
 @RequiredArgsConstructor
 public class DepartmentController {
 
@@ -72,9 +72,9 @@ public class DepartmentController {
 	 * request and, if valid, creates a new department. The endpoint responds with the
 	 * created department's details.
 	 * </p>
-	 * @param departmentRequest The request object containing the details for the new
+	 * @param departmentRequest the request object containing the details for the new
 	 * department.
-	 * @return A {@link ResponseEntity} containing the created {@link DepartmentResponse}
+	 * @return a {@link ResponseEntity} containing the created {@link DepartmentResponse}
 	 * and the HTTP status code. The response includes a 'Location' header with the URL of
 	 * the created department.
 	 * @author Stéphan Minko

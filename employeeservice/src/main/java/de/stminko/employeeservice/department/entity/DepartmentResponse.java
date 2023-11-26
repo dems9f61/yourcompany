@@ -24,8 +24,7 @@ public record DepartmentResponse(
 		@Schema(description = "Name of the department", example = "Human Resources") String departmentName) {
 
 	@JsonCreator
-	public DepartmentResponse(@JsonProperty(value = "id") Long id,
-			@JsonProperty(value = "departmentName") String departmentName) {
+	public DepartmentResponse(@JsonProperty("id") Long id, @JsonProperty("departmentName") String departmentName) {
 		this.id = id;
 		this.departmentName = departmentName;
 	}
