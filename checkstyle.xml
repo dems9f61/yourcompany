@@ -5,6 +5,11 @@
 
 <module name="com.puppycrawl.tools.checkstyle.Checker">
     <module name="io.spring.javaformat.checkstyle.SpringChecks">
+        <!--Exclusion-Reasons:
+         The SpringHeaderCheck enforces a header that is not suitable for this project.
+          We don't necessary need the first line to match the following pattern '^\Q/*\E$.
+          We don't need details such as license info to be enforced in the header
+         -->
         <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringHeaderCheck"/>
     </module>
 </module>
