@@ -94,7 +94,7 @@ public class EmployeeEventController {
 					required = true) @PageableDefault(50) Pageable pageable) {
 		log.info("findByUuidOrderByCreatedAtAsc( employeeId= [{}])", employeeId);
 		return this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageable)
-				.map(EmployeeEventResponse::new);
+			.map(EmployeeEventResponse::new);
 	}
 
 }

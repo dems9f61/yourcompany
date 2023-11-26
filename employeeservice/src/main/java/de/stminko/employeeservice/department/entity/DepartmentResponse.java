@@ -13,9 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * server. It includes the department's identifier and name. The {@link JsonView}
  * annotation is used to control the serialization visibility in different scenarios.
  * </p>
+ *
  * @param id The unique identifier of the department.
  * @param departmentName The name of the department.
- *
  * @author Stéphan Minko
  */
 @JsonView(DataView.GET.class)

@@ -22,7 +22,7 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	void givenTwoDepartmentsWithSameId_whenCompare_thenEqual() {
 		// Arrange
 		Department persistedDepartment = this.departmentRepository
-				.save(this.departmentTestFactory.builder().id(null).create());
+			.save(this.departmentTestFactory.builder().id(null).create());
 		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
@@ -45,7 +45,7 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	void givenTwoEmployeeWithSameValues_whenHash_thenSameHashCode() {
 		// Arrange
 		Department persistedDepartment = this.departmentRepository
-				.save(this.departmentTestFactory.builder().id(null).create());
+			.save(this.departmentTestFactory.builder().id(null).create());
 		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
@@ -57,12 +57,12 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	void givenTwoEmployeeWithSameValues_whenHashMultipleTimes_thenSameValue() {
 		// Arrange
 		Department persistedDepartment = this.departmentRepository
-				.save(this.departmentTestFactory.builder().id(null).create());
+			.save(this.departmentTestFactory.builder().id(null).create());
 		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
-		IntStream.range(0, RandomUtils.nextInt(50, 60)).forEach(
-				(int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedDepartment.hashCode()));
+		IntStream.range(0, RandomUtils.nextInt(50, 60))
+			.forEach((int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedDepartment.hashCode()));
 
 	}
 
@@ -71,8 +71,9 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	void givenDifferentEmployees_whenHash_thenDifferentValue() {
 		// Arrange
 		List<Department> departments = IntStream.range(0, RandomUtils.nextInt(50, 200))
-				.mapToObj((int value) -> this.departmentTestFactory.builder().id(null).create())
-				.map(this.departmentRepository::save).toList();
+			.mapToObj((int value) -> this.departmentTestFactory.builder().id(null).create())
+			.map(this.departmentRepository::save)
+			.toList();
 		long distinctHashCodesCount = departments.stream().map(Department::hashCode).distinct().count();
 
 		// Act / Assert

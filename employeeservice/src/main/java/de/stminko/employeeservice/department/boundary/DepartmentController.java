@@ -97,8 +97,12 @@ public class DepartmentController {
 		DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
 				department.getDepartmentName());
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.LOCATION, ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-				.buildAndExpand(department.getId()).toUri().toASCIIString());
+		headers.add(HttpHeaders.LOCATION,
+				ServletUriComponentsBuilder.fromCurrentRequestUri()
+					.path("/{id}")
+					.buildAndExpand(department.getId())
+					.toUri()
+					.toASCIIString());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(departmentResponse);
 	}
 

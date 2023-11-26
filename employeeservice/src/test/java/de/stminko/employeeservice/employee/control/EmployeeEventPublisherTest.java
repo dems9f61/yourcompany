@@ -69,19 +69,22 @@ class EmployeeEventPublisherTest {
 		String routingKey = RandomStringUtils.randomAlphabetic(23);
 		Mockito.doReturn(routingKey).when(this.amqpConfig).getRoutingKey();
 
-		Mockito.doNothing().when(this.template).convertAndSend(ArgumentMatchers.anyString(),
-				ArgumentMatchers.anyString(), ArgumentMatchers.any(Object.class));
+		Mockito.doNothing()
+			.when(this.template)
+			.convertAndSend(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
+					ArgumentMatchers.any(Object.class));
 		// Act
 		block.accept(employee);
 
 		// Assert
-		Mockito.verify(this.template).convertAndSend(ArgumentMatchers.eq(exchangeName), ArgumentMatchers.eq(routingKey),
-				AssertionMatcher.assertArg((Object value) -> {
-					Assertions.assertThat(value).isInstanceOf(EmployeeMessage.class);
-					EmployeeMessage employeeMessage = (EmployeeMessage) value;
-					Assertions.assertThat(employeeMessage.getEmployee()).isEqualTo(employee);
-					Assertions.assertThat(employeeMessage.getEventType()).isEqualTo(expectedEventType);
-				}));
+		Mockito.verify(this.template)
+			.convertAndSend(ArgumentMatchers.eq(exchangeName), ArgumentMatchers.eq(routingKey),
+					AssertionMatcher.assertArg((Object value) -> {
+						Assertions.assertThat(value).isInstanceOf(EmployeeMessage.class);
+						EmployeeMessage employeeMessage = (EmployeeMessage) value;
+						Assertions.assertThat(employeeMessage.getEmployee()).isEqualTo(employee);
+						Assertions.assertThat(employeeMessage.getEventType()).isEqualTo(expectedEventType);
+					}));
 	}
 
 }

@@ -66,7 +66,7 @@ class PageDeserializer extends JsonDeserializer<Page<?>> implements ContextualDe
 	public Page<?> deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
 			throws IOException {
 		final CollectionType valuesListType = deserializationContext.getTypeFactory()
-				.constructCollectionType(List.class, this.valueType);
+			.constructCollectionType(List.class, this.valueType);
 
 		List<?> list = new ArrayList<>();
 		int pageNumber = 0;
@@ -79,21 +79,21 @@ class PageDeserializer extends JsonDeserializer<Page<?>> implements ContextualDe
 				do {
 					jsonParser.nextToken();
 					switch (propName) {
-					case CONTENT:
-						list = deserializationContext.readValue(jsonParser, valuesListType);
-						break;
-					case NUMBER:
-						pageNumber = deserializationContext.readValue(jsonParser, Integer.class);
-						break;
-					case SIZE:
-						pageSize = deserializationContext.readValue(jsonParser, Integer.class);
-						break;
-					case TOTAL_ELEMENTS:
-						total = deserializationContext.readValue(jsonParser, Long.class);
-						break;
-					default:
-						jsonParser.skipChildren();
-						break;
+						case CONTENT:
+							list = deserializationContext.readValue(jsonParser, valuesListType);
+							break;
+						case NUMBER:
+							pageNumber = deserializationContext.readValue(jsonParser, Integer.class);
+							break;
+						case SIZE:
+							pageSize = deserializationContext.readValue(jsonParser, Integer.class);
+							break;
+						case TOTAL_ELEMENTS:
+							total = deserializationContext.readValue(jsonParser, Long.class);
+							break;
+						default:
+							jsonParser.skipChildren();
+							break;
 					}
 				}
 				while (((propName = jsonParser.nextFieldName())) != null);

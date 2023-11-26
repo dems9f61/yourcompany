@@ -62,8 +62,12 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 	private record ProxyDataSourceInterceptor(DataSource dataSource) implements MethodInterceptor {
 
 		private ProxyDataSourceInterceptor(final DataSource dataSource) {
-			this.dataSource = ProxyDataSourceBuilder.create(dataSource).name("MyDS").multiline()
-					.logQueryBySlf4j(SLF4JLogLevel.INFO).listener(new DataSourceQueryCountListener()).build();
+			this.dataSource = ProxyDataSourceBuilder.create(dataSource)
+				.name("MyDS")
+				.multiline()
+				.logQueryBySlf4j(SLF4JLogLevel.INFO)
+				.listener(new DataSourceQueryCountListener())
+				.build();
 		}
 
 		@Override

@@ -39,7 +39,7 @@ class EmployeeEventServiceIntegrationTest extends AbstractIntegrationTestSuite {
 
 		// Act
 		Page<PersistentEmployeeEvent> allDescOrderedByCreatedAt = this.employeeEventService
-				.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageRequest);
+			.findByEmployeeIdOrderByCreatedAtAsc(employeeId, pageRequest);
 
 		// Assert
 		List<PersistentEmployeeEvent> sortedPersistentEmployeeEvents = allDescOrderedByCreatedAt.stream().toList();
@@ -61,7 +61,7 @@ class EmployeeEventServiceIntegrationTest extends AbstractIntegrationTestSuite {
 
 		// Act
 		Page<PersistentEmployeeEvent> events = this.employeeEventService
-				.findByEmployeeIdOrderByCreatedAtAsc(unknownEmployeeId, pageRequest);
+			.findByEmployeeIdOrderByCreatedAtAsc(unknownEmployeeId, pageRequest);
 
 		// Assert
 		Assertions.assertThat(events).isNotNull().isEmpty();
@@ -85,12 +85,13 @@ class EmployeeEventServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		Assertions.assertThat(persistentEmployeeEvent.getId()).isNotNull();
 		Assertions.assertThat(persistentEmployeeEvent.getCreatedAt()).isNotNull().isBefore(Instant.now());
 		Assertions.assertThat(persistentEmployeeEvent.getBirthday())
-				.isEqualTo(Date.from(employee.getBirthday().toInstant()));
+			.isEqualTo(Date.from(employee.getBirthday().toInstant()));
 		Assertions.assertThat(persistentEmployeeEvent.getDepartmentName())
-				.isEqualTo(employee.getDepartment().getDepartmentName());
+			.isEqualTo(employee.getDepartment().getDepartmentName());
 		Assertions.assertThat(persistentEmployeeEvent.getEmailAddress()).isEqualTo(employee.getEmailAddress());
-		Assertions.assertThat(persistentEmployeeEvent.getEventType()).isNotNull()
-				.isEqualTo(employeeEvent.getEventType());
+		Assertions.assertThat(persistentEmployeeEvent.getEventType())
+			.isNotNull()
+			.isEqualTo(employeeEvent.getEventType());
 		Assertions.assertThat(persistentEmployeeEvent.getEmployeeId()).isEqualTo(employee.getId());
 		Assertions.assertThat(persistentEmployeeEvent.getFirstName()).isEqualTo(employee.getFullName().getFirstName());
 		Assertions.assertThat(persistentEmployeeEvent.getLastName()).isEqualTo(employee.getFullName().getLastName());

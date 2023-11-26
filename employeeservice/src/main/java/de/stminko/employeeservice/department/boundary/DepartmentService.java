@@ -146,8 +146,9 @@ public class DepartmentService {
 
 	private Department findDepartmentOrThrow(String departmentName, Class<? extends RuntimeException> exceptionClass) {
 
-		return this.repository.findByDepartmentName(departmentName).orElseThrow(() -> createException(exceptionClass,
-				this.messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
+		return this.repository.findByDepartmentName(departmentName)
+			.orElseThrow(() -> createException(exceptionClass,
+					this.messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
 	}
 
 	private <E extends RuntimeException> E createException(Class<E> exceptionClass, String errorMessage) {

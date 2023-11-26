@@ -62,7 +62,7 @@ public abstract class AbstractIntegrationTestSuite {
 
 	public void receiveRandomMessageFor(String id, int count) {
 		List<Employee> employees = this.employeeTestFactory
-				.createManyDefault((count <= 0) ? RandomUtils.nextInt(30, 100) : count);
+			.createManyDefault((count <= 0) ? RandomUtils.nextInt(30, 100) : count);
 		employees.forEach((Employee employee) -> {
 			employee.setId(id);
 			EmployeeMessage employeeMessage = this.employeeMessageTestFactory.builder().employee(employee).create();

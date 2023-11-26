@@ -41,11 +41,11 @@ class EmployeeEventControllerIntegrationTest extends AbstractIntegrationTestSuit
 
 		// Act / Assert
 		MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(uri, employeeId))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(expectedEventCount)))
-				.andReturn();
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(expectedEventCount)))
+			.andReturn();
 		String contentAsString = mvcResult.getResponse().getContentAsString();
 		Page<EmployeeEventResponse> employeeResponsePage = this.objectMapper.readValue(contentAsString,
 				new TypeReference<>() {

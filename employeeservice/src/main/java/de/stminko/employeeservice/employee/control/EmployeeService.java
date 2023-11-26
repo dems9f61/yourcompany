@@ -114,8 +114,9 @@ public class EmployeeService {
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public Employee findById(@NonNull String id) {
 		log.info("findById( id= [{}] )", id);
-		return this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+		return this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 	}
 
 	/**
@@ -161,8 +162,9 @@ public class EmployeeService {
 
 	private Employee update(String id, EmployeeRequest updateRequest, Class<? extends DataView> validationGroup) {
 		validateRequest(updateRequest, validationGroup);
-		Employee employeeToUpdate = this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+		Employee employeeToUpdate = this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 
 		boolean hasChanged = hasEmailAddressChangedAfterUpdate(updateRequest, employeeToUpdate);
 		hasChanged = hasFullNameChangedAfterUpdate(updateRequest, employeeToUpdate) || hasChanged;
@@ -189,8 +191,9 @@ public class EmployeeService {
 	 */
 	public void deleteById(@NonNull String id) {
 		log.info("deleteById( id= [{}] )", id);
-		Employee employee = this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+		Employee employee = this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 		this.repository.deleteById(id);
 		this.messagePublisher.employeeDeleted(employee);
 	}

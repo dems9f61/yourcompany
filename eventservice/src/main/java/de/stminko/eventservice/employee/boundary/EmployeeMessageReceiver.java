@@ -68,7 +68,7 @@ public class EmployeeMessageReceiver {
 		// Avoids infinite Loops on Message Processing
 		try {
 			this.eventPublisher
-					.publishEvent(new EmployeeEvent(employeeMessage.getEmployee(), employeeMessage.getEventType()));
+				.publishEvent(new EmployeeEvent(employeeMessage.getEmployee(), employeeMessage.getEventType()));
 		}
 		catch (Exception caught) {
 			log.error("An error occurred during EmployeeMessageReceiver.receiveEmployeeMessage ( [{}] ). Error was: {}",

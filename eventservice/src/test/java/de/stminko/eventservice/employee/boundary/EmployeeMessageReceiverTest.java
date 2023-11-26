@@ -54,8 +54,9 @@ class EmployeeMessageReceiverTest extends AbstractUnitTestSuite {
 		// Arrange
 		EmployeeMessage employeeMessage = this.employeeMessageTestFactory.createDefault();
 		String errorMessage = RandomStringUtils.randomAlphabetic(23);
-		Mockito.doThrow(new RuntimeException(errorMessage)).when(this.eventPublisher)
-				.publishEvent(ArgumentMatchers.any());
+		Mockito.doThrow(new RuntimeException(errorMessage))
+			.when(this.eventPublisher)
+			.publishEvent(ArgumentMatchers.any());
 
 		// Act
 		this.employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);

@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
 			List<HttpMessageConverter<?>> messageConverters) {
 		this.configuration = configuration;
 		messageConverters.forEach((HttpMessageConverter<?> converter) -> this.supportedResponseMediaTypes
-				.addAll(converter.getSupportedMediaTypes()));
+			.addAll(converter.getSupportedMediaTypes()));
 		log.info("ExceptionHandler/ControllerAdvice: [{}], Response Body Type: [{}]", getClass().getName(),
 				ErrorInfo.class.getName());
 		log.info("Supported Mime-Types for ExceptionHandler error serialization: [{}]",
@@ -114,8 +114,9 @@ public class GlobalExceptionHandler {
 			constraintViolations = getConstraintViolationInfos((BindException) rootCause);
 		}
 		logHandledException(responseStatus, caught, request);
-		return ResponseEntity.status(responseStatus).contentType(getResponseContentType(request, responseHeaders))
-				.body(createErrorResponseBody(responseStatus, rootCause, request, constraintViolations));
+		return ResponseEntity.status(responseStatus)
+			.contentType(getResponseContentType(request, responseHeaders))
+			.body(createErrorResponseBody(responseStatus, rootCause, request, constraintViolations));
 	}
 
 	/**
@@ -129,9 +130,16 @@ public class GlobalExceptionHandler {
 	 */
 	public ErrorInfo createErrorResponseBody(HttpStatus status, Throwable e, HttpServletRequest request,
 			Set<ConstraintViolationInfo> constraintViolations) {
-		return ErrorInfo.builder().url(request.getRequestURI()).urlQueryString(request.getQueryString())
-				.errorDateTime(ZonedDateTime.now()).errorMessage(e.getMessage()).httpMethod(request.getMethod())
-				.httpStatus(status).httpStatusCode(status.value()).constraintViolations(constraintViolations).build();
+		return ErrorInfo.builder()
+			.url(request.getRequestURI())
+			.urlQueryString(request.getQueryString())
+			.errorDateTime(ZonedDateTime.now())
+			.errorMessage(e.getMessage())
+			.httpMethod(request.getMethod())
+			.httpStatus(status)
+			.httpStatusCode(status.value())
+			.constraintViolations(constraintViolations)
+			.build();
 	}
 
 	/**
@@ -145,7 +153,7 @@ public class GlobalExceptionHandler {
 		HttpStatus rootCauseStatus = resolveHttpResponseStatusForException(rootCause);
 		HttpStatus causeMapping = resolveHttpResponseStatusForException(cause);
 		HttpStatus resultHttpStatus = Optional.ofNullable(Optional.ofNullable(rootCauseStatus).orElse(causeMapping))
-				.orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+			.orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 		log.debug(
 				"The HTTP Response Code: [{}] / [{}] was resolved for Exception of Type: [{}] and its Root Cause Exception of Type: [{}]",
 				resultHttpStatus.value(), resultHttpStatus.name(), cause.getClass().getName(),
@@ -170,7 +178,7 @@ public class GlobalExceptionHandler {
 			// Exception Class
 			if (this.configuration.getRuntimeHttpErrorCodes().containsKey(currentExceptionClass.getName())) {
 				httpStatus = HttpStatus
-						.valueOf(this.configuration.getRuntimeHttpErrorCodes().get(currentExceptionClass.getName()));
+					.valueOf(this.configuration.getRuntimeHttpErrorCodes().get(currentExceptionClass.getName()));
 			}
 			// Lookup Response Code if no Mapping was found
 			ResponseStatus causeStatus = currentExceptionClass.getAnnotation(ResponseStatus.class);
@@ -198,18 +206,18 @@ public class GlobalExceptionHandler {
 		String message = String.format("HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]", request.getRequestURI(),
 				queryString, request.getMethod(), caught.getMessage());
 
-		LogLevel logLevel = this.configuration.getHttpStatusLogLevel().getOrDefault(status.value(),
-				this.configuration.getDefaultLogLevel());
+		LogLevel logLevel = this.configuration.getHttpStatusLogLevel()
+			.getOrDefault(status.value(), this.configuration.getDefaultLogLevel());
 
 		switch (logLevel) {
-		case TRACE -> log.trace(message, caught);
-		case DEBUG -> log.debug(message, caught);
-		case INFO -> log.info(message, caught);
-		case WARN -> log.warn(message, caught);
-		case ERROR -> log.error(message, caught);
-		case OFF -> {
-		} // No operation
-			// No default needed as all cases are covered
+			case TRACE -> log.trace(message, caught);
+			case DEBUG -> log.debug(message, caught);
+			case INFO -> log.info(message, caught);
+			case WARN -> log.warn(message, caught);
+			case ERROR -> log.error(message, caught);
+			case OFF -> {
+			} // No operation
+				// No default needed as all cases are covered
 		}
 	}
 
@@ -229,14 +237,18 @@ public class GlobalExceptionHandler {
 			// Filter out a potential "*/*" (ALL) Accept header value from the requested
 			// Accept headers values. Will fall back to the default response content type
 			// if it is the only Accept header value provided.
-			List<MediaType> requestMediaTypes = MediaType.parseMediaTypes(acceptHeaders).stream()
-					.filter((MediaType mediaType) -> !mediaType.equals(MediaType.ALL)).toList();
+			List<MediaType> requestMediaTypes = MediaType.parseMediaTypes(acceptHeaders)
+				.stream()
+				.filter((MediaType mediaType) -> !mediaType.equals(MediaType.ALL))
+				.toList();
 			for (MediaType currentRequestedMediaType : requestMediaTypes) {
 				// Find the first supported non wildcard type / subtype MediaType that is
 				// supported by the runtime environment and return it.
-				retVal = this.supportedResponseMediaTypes.stream().filter((MediaType m) -> !m.isWildcardType()
-						&& !m.isWildcardSubtype() && m.isCompatibleWith(currentRequestedMediaType)).findFirst()
-						.orElse(retVal);
+				retVal = this.supportedResponseMediaTypes.stream()
+					.filter((MediaType m) -> !m.isWildcardType() && !m.isWildcardSubtype()
+							&& m.isCompatibleWith(currentRequestedMediaType))
+					.findFirst()
+					.orElse(retVal);
 				// Break the loop as soon as a result was found for the first Accept
 				// header that can be served
 				if (retVal != null) {
@@ -269,13 +281,14 @@ public class GlobalExceptionHandler {
 	 */
 	private Set<ConstraintViolationInfo> getConstraintViolationInfos(
 			ConstraintViolationException constraintViolationException) {
-		return constraintViolationException.getConstraintViolations().stream()
-				.map((ConstraintViolation<?> constraintViolation) -> ConstraintViolationInfo.builder()
-						.invalidValue(
-								Optional.ofNullable(constraintViolation.getInvalidValue()).orElse("null").toString())
-						.message(constraintViolation.getMessage())
-						.propertyPath(constraintViolation.getPropertyPath().toString()).build())
-				.collect(Collectors.toSet());
+		return constraintViolationException.getConstraintViolations()
+			.stream()
+			.map((ConstraintViolation<?> constraintViolation) -> ConstraintViolationInfo.builder()
+				.invalidValue(Optional.ofNullable(constraintViolation.getInvalidValue()).orElse("null").toString())
+				.message(constraintViolation.getMessage())
+				.propertyPath(constraintViolation.getPropertyPath().toString())
+				.build())
+			.collect(Collectors.toSet());
 	}
 
 	/**
@@ -289,18 +302,23 @@ public class GlobalExceptionHandler {
 	private Set<ConstraintViolationInfo> getConstraintViolationInfos(BindingResult bindingResult) {
 		Set<ConstraintViolationInfo> violationInfos;
 		// Field errors
-		violationInfos = bindingResult.getFieldErrors().stream()
-				.map((FieldError constraintViolation) -> ConstraintViolationInfo.builder()
-						.invalidValue(
-								Optional.ofNullable(constraintViolation.getRejectedValue()).orElse("null").toString())
-						.message(constraintViolation.getDefaultMessage()).propertyPath(constraintViolation.getField())
-						.build())
-				.collect(Collectors.toSet());
+		violationInfos = bindingResult.getFieldErrors()
+			.stream()
+			.map((FieldError constraintViolation) -> ConstraintViolationInfo.builder()
+				.invalidValue(Optional.ofNullable(constraintViolation.getRejectedValue()).orElse("null").toString())
+				.message(constraintViolation.getDefaultMessage())
+				.propertyPath(constraintViolation.getField())
+				.build())
+			.collect(Collectors.toSet());
 		// Global Errors
-		violationInfos.addAll(bindingResult.getGlobalErrors().stream()
-				.map(((ObjectError objectError) -> ConstraintViolationInfo.builder().isGlobalError(true)
-						.propertyPath(objectError.getObjectName()).message(objectError.getDefaultMessage()).build()))
-				.collect(Collectors.toSet()));
+		violationInfos.addAll(bindingResult.getGlobalErrors()
+			.stream()
+			.map(((ObjectError objectError) -> ConstraintViolationInfo.builder()
+				.isGlobalError(true)
+				.propertyPath(objectError.getObjectName())
+				.message(objectError.getDefaultMessage())
+				.build()))
+			.collect(Collectors.toSet()));
 		return violationInfos;
 	}
 

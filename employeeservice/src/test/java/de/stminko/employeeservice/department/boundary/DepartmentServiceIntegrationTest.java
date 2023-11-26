@@ -36,7 +36,7 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenValidRequestParams_whenCreate_thenStatusSucceed() {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.createDefault();
+				.createDefault();
 
 			// Act
 			Department department = DepartmentServiceIntegrationTest.this.departmentService.create(departmentRequest);
@@ -44,8 +44,9 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			// Assert
 			Assertions.assertThat(department).isNotNull();
 			Assertions.assertThat(department.getId()).isGreaterThan(0L);
-			Assertions.assertThat(department.getDepartmentName()).isNotBlank()
-					.isEqualTo(departmentRequest.departmentName());
+			Assertions.assertThat(department.getDepartmentName())
+				.isNotBlank()
+				.isEqualTo(departmentRequest.departmentName());
 		}
 
 		@Test
@@ -54,14 +55,18 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			// Arrange
 			String departmentName = RandomStringUtils.randomAlphabetic(23);
 			DepartmentRequest creationRequest = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName(departmentName).create();
+				.builder()
+				.departmentName(departmentName)
+				.create();
 			DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest);
 
 			DepartmentRequest creationRequest_2 = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName(departmentName).create();
+				.builder()
+				.departmentName(departmentName)
+				.create();
 			// Act / Assert
-			Assertions.assertThatExceptionOfType(BadRequestException.class).isThrownBy(
-					() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest_2));
+			Assertions.assertThatExceptionOfType(BadRequestException.class)
+				.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest_2));
 		}
 
 		@Test
@@ -69,10 +74,12 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenBlankDepartmentName_whenCreate_thenThrowException() {
 			// Arrange
 			DepartmentRequest creationRequest = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName(" ").create();
+				.builder()
+				.departmentName(" ")
+				.create();
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
-					.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest));
+				.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest));
 		}
 
 		@Test
@@ -80,10 +87,12 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullDepartmentName_whenCreate_thenThrowException() {
 			// Arrange
 			DepartmentRequest creationRequest = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName(null).create();
+				.builder()
+				.departmentName(null)
+				.create();
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
-					.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest));
+				.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest));
 		}
 
 	}
@@ -98,7 +107,7 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 			// Arrange
 			DepartmentServiceIntegrationTest.this.departmentRepository.deleteAll();
 			List<DepartmentRequest> creationRequests = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.createManyDefault(RandomUtils.nextInt(10, 50));
+				.createManyDefault(RandomUtils.nextInt(10, 50));
 			for (DepartmentRequest creationRequest : creationRequests) {
 				DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest);
 			}
@@ -115,18 +124,18 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenDepartments_whenFindByDepartmentName_thenReturnDepartment() {
 			// Arrange
 			List<DepartmentRequest> creationRequests = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.createManyDefault(RandomUtils.nextInt(10, 50));
+				.createManyDefault(RandomUtils.nextInt(10, 50));
 			for (DepartmentRequest creationRequest : creationRequests) {
 				DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest);
 			}
 
 			DepartmentRequest creationRequest = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.createDefault();
+				.createDefault();
 			Department department = DepartmentServiceIntegrationTest.this.departmentService.create(creationRequest);
 
 			// Act
 			Department foundDepartment = DepartmentServiceIntegrationTest.this.departmentService
-					.findByDepartmentName(creationRequest.departmentName());
+				.findByDepartmentName(creationRequest.departmentName());
 
 			// Assert
 			Assertions.assertThat(foundDepartment.getId()).isEqualTo(department.getId());
@@ -138,7 +147,7 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNotExistingDepartmentName_whenFindByDepartmentName_thenThrowNotFoundException() {
 			// Arrange
 			List<DepartmentRequest> creationParameters = DepartmentServiceIntegrationTest.this.departmentRequestTestFactory
-					.createManyDefault(RandomUtils.nextInt(10, 50));
+				.createManyDefault(RandomUtils.nextInt(10, 50));
 			for (DepartmentRequest creationParameter : creationParameters) {
 				DepartmentServiceIntegrationTest.this.departmentService.create(creationParameter);
 			}
@@ -146,8 +155,8 @@ class DepartmentServiceIntegrationTest extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-					.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService
-							.findByDepartmentName(wrongDepartmentName));
+				.isThrownBy(() -> DepartmentServiceIntegrationTest.this.departmentService
+					.findByDepartmentName(wrongDepartmentName));
 		}
 
 	}

@@ -45,9 +45,9 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
 		Employee persistedEmployee = this.employeeRepository
-				.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
+			.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
 		Employee otherPersistedEmployee = this.employeeRepository
-				.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
+			.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
 		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
 		Employee otherFound = this.employeeRepository.findById(otherPersistedEmployee.getId()).orElseThrow();
 
@@ -82,8 +82,8 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
 
 		// Act / Assert
-		IntStream.range(0, RandomUtils.nextInt(50, 60)).forEach(
-				(int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedEmployee.hashCode()));
+		IntStream.range(0, RandomUtils.nextInt(50, 60))
+			.forEach((int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedEmployee.hashCode()));
 
 	}
 
@@ -95,8 +95,9 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
 		List<Employee> employees = IntStream.range(0, RandomUtils.nextInt(50, 200))
-				.mapToObj((int value) -> this.employeeTestFactory.builder().department(persistedDepartment).create())
-				.map(this.employeeRepository::save).toList();
+			.mapToObj((int value) -> this.employeeTestFactory.builder().department(persistedDepartment).create())
+			.map(this.employeeRepository::save)
+			.toList();
 		long distinctHashCodesCount = employees.stream().map(Employee::hashCode).distinct().count();
 
 		// Act / Assert

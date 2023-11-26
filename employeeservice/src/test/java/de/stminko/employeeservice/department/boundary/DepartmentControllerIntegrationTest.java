@@ -41,15 +41,17 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenEmptyDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName("").create();
+				.builder()
+				.departmentName("")
+				.create();
 
 			// Act / Assert
 			DepartmentControllerIntegrationTest.this.mockMvc
-					.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
-							.contentType(MediaType.APPLICATION_JSON_UTF8)
-							.content(DepartmentControllerIntegrationTest.this.objectMapper
-									.writeValueAsString(departmentRequest)))
-					.andExpect(MockMvcResultMatchers.status().isBadRequest());
+				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(DepartmentControllerIntegrationTest.this.objectMapper
+						.writeValueAsString(departmentRequest)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
 
 		@Test
@@ -57,15 +59,17 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenBlankDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName("  ").create();
+				.builder()
+				.departmentName("  ")
+				.create();
 
 			// Act / Assert
 			DepartmentControllerIntegrationTest.this.mockMvc
-					.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
-							.contentType(MediaType.APPLICATION_JSON_UTF8)
-							.content(DepartmentControllerIntegrationTest.this.objectMapper
-									.writeValueAsString(departmentRequest)))
-					.andExpect(MockMvcResultMatchers.status().isBadRequest());
+				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(DepartmentControllerIntegrationTest.this.objectMapper
+						.writeValueAsString(departmentRequest)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
 
 		@Test
@@ -73,15 +77,17 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenNullDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
-					.builder().departmentName("").create();
+				.builder()
+				.departmentName("")
+				.create();
 
 			// Act / Assert
 			DepartmentControllerIntegrationTest.this.mockMvc
-					.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
-							.contentType(MediaType.APPLICATION_JSON_UTF8)
-							.content(DepartmentControllerIntegrationTest.this.objectMapper
-									.writeValueAsString(departmentRequest)))
-					.andExpect(MockMvcResultMatchers.status().isBadRequest());
+				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
+					.contentType(MediaType.APPLICATION_JSON_UTF8)
+					.content(DepartmentControllerIntegrationTest.this.objectMapper
+						.writeValueAsString(departmentRequest)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
 		}
 
 		@Test
@@ -89,29 +95,30 @@ class DepartmentControllerIntegrationTest extends AbstractIntegrationTestSuite {
 		void givenValidDepartmentRequest_whenCreate_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTest.this.departmentRequestTestFactory
-					.createDefault();
+				.createDefault();
 			String requestAsJson = transformRequestToJSONByView(departmentRequest, DataView.POST.class);
 
 			// Act / Assert
 			MvcResult mvcResult = DepartmentControllerIntegrationTest.this.mockMvc
-					.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
-							.contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
-					.andExpect(MockMvcResultMatchers.status().isCreated())
-					.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-					.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-					.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
-					.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName",
-							Matchers.is(departmentRequest.departmentName())))
-					.andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION,
-							Matchers.containsString(DepartmentController.BASE_URI)))
-					.andReturn();
+				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestAsJson))
+				.andExpect(MockMvcResultMatchers.status().isCreated())
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName",
+						Matchers.is(departmentRequest.departmentName())))
+				.andExpect(MockMvcResultMatchers.header()
+					.string(HttpHeaders.LOCATION, Matchers.containsString(DepartmentController.BASE_URI)))
+				.andReturn();
 			String contentAsString = mvcResult.getResponse().getContentAsString();
 			DepartmentResponse departmentResponse = DepartmentControllerIntegrationTest.this.objectMapper
-					.readValue(contentAsString, DepartmentResponse.class);
+				.readValue(contentAsString, DepartmentResponse.class);
 			Optional<Department> optionalDepartment = DepartmentControllerIntegrationTest.this.departmentRepository
-					.findById(departmentResponse.id());
+				.findById(departmentResponse.id());
 			Assertions.assertThat(optionalDepartment)
-					.hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());
+				.hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());
 		}
 
 	}

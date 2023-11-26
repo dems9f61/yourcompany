@@ -196,9 +196,11 @@ public class AmqpConfig {
 		ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
 		backOffPolicy.setInitialInterval(1000);
 
-		return RetryInterceptorBuilder.stateless().backOffPolicy(backOffPolicy).maxAttempts(3)
-				.recoverer(new RepublishMessageRecoverer(rabbitTemplate, errorQueue().getName(), this.routingKey))
-				.build();
+		return RetryInterceptorBuilder.stateless()
+			.backOffPolicy(backOffPolicy)
+			.maxAttempts(3)
+			.recoverer(new RepublishMessageRecoverer(rabbitTemplate, errorQueue().getName(), this.routingKey))
+			.build();
 	}
 
 	/**
@@ -240,9 +242,11 @@ public class AmqpConfig {
 	 */
 	@Bean
 	public Queue queue() {
-		Queue queue = QueueBuilder.durable(this.queueName).withArgument("x-message-ttl", 10000)
-				.withArgument("x-dead-letter-exchange", this.exchangeName + "." + DEAD_LETTER)
-				.withArgument("x-dead-letter-routing-key", this.routingKey).build();
+		Queue queue = QueueBuilder.durable(this.queueName)
+			.withArgument("x-message-ttl", 10000)
+			.withArgument("x-dead-letter-exchange", this.exchangeName + "." + DEAD_LETTER)
+			.withArgument("x-dead-letter-routing-key", this.routingKey)
+			.build();
 		queue.setAdminsThatShouldDeclare(admin());
 		return queue;
 	}

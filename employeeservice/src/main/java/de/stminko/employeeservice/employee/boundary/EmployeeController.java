@@ -109,8 +109,12 @@ public class EmployeeController {
 				employee.getDepartment().getDepartmentName());
 		HttpHeaders headers = new HttpHeaders();
 		assert newId != null;
-		headers.add(HttpHeaders.LOCATION, ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-				.buildAndExpand(newId).toUri().toASCIIString());
+		headers.add(HttpHeaders.LOCATION,
+				ServletUriComponentsBuilder.fromCurrentRequestUri()
+					.path("/{id}")
+					.buildAndExpand(newId)
+					.toUri()
+					.toASCIIString());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(employeeResponse);
 	}
 

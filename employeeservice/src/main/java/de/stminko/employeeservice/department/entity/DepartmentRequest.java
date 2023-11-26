@@ -16,9 +16,9 @@ import jakarta.validation.constraints.NotBlank;
  * updating department details. It includes validation annotations to ensure that the
  * provided data meets the expected format and constraints.
  * </p>
+ *
  * @param departmentName The name of the department, which must not be blank when creating
  * or updating. For PATCH requests, it can be null or not blank.
- *
  * @author Stéphan Minko
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

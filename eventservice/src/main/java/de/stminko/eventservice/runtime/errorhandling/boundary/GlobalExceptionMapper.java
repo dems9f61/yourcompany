@@ -65,10 +65,14 @@ public class GlobalExceptionMapper {
 		else {
 			log.error("Unhandled Exception occurred. Error: {}", localizedMessage, exception);
 		}
-		ErrorInfo errorInfo = ErrorInfo.builder().url(httpServletRequest.getRequestURI())
-				.errorDateTime(ZonedDateTime.now()).errorMessage(exception.getMessage())
-				.httpMethod(HttpMethod.valueOf(httpServletRequest.getMethod()).name()).httpStatus(httpStatus)
-				.httpStatusCode(httpStatus.value()).build();
+		ErrorInfo errorInfo = ErrorInfo.builder()
+			.url(httpServletRequest.getRequestURI())
+			.errorDateTime(ZonedDateTime.now())
+			.errorMessage(exception.getMessage())
+			.httpMethod(HttpMethod.valueOf(httpServletRequest.getMethod()).name())
+			.httpStatus(httpStatus)
+			.httpStatusCode(httpStatus.value())
+			.build();
 		return ResponseEntity.status(httpStatus).body(errorInfo);
 	}
 
