@@ -115,7 +115,7 @@ public class EmployeeService {
 	public Employee findById(@NonNull String id) {
 		log.info("findById( id= [{}] )", id);
 		return this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class EmployeeService {
 	private Employee update(String id, EmployeeRequest updateRequest, Class<? extends DataView> validationGroup) {
 		validateRequest(updateRequest, validationGroup);
 		Employee employeeToUpdate = this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 
 		boolean hasChanged = hasEmailAddressChangedAfterUpdate(updateRequest, employeeToUpdate);
 		hasChanged = hasFullNameChangedAfterUpdate(updateRequest, employeeToUpdate) || hasChanged;
@@ -190,7 +190,7 @@ public class EmployeeService {
 	public void deleteById(@NonNull String id) {
 		log.info("deleteById( id= [{}] )", id);
 		Employee employee = this.repository.findById(id).orElseThrow(
-				() -> new NotFoundException(messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+				() -> new NotFoundException(this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 		this.repository.deleteById(id);
 		this.messagePublisher.employeeDeleted(employee);
 	}
@@ -200,7 +200,7 @@ public class EmployeeService {
 				: this.repository.findByEmailAddress(emailAddress);
 		if (!employeesWithSameEmail.isEmpty()) {
 			throw new BadRequestException(
-					messageSourceHelper.getMessage("errors.employee.email.already-exists", emailAddress));
+					this.messageSourceHelper.getMessage("errors.employee.email.already-exists", emailAddress));
 		}
 	}
 

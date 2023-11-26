@@ -43,11 +43,11 @@ public class MessageSourceHelper {
 	public String getMessage(String code, Object... args) {
 		log.debug("getMessage(code= [{}], args= [{}])", code, ArrayUtils.toString(args));
 		LocaleContext localeContext = LocaleContextHolder.getLocaleContext();
-		if (localeContext != null && localeContext.getLocale() != null) {
-			return customValidationMessageSource.getMessage(code, args, localeContext.getLocale());
+		if ((localeContext != null) && (localeContext.getLocale() != null)) {
+			return this.customValidationMessageSource.getMessage(code, args, localeContext.getLocale());
 		}
 		else {
-			return customValidationMessageSource.getMessage(code, args, Locale.getDefault());
+			return this.customValidationMessageSource.getMessage(code, args, Locale.getDefault());
 		}
 	}
 

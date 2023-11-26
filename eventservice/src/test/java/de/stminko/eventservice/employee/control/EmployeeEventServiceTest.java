@@ -9,6 +9,7 @@ import de.stminko.eventservice.employee.entity.EmployeeEvent;
 import de.stminko.eventservice.employee.entity.PersistentEmployeeEvent;
 import info.solidsoft.mockito.java8.AssertionMatcher;
 import org.apache.commons.lang3.RandomUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,10 +20,6 @@ import org.mockito.Mockito;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @DisplayName("Unit tests for the employee event service")
 class EmployeeEventServiceTest extends AbstractUnitTestSuite {
@@ -41,25 +38,31 @@ class EmployeeEventServiceTest extends AbstractUnitTestSuite {
 		@DisplayName("Handle an employee events persists that event")
 		void givenEmployeeVent_whenHandle_thenPersist() {
 			// Arrange
-			EmployeeEvent employeeEvent = employeeEventTestFactory.createDefault();
-			Mockito.doReturn(null).when(employeeEventRepository).save(ArgumentMatchers.any());
+			EmployeeEvent employeeEvent = EmployeeEventServiceTest.this.employeeEventTestFactory.createDefault();
+			Mockito.doReturn(null).when(EmployeeEventServiceTest.this.employeeEventRepository)
+					.save(ArgumentMatchers.any());
 
 			// Act
-			employeeEventService.handleEmployeeEvent(employeeEvent);
+			EmployeeEventServiceTest.this.employeeEventService.handleEmployeeEvent(employeeEvent);
 
 			// Assert
-			verify(employeeEventRepository).save(AssertionMatcher.assertArg(persistentEmployeeEvent -> {
-				Employee employee = employeeEvent.getEmployee();
-				assertThat(persistentEmployeeEvent.getDepartmentName())
-						.isEqualTo(employee.getDepartment().getDepartmentName());
-				assertThat(persistentEmployeeEvent.getFirstName()).isEqualTo(employee.getFullName().getFirstName());
-				assertThat(persistentEmployeeEvent.getLastName()).isEqualTo(employee.getFullName().getLastName());
-				assertThat(persistentEmployeeEvent.getEmployeeId()).isEqualTo(employee.getId());
-				assertThat(persistentEmployeeEvent.getEmailAddress()).isEqualTo(employee.getEmailAddress());
-				assertThat(persistentEmployeeEvent.getEventType()).isEqualTo(employeeEvent.getEventType());
-				assertThat(persistentEmployeeEvent.getBirthday())
-						.isEqualTo(Date.from(employee.getBirthday().toInstant()));
-			}));
+			Mockito.verify(EmployeeEventServiceTest.this.employeeEventRepository)
+					.save(AssertionMatcher.assertArg((PersistentEmployeeEvent persistentEmployeeEvent) -> {
+						Employee employee = employeeEvent.getEmployee();
+						Assertions.assertThat(persistentEmployeeEvent.getDepartmentName())
+								.isEqualTo(employee.getDepartment().getDepartmentName());
+						Assertions.assertThat(persistentEmployeeEvent.getFirstName())
+								.isEqualTo(employee.getFullName().getFirstName());
+						Assertions.assertThat(persistentEmployeeEvent.getLastName())
+								.isEqualTo(employee.getFullName().getLastName());
+						Assertions.assertThat(persistentEmployeeEvent.getEmployeeId()).isEqualTo(employee.getId());
+						Assertions.assertThat(persistentEmployeeEvent.getEmailAddress())
+								.isEqualTo(employee.getEmailAddress());
+						Assertions.assertThat(persistentEmployeeEvent.getEventType())
+								.isEqualTo(employeeEvent.getEventType());
+						Assertions.assertThat(persistentEmployeeEvent.getBirthday())
+								.isEqualTo(Date.from(employee.getBirthday().toInstant()));
+					}));
 		}
 
 	}
@@ -73,23 +76,25 @@ class EmployeeEventServiceTest extends AbstractUnitTestSuite {
 		void givenEmployeeVents_whenFindByUuid_thenInvokeRelyOnRepository() {
 			// Arrange
 			String employeeId = UUID.randomUUID().toString();
-			Pageable mockPageable = mock(Pageable.class);
+			Pageable mockPageable = Mockito.mock(Pageable.class);
 			int expectedPageNumber = RandomUtils.nextInt(0, 23);
 			Mockito.doReturn(expectedPageNumber).when(mockPageable).getPageNumber();
 
-			Page<PersistentEmployeeEvent> mockPageableResult = (Page<PersistentEmployeeEvent>) mock(Page.class);
-			Mockito.doReturn(mockPageableResult).when(employeeEventRepository).findByEmployeeId(eq(employeeId),
-					ArgumentMatchers.any(Pageable.class));
+			Page<PersistentEmployeeEvent> mockPageableResult = (Page<PersistentEmployeeEvent>) Mockito.mock(Page.class);
+			Mockito.doReturn(mockPageableResult).when(EmployeeEventServiceTest.this.employeeEventRepository)
+					.findByEmployeeId(ArgumentMatchers.eq(employeeId), ArgumentMatchers.any(Pageable.class));
 
 			// Act
-			employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId, mockPageable);
+			EmployeeEventServiceTest.this.employeeEventService.findByEmployeeIdOrderByCreatedAtAsc(employeeId,
+					mockPageable);
 
 			// Assert
-			verify(employeeEventRepository).findByEmployeeId(ArgumentMatchers.eq(employeeId),
-					AssertionMatcher.assertArg(pageable -> {
-						assertThat(pageable.getPageNumber()).isEqualTo(expectedPageNumber);
-						assertThat(pageable.getPageSize()).isEqualTo(EmployeeEventService.MAX_PAGE_SIZE);
-						assertThat(pageable.getSort()).isEqualTo(EmployeeEventService.CREATED_AT_WITH_ASC_SORT);
+			Mockito.verify(EmployeeEventServiceTest.this.employeeEventRepository).findByEmployeeId(
+					ArgumentMatchers.eq(employeeId), AssertionMatcher.assertArg((Pageable pageable) -> {
+						Assertions.assertThat(pageable.getPageNumber()).isEqualTo(expectedPageNumber);
+						Assertions.assertThat(pageable.getPageSize()).isEqualTo(EmployeeEventService.MAX_PAGE_SIZE);
+						Assertions.assertThat(pageable.getSort())
+								.isEqualTo(EmployeeEventService.CREATED_AT_WITH_ASC_SORT);
 					}));
 		}
 

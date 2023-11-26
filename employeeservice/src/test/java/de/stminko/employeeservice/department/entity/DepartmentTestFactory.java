@@ -36,8 +36,8 @@ public class DepartmentTestFactory extends AbstractTestFactory<Department, Depar
 
 		public Department create() {
 			Department department = new Department();
-			department.setId(id);
-			department.setDepartmentName(departmentName);
+			department.setId(this.id);
+			department.setDepartmentName(this.departmentName);
 			return department;
 		}
 

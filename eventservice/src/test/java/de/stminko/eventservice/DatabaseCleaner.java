@@ -15,7 +15,7 @@ public class DatabaseCleaner {
 
 	public void cleanDatabases() {
 		log.info("Cleaning up the test database");
-		employeeEventRepository.deleteAll();
+		this.employeeEventRepository.deleteAll();
 	}
 
 }

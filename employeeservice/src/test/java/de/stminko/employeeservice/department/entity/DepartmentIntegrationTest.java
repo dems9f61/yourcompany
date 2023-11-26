@@ -21,8 +21,9 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two departments with the same id are equals")
 	void givenTwoDepartmentsWithSameId_whenCompare_thenEqual() {
 		// Arrange
-		Department persistedDepartment = departmentRepository.save(departmentTestFactory.builder().id(null).create());
-		Department found = departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
+		Department persistedDepartment = this.departmentRepository
+				.save(this.departmentTestFactory.builder().id(null).create());
+		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
 		Assertions.assertThat(found).isEqualTo(persistedDepartment);
@@ -32,8 +33,8 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two different departments are not equals")
 	void givenDifferentEmployees_whenCompare_thenNotEqual() {
 		// Arrange
-		Department first = departmentRepository.save(departmentTestFactory.builder().id(null).create());
-		Department second = departmentRepository.save(departmentTestFactory.builder().id(null).create());
+		Department first = this.departmentRepository.save(this.departmentTestFactory.builder().id(null).create());
+		Department second = this.departmentRepository.save(this.departmentTestFactory.builder().id(null).create());
 
 		// Act / Assert
 		Assertions.assertThat(first).isNotEqualTo(second);
@@ -43,8 +44,9 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two employees with the same id and values are mapped to the same hash code")
 	void givenTwoEmployeeWithSameValues_whenHash_thenSameHashCode() {
 		// Arrange
-		Department persistedDepartment = departmentRepository.save(departmentTestFactory.builder().id(null).create());
-		Department found = departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
+		Department persistedDepartment = this.departmentRepository
+				.save(this.departmentTestFactory.builder().id(null).create());
+		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
 		Assertions.assertThat(found.hashCode()).isEqualTo(persistedDepartment.hashCode());
@@ -54,12 +56,13 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two employees with the same id and values are consistently mapped to the same hash value")
 	void givenTwoEmployeeWithSameValues_whenHashMultipleTimes_thenSameValue() {
 		// Arrange
-		Department persistedDepartment = departmentRepository.save(departmentTestFactory.builder().id(null).create());
-		Department found = departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
+		Department persistedDepartment = this.departmentRepository
+				.save(this.departmentTestFactory.builder().id(null).create());
+		Department found = this.departmentRepository.findById(persistedDepartment.getId()).orElseThrow();
 
 		// Act / Assert
-		IntStream.range(0, RandomUtils.nextInt(50, 60))
-				.forEach(value -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedDepartment.hashCode()));
+		IntStream.range(0, RandomUtils.nextInt(50, 60)).forEach(
+				(int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedDepartment.hashCode()));
 
 	}
 
@@ -68,8 +71,8 @@ class DepartmentIntegrationTest extends AbstractIntegrationTestSuite {
 	void givenDifferentEmployees_whenHash_thenDifferentValue() {
 		// Arrange
 		List<Department> departments = IntStream.range(0, RandomUtils.nextInt(50, 200))
-				.mapToObj(value -> departmentTestFactory.builder().id(null).create()).map(departmentRepository::save)
-				.toList();
+				.mapToObj((int value) -> this.departmentTestFactory.builder().id(null).create())
+				.map(this.departmentRepository::save).toList();
 		long distinctHashCodesCount = departments.stream().map(Department::hashCode).distinct().count();
 
 		// Act / Assert

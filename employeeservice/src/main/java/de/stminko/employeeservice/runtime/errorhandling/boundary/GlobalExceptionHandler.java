@@ -194,7 +194,7 @@ public class GlobalExceptionHandler {
 	 * @param request the {@link HttpServletRequest} context
 	 */
 	private void logHandledException(HttpStatus status, Throwable caught, HttpServletRequest request) {
-		String queryString = Optional.ofNullable(request.getQueryString()).map(q -> "?" + q).orElse("");
+		String queryString = Optional.ofNullable(request.getQueryString()).map((String q) -> "?" + q).orElse("");
 		String message = String.format("HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]", request.getRequestURI(),
 				queryString, request.getMethod(), caught.getMessage());
 

@@ -61,12 +61,12 @@ public abstract class AbstractIntegrationTestSuite {
 	}
 
 	public void receiveRandomMessageFor(String id, int count) {
-		List<Employee> employees = employeeTestFactory
-				.createManyDefault(count <= 0 ? RandomUtils.nextInt(30, 100) : count);
-		employees.forEach(employee -> {
+		List<Employee> employees = this.employeeTestFactory
+				.createManyDefault((count <= 0) ? RandomUtils.nextInt(30, 100) : count);
+		employees.forEach((Employee employee) -> {
 			employee.setId(id);
-			EmployeeMessage employeeMessage = employeeMessageTestFactory.builder().employee(employee).create();
-			employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
+			EmployeeMessage employeeMessage = this.employeeMessageTestFactory.builder().employee(employee).create();
+			this.employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
 		});
 	}
 
@@ -93,7 +93,7 @@ public abstract class AbstractIntegrationTestSuite {
 		stopWatch.stop();
 		log.info(stopWatch.shortSummary());
 		log.info("AFTER TEST <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		databaseCleaner.cleanDatabases();
+		this.databaseCleaner.cleanDatabases();
 	}
 
 }

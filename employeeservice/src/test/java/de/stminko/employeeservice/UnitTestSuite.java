@@ -21,10 +21,10 @@ public abstract class UnitTestSuite {
 
 	@BeforeEach
 	public void initFactories() {
-		departmentTestFactory = new DepartmentTestFactory();
-		departmentRequestTestFactory = new DepartmentRequestTestFactory();
-		employeeTestFactory = new EmployeeTestFactory();
-		employeeRequestTestFactory = new EmployeeRequestTestFactory();
+		this.departmentTestFactory = new DepartmentTestFactory();
+		this.departmentRequestTestFactory = new DepartmentRequestTestFactory();
+		this.employeeTestFactory = new EmployeeTestFactory();
+		this.employeeRequestTestFactory = new EmployeeRequestTestFactory();
 	}
 
 }

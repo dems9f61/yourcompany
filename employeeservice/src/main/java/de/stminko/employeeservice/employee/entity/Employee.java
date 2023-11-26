@@ -91,10 +91,12 @@ public class Employee extends AbstractEntity<String> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if ((o == null) || (getClass() != o.getClass())) {
 			return false;
+		}
 		Employee employee = (Employee) o;
 		return Objects.equals(getId(), employee.getId())
 				&& Objects.equals(getEmailAddress(), employee.getEmailAddress())

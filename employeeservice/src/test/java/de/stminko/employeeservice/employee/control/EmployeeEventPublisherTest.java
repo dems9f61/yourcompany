@@ -19,8 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeEventPublisherTest {
@@ -37,7 +35,7 @@ class EmployeeEventPublisherTest {
 
 	@BeforeEach
 	void setUp() {
-		publisher = new EmployeeEventPublisher(template, amqpConfig);
+		this.publisher = new EmployeeEventPublisher(this.template, this.amqpConfig);
 	}
 
 	@DisplayName("Creating a employee lead to a EmployeeMessage of type EMPLOYEE_CREATED")
@@ -45,39 +43,39 @@ class EmployeeEventPublisherTest {
 	void givenEmployee_whenEmployeeCreated_thenSendCreatedEmployeeMessage() {
 
 		givenEmployee_whenEmployeeProcessed_thenSendEmployeeMessage(
-				(Employee value) -> publisher.employeeCreated(value), EmployeeMessage.EventType.EMPLOYEE_CREATED);
+				(Employee value) -> this.publisher.employeeCreated(value), EmployeeMessage.EventType.EMPLOYEE_CREATED);
 	}
 
 	@DisplayName("Deleting a employee lead to a EmployeeMessage of type EMPLOYEE_DELEED")
 	@Test
 	void givenEmployee_whenEmployeeCreated_thenSendDeletedEmployeeMessage() {
 		givenEmployee_whenEmployeeProcessed_thenSendEmployeeMessage(
-				(Employee value) -> publisher.employeeDeleted(value), EmployeeMessage.EventType.EMPLOYEE_DELETED);
+				(Employee value) -> this.publisher.employeeDeleted(value), EmployeeMessage.EventType.EMPLOYEE_DELETED);
 	}
 
 	@DisplayName("Deleting a employee lead to a EmployeeMessage of type EMPLOYEE_UPDATED")
 	@Test
 	void givenEmployee_whenEmployeeCreated_thenSendUpdatedEmployeeMessage() {
 		givenEmployee_whenEmployeeProcessed_thenSendEmployeeMessage(
-				(Employee value) -> publisher.employeeUpdated(value), EmployeeMessage.EventType.EMPLOYEE_UPDATED);
+				(Employee value) -> this.publisher.employeeUpdated(value), EmployeeMessage.EventType.EMPLOYEE_UPDATED);
 	}
 
 	private void givenEmployee_whenEmployeeProcessed_thenSendEmployeeMessage(Consumer<Employee> block,
 			EmployeeMessage.EventType expectedEventType) {
 		// Arrange
-		Employee employee = employeeTestFactory.createDefault();
+		Employee employee = this.employeeTestFactory.createDefault();
 		String exchangeName = RandomStringUtils.randomAlphabetic(23);
-		Mockito.doReturn(exchangeName).when(amqpConfig).getExchangeName();
+		Mockito.doReturn(exchangeName).when(this.amqpConfig).getExchangeName();
 		String routingKey = RandomStringUtils.randomAlphabetic(23);
-		Mockito.doReturn(routingKey).when(amqpConfig).getRoutingKey();
+		Mockito.doReturn(routingKey).when(this.amqpConfig).getRoutingKey();
 
-		Mockito.doNothing().when(template).convertAndSend(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(),
-				any(Object.class));
+		Mockito.doNothing().when(this.template).convertAndSend(ArgumentMatchers.anyString(),
+				ArgumentMatchers.anyString(), ArgumentMatchers.any(Object.class));
 		// Act
 		block.accept(employee);
 
 		// Assert
-		verify(template).convertAndSend(ArgumentMatchers.eq(exchangeName), ArgumentMatchers.eq(routingKey),
+		Mockito.verify(this.template).convertAndSend(ArgumentMatchers.eq(exchangeName), ArgumentMatchers.eq(routingKey),
 				AssertionMatcher.assertArg((Object value) -> {
 					Assertions.assertThat(value).isInstanceOf(EmployeeMessage.class);
 					EmployeeMessage employeeMessage = (EmployeeMessage) value;

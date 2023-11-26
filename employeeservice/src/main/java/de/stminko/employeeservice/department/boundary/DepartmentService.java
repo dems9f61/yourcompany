@@ -135,9 +135,9 @@ public class DepartmentService {
 		}
 
 		String departmentName = departmentRequest.departmentName();
-		this.repository.findByDepartmentName(departmentName).ifPresent(dept -> {
+		this.repository.findByDepartmentName(departmentName).ifPresent((Department dept) -> {
 			throw new BadRequestException(
-					messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
+					this.messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
 		});
 		Department department = new Department();
 		department.setDepartmentName(departmentName);
@@ -147,7 +147,7 @@ public class DepartmentService {
 	private Department findDepartmentOrThrow(String departmentName, Class<? extends RuntimeException> exceptionClass) {
 
 		return this.repository.findByDepartmentName(departmentName).orElseThrow(() -> createException(exceptionClass,
-				messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
+				this.messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
 	}
 
 	private <E extends RuntimeException> E createException(Class<E> exceptionClass, String errorMessage) {

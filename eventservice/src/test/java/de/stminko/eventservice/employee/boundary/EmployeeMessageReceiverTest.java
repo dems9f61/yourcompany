@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(OutputCaptureExtension.class)
@@ -32,14 +33,14 @@ class EmployeeMessageReceiverTest extends AbstractUnitTestSuite {
 	@Test
 	void givenEmployeeMessage_whenReceive_thenPublish() {
 		// Arrange
-		EmployeeMessage employeeMessage = employeeMessageTestFactory.createDefault();
-		Mockito.doNothing().when(eventPublisher).publishEvent(ArgumentMatchers.any());
+		EmployeeMessage employeeMessage = this.employeeMessageTestFactory.createDefault();
+		Mockito.doNothing().when(this.eventPublisher).publishEvent(ArgumentMatchers.any());
 
 		// Act
-		employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
+		this.employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
 
 		// Assert
-		Mockito.verify(eventPublisher).publishEvent(AssertionMatcher.assertArg(event -> {
+		Mockito.verify(this.eventPublisher).publishEvent(AssertionMatcher.assertArg((ApplicationEvent event) -> {
 			Assertions.assertThat(event).isInstanceOf(EmployeeEvent.class);
 			EmployeeEvent employeeEvent = (EmployeeEvent) event;
 			Assertions.assertThat(employeeEvent.getEmployee()).isEqualTo(employeeMessage.getEmployee());
@@ -51,12 +52,13 @@ class EmployeeMessageReceiverTest extends AbstractUnitTestSuite {
 	@Test
 	void givenExceptionThrown_whenReceive_thenLogErrorMessage(CapturedOutput output) {
 		// Arrange
-		EmployeeMessage employeeMessage = employeeMessageTestFactory.createDefault();
+		EmployeeMessage employeeMessage = this.employeeMessageTestFactory.createDefault();
 		String errorMessage = RandomStringUtils.randomAlphabetic(23);
-		Mockito.doThrow(new RuntimeException(errorMessage)).when(eventPublisher).publishEvent(ArgumentMatchers.any());
+		Mockito.doThrow(new RuntimeException(errorMessage)).when(this.eventPublisher)
+				.publishEvent(ArgumentMatchers.any());
 
 		// Act
-		employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
+		this.employeeMessageReceiver.receiveEmployeeMessage(employeeMessage);
 
 		// Assert
 		Assertions.assertThat(output.getOut()).contains(errorMessage);

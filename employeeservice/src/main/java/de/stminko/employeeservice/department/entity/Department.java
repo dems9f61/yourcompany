@@ -66,10 +66,12 @@ public class Department extends AbstractEntity<Long> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if ((o == null) || (getClass() != o.getClass())) {
 			return false;
+		}
 		Department that = (Department) o;
 		return Objects.equals(getId(), that.getId()) && Objects.equals(getDepartmentName(), that.getDepartmentName());
 	}

@@ -26,12 +26,12 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two employees with the same id and values are equal")
 	void givenTwoEmployeesWithSameIdAndValues_whenCompare_thenEqual() {
 		// Arrange
-		Department toPersistDepartment = departmentTestFactory.builder().id(null).create();
-		Department persistedDepartment = departmentRepository.save(toPersistDepartment);
+		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
+		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
-		Employee toPersistEmployee = employeeTestFactory.builder().department(persistedDepartment).create();
-		Employee persistedEmployee = employeeRepository.save(toPersistEmployee);
-		Employee found = employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
+		Employee toPersistEmployee = this.employeeTestFactory.builder().department(persistedDepartment).create();
+		Employee persistedEmployee = this.employeeRepository.save(toPersistEmployee);
+		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
 
 		// Act / Assert
 		Assertions.assertThat(found).isEqualTo(persistedEmployee);
@@ -41,15 +41,15 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two different employees are not equal")
 	void givenDifferentEmployees_whenCompare_thenNotEqual() {
 		// Arrange
-		Department toPersistDepartment = departmentTestFactory.builder().id(null).create();
-		Department persistedDepartment = departmentRepository.save(toPersistDepartment);
+		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
+		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
-		Employee persistedEmployee = employeeRepository
-				.save(employeeTestFactory.builder().department(persistedDepartment).create());
-		Employee otherPersistedEmployee = employeeRepository
-				.save(employeeTestFactory.builder().department(persistedDepartment).create());
-		Employee found = employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
-		Employee otherFound = employeeRepository.findById(otherPersistedEmployee.getId()).orElseThrow();
+		Employee persistedEmployee = this.employeeRepository
+				.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
+		Employee otherPersistedEmployee = this.employeeRepository
+				.save(this.employeeTestFactory.builder().department(persistedDepartment).create());
+		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
+		Employee otherFound = this.employeeRepository.findById(otherPersistedEmployee.getId()).orElseThrow();
 
 		// Act / Assert
 		Assertions.assertThat(found).isNotEqualTo(otherFound);
@@ -59,12 +59,12 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two employees with the same id and values are mapped to the same hash code")
 	void givenTwoEmployeesWithSameIdAndValues_whenHash_thenSameHashCode() {
 		// Arrange
-		Department toPersistDepartment = departmentTestFactory.builder().id(null).create();
-		Department persistedDepartment = departmentRepository.save(toPersistDepartment);
+		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
+		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
-		Employee toPersistEmployee = employeeTestFactory.builder().department(persistedDepartment).create();
-		Employee persistedEmployee = employeeRepository.save(toPersistEmployee);
-		Employee found = employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
+		Employee toPersistEmployee = this.employeeTestFactory.builder().department(persistedDepartment).create();
+		Employee persistedEmployee = this.employeeRepository.save(toPersistEmployee);
+		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
 
 		// Act / Assert
 		Assertions.assertThat(found.hashCode()).isEqualTo(persistedEmployee.hashCode());
@@ -74,16 +74,16 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("two employees with the same id and values are consistently mapped to the same hash code")
 	void givenTwoEmployeesWithSameValues_whenHashMultipleTimes_thenSameHashCode() {
 		// Arrange
-		Department toPersistDepartment = departmentTestFactory.builder().id(null).create();
-		Department persistedDepartment = departmentRepository.save(toPersistDepartment);
+		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
+		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
-		Employee toPersistEmployee = employeeTestFactory.builder().department(persistedDepartment).create();
-		Employee persistedEmployee = employeeRepository.save(toPersistEmployee);
-		Employee found = employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
+		Employee toPersistEmployee = this.employeeTestFactory.builder().department(persistedDepartment).create();
+		Employee persistedEmployee = this.employeeRepository.save(toPersistEmployee);
+		Employee found = this.employeeRepository.findById(persistedEmployee.getId()).orElseThrow();
 
 		// Act / Assert
-		IntStream.range(0, RandomUtils.nextInt(50, 60))
-				.forEach(value -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedEmployee.hashCode()));
+		IntStream.range(0, RandomUtils.nextInt(50, 60)).forEach(
+				(int value) -> Assertions.assertThat(found.hashCode()).isEqualTo(persistedEmployee.hashCode()));
 
 	}
 
@@ -91,12 +91,12 @@ class EmployeeIntegrationTest extends AbstractIntegrationTestSuite {
 	@DisplayName("different employees do not have the same hash-code")
 	void givenDifferentEmployees_whenHash_thenDifferentHashCode() {
 		// Arrange
-		Department toPersistDepartment = departmentTestFactory.builder().id(null).create();
-		Department persistedDepartment = departmentRepository.save(toPersistDepartment);
+		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
+		Department persistedDepartment = this.departmentRepository.save(toPersistDepartment);
 
 		List<Employee> employees = IntStream.range(0, RandomUtils.nextInt(50, 200))
-				.mapToObj(value -> employeeTestFactory.builder().department(persistedDepartment).create())
-				.map(employeeRepository::save).toList();
+				.mapToObj((int value) -> this.employeeTestFactory.builder().department(persistedDepartment).create())
+				.map(this.employeeRepository::save).toList();
 		long distinctHashCodesCount = employees.stream().map(Employee::hashCode).distinct().count();
 
 		// Act / Assert
