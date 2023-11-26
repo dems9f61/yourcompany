@@ -25,18 +25,33 @@ import lombok.Data;
 public class EmployeeMessage {
 
 	/**
-	 * Enumerates the types of events that can occur to an employee. This helps in
-	 * categorizing and responding to different events differently. The event types
-	 * include: - EMPLOYEE_CREATED: Indicates a new employee has been added to the system.
-	 * - EMPLOYEE_UPDATED: Indicates an existing employee's details have been modified. -
-	 * EMPLOYEE_DELETED: Indicates an employee has been removed from the system.
+	 * Enum representing the various types of events related to employees within the Event
+	 * Service application. This enumeration is crucial for identifying and responding to
+	 * different employee-related actions.
 	 */
 	public enum EventType {
 
+		/**
+		 * Indicates that a new employee has been created. This event type is used when an
+		 * employee record is added to the system, signaling the need for processes
+		 * related to new employee onboarding or record creation.
+		 */
 		EMPLOYEE_CREATED,
 
+		/**
+		 * Signifies that an existing employee's details have been updated. This event
+		 * type is triggered when changes are made to an employee's information, such as
+		 * updates to personal details, job role, department, or employment status. It can
+		 * be used to trigger processes that depend on up-to-date employee information.
+		 */
 		EMPLOYEE_UPDATED,
 
+		/**
+		 * Denotes the deletion of an employee from the system. This event type is used
+		 * when an employee's record is removed, which might be relevant for processes
+		 * related to off-boarding, archiving employee data, or updating organizational
+		 * charts and directories.
+		 */
 		EMPLOYEE_DELETED
 
 	}

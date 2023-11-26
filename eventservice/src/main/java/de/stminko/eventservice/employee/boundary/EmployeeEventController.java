@@ -45,6 +45,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeEventController {
 
+	/**
+	 * The base URI for all endpoints in this controller. It combines the API version
+	 * prefix from {@link ApiVersions} with the "/events" path.
+	 */
 	public static final String BASE_URI = ApiVersions.V1 + "/events";
 
 	private final EmployeeEventService employeeEventService;

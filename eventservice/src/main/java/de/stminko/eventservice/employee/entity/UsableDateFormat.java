@@ -30,10 +30,20 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public enum UsableDateFormat {
 
+	/**
+	 * the default date format used across the Event Service application. This format is
+	 * set to 'yyyy-MM-dd', representing a common pattern for representing dates. It is
+	 * used in scenarios where a standardized, simple date format is required, such as in
+	 * logging, data storage, or user interfaces.
+	 */
 	DEFAULT(Constants.DEFAULT_DATE_FORMAT);
 
 	private final String dateFormat;
 
+	/**
+	 * inner class to hold constants related to the {@link UsableDateFormat} enum. This
+	 * includes the default date format pattern.
+	 */
 	public static final class Constants {
 
 		static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
