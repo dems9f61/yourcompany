@@ -16,7 +16,6 @@ import org.springframework.context.annotation.PropertySource;
  * @author Stéphan Minko
  */
 @Configuration
-@ComponentScan
 @PropertySource("classpath:config/stminko-springdoc.properties")
 public class SpringDocStarterAutoConfiguration {
 

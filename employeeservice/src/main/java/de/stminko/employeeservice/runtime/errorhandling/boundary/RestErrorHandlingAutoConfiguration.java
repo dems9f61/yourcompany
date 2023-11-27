@@ -1,6 +1,5 @@
 package de.stminko.employeeservice.runtime.errorhandling.boundary;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -25,8 +24,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author Stéphan Minko
  */
 @Configuration
-@ComponentScan
-@PropertySource("classpath:config/rest-errorhandling.properties")
+@PropertySource("classpath:config/stminko-errorhandling.properties")
 public class RestErrorHandlingAutoConfiguration {
 
 }
