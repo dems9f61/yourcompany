@@ -31,6 +31,7 @@
         <mockito.java8.version>2.5.0</mockito.java8.version>
         <stacksrc-junit5.version>0.6.0</stacksrc-junit5.version>
         <spring-javaformat-plugin.version>0.0.40</spring-javaformat-plugin.version>
+        <micrometer.version>1.12.0</micrometer.version>
         <!-- Default Surefire Plugin activation -->
         <skipTests>false</skipTests>
     </properties>
