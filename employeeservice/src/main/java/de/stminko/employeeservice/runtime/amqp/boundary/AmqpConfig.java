@@ -104,6 +104,7 @@ public class AmqpConfig {
 		template.setRetryTemplate(retryTemplate());
 		template.setMessageConverter(messageConverter);
 		template.setBeforePublishPostProcessors(messagePostProcessor);
+		template.setReplyTimeout(5000 * 10L);
 		return template;
 	}
 
