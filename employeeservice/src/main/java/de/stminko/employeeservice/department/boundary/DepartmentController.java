@@ -47,6 +47,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @Tag(name = "Department", description = "The Department API")
 @RequestMapping(DepartmentController.BASE_URI)
+@ApiResponse(responseCode = "500", description = "An unexpected server error occurred")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DepartmentController {
 
@@ -86,8 +87,7 @@ public class DepartmentController {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = Department.class))),
 			@ApiResponse(responseCode = "400",
-					description = "on any client related errors e.g., constraints violation, already existing department name"),
-			@ApiResponse(responseCode = "500", description = "Internal server error") })
+					description = "on any client related errors e.g., constraints violation, already existing department name") })
 	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@JsonView(DataView.GET.class)
 	public ResponseEntity<DepartmentResponse> create(@io.swagger.v3.oas.annotations.parameters.RequestBody(

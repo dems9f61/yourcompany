@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionMapper {
+public class GlobalExceptionHandler {
 
 	/**
 	 * Handles generic exceptions.
@@ -40,40 +40,17 @@ public class GlobalExceptionMapper {
 	 */
 	@ExceptionHandler({ Exception.class })
 	protected ResponseEntity<ErrorInfo> handleException(HttpServletRequest httpServletRequest, Exception exception) {
-		return serializeExceptionToResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, httpServletRequest);
-	}
-
-	/**
-	 * Serializes an exception into a standard error response.
-	 *
-	 * <p>
-	 * This method constructs an error response based on the provided exception and HTTP
-	 * status. It includes details such as the error message, the request URI, and the
-	 * time of occurrence.
-	 * </p>
-	 * @param exception the exception to serialize
-	 * @param httpStatus the HTTP status associated with the error
-	 * @param httpServletRequest the request during which the exception occurred
-	 * @return a ResponseEntity containing the error details
-	 */
-	private ResponseEntity<ErrorInfo> serializeExceptionToResponse(Exception exception, HttpStatus httpStatus,
-			HttpServletRequest httpServletRequest) {
 		String localizedMessage = exception.getLocalizedMessage();
-		if (httpStatus.is4xxClientError()) {
-			log.info("Client Exception occurred. Error: {}", localizedMessage);
-		}
-		else {
-			log.error("Unhandled Exception occurred. Error: {}", localizedMessage, exception);
-		}
+		log.error("Unhandled Exception occurred. Error: {}", localizedMessage, exception);
 		ErrorInfo errorInfo = ErrorInfo.builder()
 			.url(httpServletRequest.getRequestURI())
 			.errorDateTime(ZonedDateTime.now())
 			.errorMessage(exception.getMessage())
 			.httpMethod(HttpMethod.valueOf(httpServletRequest.getMethod()).name())
-			.httpStatus(httpStatus)
-			.httpStatusCode(httpStatus.value())
+			.httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+			.httpStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 			.build();
-		return ResponseEntity.status(httpStatus).body(errorInfo);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorInfo);
 	}
 
 }

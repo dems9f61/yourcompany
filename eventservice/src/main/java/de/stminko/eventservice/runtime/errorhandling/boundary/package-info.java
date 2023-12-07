@@ -4,8 +4,8 @@
  * offering a centralized approach to error management within the application.
  * <p>
  * The
- * {@link de.stminko.eventservice.runtime.errorhandling.boundary.GlobalExceptionMapper} is
- * instrumental in enhancing the robustness of the event service, ensuring that all
+ * {@link de.stminko.eventservice.runtime.errorhandling.boundary.GlobalExceptionHandler}
+ * is instrumental in enhancing the robustness of the event service, ensuring that all
  * exceptions are caught and handled gracefully, thereby maintaining a consistent and
  * user-friendly error response strategy.
  *

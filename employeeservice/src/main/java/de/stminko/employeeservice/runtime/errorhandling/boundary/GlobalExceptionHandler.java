@@ -203,7 +203,7 @@ public class GlobalExceptionHandler {
 	 */
 	private void logHandledException(HttpStatus status, Throwable caught, HttpServletRequest request) {
 		String queryString = Optional.ofNullable(request.getQueryString()).map((String q) -> "?" + q).orElse("");
-		String message = String.format("HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]", request.getRequestURI(),
+		String message = "HTTP Error - URL: [%s%s], Method: [%s] - Error: [%s]".formatted(request.getRequestURI(),
 				queryString, request.getMethod(), caught.getMessage());
 
 		LogLevel logLevel = this.configuration.getHttpStatusLogLevel()

@@ -314,7 +314,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.status().isNotFound())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers
-					.containsString(String.format("The employee with the ID [%s] could not be found!", unknownId))));
+					.containsString("The employee with the ID [%s] could not be found!".formatted(unknownId))));
 		}
 
 		@Test

@@ -54,9 +54,9 @@ class EmployeeEventServiceIntegrationTests extends AbstractIntegrationTestSuite 
 	@Test
 	void givenUnknownUuid_whenFindAll_thenReturnEmptyList() {
 		// Arrange
+		String unknownEmployeeId = UUID.randomUUID().toString();
 		int eventCount = RandomUtils.nextInt(10, 20);
 		receiveRandomMessageFor(eventCount);
-		String unknownEmployeeId = UUID.randomUUID().toString();
 		PageRequest pageRequest = PageRequest.of(0, eventCount);
 
 		// Act

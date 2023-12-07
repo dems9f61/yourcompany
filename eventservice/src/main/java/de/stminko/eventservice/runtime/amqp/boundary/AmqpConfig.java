@@ -1,7 +1,6 @@
 package de.stminko.eventservice.runtime.amqp.boundary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.stminko.eventservice.runtime.pagination.boundary.PageModule;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -123,7 +122,6 @@ public class AmqpConfig {
 	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper objectMapper) {
 		MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
 		mappingJackson2HttpMessageConverter.setObjectMapper(objectMapper);
-		objectMapper.registerModule(new PageModule());
 		return mappingJackson2HttpMessageConverter;
 	}
 

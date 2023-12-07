@@ -56,6 +56,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @Tag(name = "Employee", description = "The Employee API")
 @RequestMapping(EmployeeController.BASE_URI)
+@ApiResponse(responseCode = "500", description = "An unexpected server error occurred")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class EmployeeController {
 

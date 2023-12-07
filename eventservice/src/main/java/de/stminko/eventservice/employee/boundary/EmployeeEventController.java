@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = EmployeeEventController.BASE_URI, produces = MediaType.APPLICATION_JSON_VALUE)
+@ApiResponse(responseCode = "500", description = "An unexpected server error occurred")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class EmployeeEventController {
 

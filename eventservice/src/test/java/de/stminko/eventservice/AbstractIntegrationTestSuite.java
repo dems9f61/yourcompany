@@ -2,10 +2,12 @@ package de.stminko.eventservice;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stminko.eventservice.employee.boundary.EmployeeMessageReceiver;
+import de.stminko.eventservice.employee.control.EmployeeEventService;
 import de.stminko.eventservice.employee.entity.Employee;
 import de.stminko.eventservice.employee.entity.EmployeeEventTestFactory;
 import de.stminko.eventservice.employee.entity.EmployeeMessage;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
@@ -50,14 +53,13 @@ public abstract class AbstractIntegrationTestSuite {
 	@Autowired
 	private EmployeeMessageReceiver employeeMessageReceiver;
 
+	@SpyBean
+	protected EmployeeEventService employeeEventService;
+
 	private final Map<String, StopWatch> stopWatches = new ConcurrentHashMap<>();
 
-	public void receiveRandomMessageFor(String id) {
-		receiveRandomMessageFor(id, 0);
-	}
-
 	public void receiveRandomMessageFor(int count) {
-		receiveRandomMessageFor(null, 0);
+		receiveRandomMessageFor(UUID.randomUUID().toString(), count);
 	}
 
 	public void receiveRandomMessageFor(String id, int count) {
