@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +56,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @Tag(name = "Employee", description = "The Employee API")
 @RequestMapping(EmployeeController.BASE_URI)
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class EmployeeController {
 
 	/**
@@ -98,7 +99,7 @@ public class EmployeeController {
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.CREATED)
-	ResponseEntity<EmployeeResponse> createEmployee(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+	public ResponseEntity<EmployeeResponse> createEmployee(@io.swagger.v3.oas.annotations.parameters.RequestBody(
 			description = "Employee request data", required = true, content = @Content(schema = @Schema(
 					implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
 		log.info("createEmployee( employeeRequest= [{}] )", employeeRequest);
@@ -137,7 +138,7 @@ public class EmployeeController {
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
-	EmployeeResponse findEmployee(@Parameter(description = "Unique identifier of the employee",
+	public EmployeeResponse findEmployee(@Parameter(description = "Unique identifier of the employee",
 			required = true) @PathVariable("id") String id) {
 		log.info("findEmployee( id=[{}] )", id);
 		Employee employee = this.employeeService.findById(id);
@@ -162,7 +163,7 @@ public class EmployeeController {
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
-	List<EmployeeResponse> findAllEmployees() {
+	public List<EmployeeResponse> findAllEmployees() {
 		log.info("findAllEmployees()");
 		return this.employeeService.findAll().stream().map((Employee employee) -> {
 			Employee.FullName fullName = employee.getFullName();
@@ -192,7 +193,7 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
 	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	void doPartialUpdate(
+	public void doPartialUpdate(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("id") String id,
 
@@ -223,7 +224,7 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	void doFullUpdate(
+	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("id") String id,
 
@@ -249,7 +250,7 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	void deleteEmployee(@Parameter(description = "Unique identifier of the employee",
+	public void deleteEmployee(@Parameter(description = "Unique identifier of the employee",
 			required = true) @PathVariable("id") String id) {
 		log.info("deleteEmployee( id= [{}] )", id);
 		this.employeeService.deleteById(id);

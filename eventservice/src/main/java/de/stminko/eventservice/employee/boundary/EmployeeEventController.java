@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(value = EmployeeEventController.BASE_URI, produces = MediaType.APPLICATION_JSON_VALUE)
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class EmployeeEventController {
 
 	/**
@@ -90,7 +91,7 @@ public class EmployeeEventController {
 							schema = @Schema(implementation = EmployeeEventResponse.class))))
 	@GetMapping("/{employeeId}")
 	@ResponseStatus(HttpStatus.OK)
-	Page<EmployeeEventResponse> findByUuidOrderByCreatedAtAsc(
+	public Page<EmployeeEventResponse> findByUuidOrderByCreatedAtAsc(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("employeeId") String employeeId,
 

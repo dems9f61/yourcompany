@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +47,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @Tag(name = "Department", description = "The Department API")
 @RequestMapping(DepartmentController.BASE_URI)
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DepartmentController {
 
 	/**
@@ -89,7 +90,7 @@ public class DepartmentController {
 			@ApiResponse(responseCode = "500", description = "Internal server error") })
 	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@JsonView(DataView.GET.class)
-	ResponseEntity<DepartmentResponse> create(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+	public ResponseEntity<DepartmentResponse> create(@io.swagger.v3.oas.annotations.parameters.RequestBody(
 			description = "Department request data", required = true, content = @Content(schema = @Schema(
 					implementation = DepartmentRequest.class))) @RequestBody DepartmentRequest departmentRequest) {
 		log.info("create( departmentRequest=[{}] )", departmentRequest);
