@@ -878,7 +878,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 		@Test
 		@DisplayName("PUT: 'http://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
-		void givenValidRequestWithAllFieldsSet_whenFullUpdateEmployee_thenStatus204() throws Exception {
+		void givenValidFullRequest_whenFullUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
 			EmployeeRequest initialEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
@@ -1238,7 +1238,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
 			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
 
-			// Acr / Assert
+			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.delete(uri, employeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON))

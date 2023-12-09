@@ -2,13 +2,17 @@ package de.stminko.employeeservice.department.boundary;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import de.stminko.employeeservice.department.control.DepartmentRepository;
 import de.stminko.employeeservice.department.entity.Department;
 import de.stminko.employeeservice.department.entity.DepartmentRequest;
+import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
+import de.stminko.employeeservice.runtime.errorhandling.boundary.DepartmentNotEmptyException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
+import de.stminko.employeeservice.runtime.persistence.boundary.BeanTool;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import de.stminko.employeeservice.runtime.validation.constraints.boundary.MessageSourceHelper;
 import jakarta.validation.ConstraintViolation;
@@ -17,6 +21,7 @@ import jakarta.validation.Validator;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,6 +51,23 @@ public class DepartmentService {
 	private final Validator validator;
 
 	private final MessageSourceHelper messageSourceHelper;
+
+	/**
+	 * Retrieves an department by their unique identifier.
+	 * <p>
+	 * Searches for an department using the provided ID. If the department is not found, a
+	 * {@link NotFoundException} is thrown.
+	 * </p>
+	 * @param id the unique identifier of the employee
+	 * @return the found {@link Department}
+	 */
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public Department findById(@NonNull Long id) {
+		log.info("findById( id= [{}] )", id);
+		return this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+	}
 
 	/**
 	 * Retrieves a department by its name with a transactional context of SUPPORTS.
@@ -127,12 +149,8 @@ public class DepartmentService {
 	 * @throws BadRequestException if a department with the given name already exists.
 	 */
 	public Department create(@NonNull DepartmentRequest departmentRequest) {
-		log.info("create( [{}] )", departmentRequest);
-		Set<ConstraintViolation<DepartmentRequest>> constraintViolations = this.validator.validate(departmentRequest,
-				DataView.POST.class);
-		if (!constraintViolations.isEmpty()) {
-			throw new ConstraintViolationException(constraintViolations);
-		}
+		log.info("create( departmentRequest= [{}] )", departmentRequest);
+		validateRequest(departmentRequest, DataView.POST.class);
 
 		String departmentName = departmentRequest.departmentName();
 		this.repository.findByDepartmentName(departmentName).ifPresent((Department dept) -> {
@@ -144,11 +162,114 @@ public class DepartmentService {
 		return this.repository.save(department);
 	}
 
+	/**
+	 * Fully updates an existing department's data.
+	 * <p>
+	 * Updates the department identified by the provided ID with the new data from the
+	 * request object. Validates the request and applies the changes.
+	 * </p>
+	 * @param id the unique identifier of the department
+	 * @param departmentRequest the request object containing new details for the
+	 * department
+	 * @return the updated {@link Department}
+	 */
+	public Department doFullUpdate(Long id, DepartmentRequest departmentRequest) {
+		log.info("doFullUpdate ( id= [{}], departmentRequest= [{}] ) ", id, departmentRequest);
+		return update(id, departmentRequest, DataView.PUT.class);
+	}
+
+	/**
+	 * Partially updates an existing department's data.
+	 * <p>
+	 * Updates the department identified by the provided ID with the new data from the
+	 * request object. Validates the request and applies the changes.
+	 * </p>
+	 * @param id the unique identifier of the department
+	 * @param departmentRequest the request object containing new details for the
+	 * department
+	 * @return the updated {@link Department}
+	 */
+	public Department doPartialUpdate(Long id, DepartmentRequest departmentRequest) {
+		log.info("doFullUpdate ( id= [{}], departmentRequest= [{}] ) ", id, departmentRequest);
+		return update(id, departmentRequest, DataView.PATCH.class);
+	}
+
+	/**
+	 * deletes a department by its unique identifier.
+	 * <p>
+	 * Retrieves the department with the provided ID from the repository. If the
+	 * department does not exist, a {@link NotFoundException} is thrown.
+	 * </p>
+	 * <p>
+	 * Checks if the department has any employees associated with it. If there are any
+	 * employees, a {@link DepartmentNotEmptyException} is thrown, indicating that the
+	 * department cannot be deleted until all employees are removed.
+	 * </p>
+	 * <p>
+	 * Finally, deletes the department from the repository.
+	 * </p>
+	 * @param id the unique identifier of the department to be deleted
+	 * @throws NotFoundException if the department with the provided ID does not exist
+	 * @throws DepartmentNotEmptyException if the department has employees associated with
+	 * it
+	 */
+	public void deleteById(@NonNull Long id) {
+		log.info("deleteById( id= [{}] )", id);
+		Department department = this.repository.findDepartmentWithEmployees(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+		Set<Employee> employees = department.getEmployees();
+		if (CollectionUtils.isNotEmpty(employees)) {
+			throw new DepartmentNotEmptyException(
+					this.messageSourceHelper.getMessage("errors.department.not-deletable-on-employee", id.toString()));
+		}
+		this.repository.deleteById(id);
+	}
+
+	/**
+	 * retrieves all employees associated with a department identified by the provided ID.
+	 * @param id the unique identifier of the department
+	 * @return a set of employees associated with the department
+	 * @throws NotFoundException if the department with the provided ID does not exist
+	 */
+	Set<Employee> findAllEmployeesById(@NonNull Long id) {
+		log.info("findAllEmployeesById( id= [{}] )", id);
+		Department department = this.repository.findDepartmentWithEmployees(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+		return department.getEmployees();
+	}
+
+	private Department update(Long id, DepartmentRequest departmentRequest, Class<? extends DataView> validationGroup) {
+		validateRequest(departmentRequest, validationGroup);
+		Department departmentToUpdate = this.repository.findById(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+
+		String departmentName = departmentRequest.departmentName();
+		this.repository.findByDepartmentName(departmentName).ifPresent((Department department) -> {
+			if (!Objects.equals(id, department.getId())) {
+				throw new BadRequestException(
+						this.messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
+			}
+		});
+		BeanTool.copyNonNullProperties(departmentRequest, departmentToUpdate);
+		return this.repository.save(departmentToUpdate);
+	}
+
+	private void validateRequest(DepartmentRequest departmentRequest, Class<? extends DataView> validationGroup) {
+		Set<ConstraintViolation<DepartmentRequest>> constraintViolations = this.validator.validate(departmentRequest,
+				validationGroup);
+		if (!constraintViolations.isEmpty()) {
+			throw new ConstraintViolationException(constraintViolations);
+		}
+	}
+
 	private Department findDepartmentOrThrow(String departmentName, Class<? extends RuntimeException> exceptionClass) {
 
 		return this.repository.findByDepartmentName(departmentName)
 			.orElseThrow(() -> createException(exceptionClass,
-					this.messageSourceHelper.getMessage("errors.department-not-found", departmentName)));
+					this.messageSourceHelper.getMessage("errors.department.name.not-found", departmentName)));
 	}
 
 	private <E extends RuntimeException> E createException(Class<E> exceptionClass, String errorMessage) {

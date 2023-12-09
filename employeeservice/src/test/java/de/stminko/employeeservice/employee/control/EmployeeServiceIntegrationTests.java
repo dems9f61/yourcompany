@@ -115,19 +115,19 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 		@Test
 		@DisplayName("Finding an employee with a wrong uuid fails")
-		void givenUnknownUuid_whenFind_thenThrowResourceNotFoundException() {
+		void givenUnknownUuid_whenFindById_thenThrowResourceNotFoundException() {
 			// Arrange
 			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
 			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
-			List<EmployeeRequest> EmployeeRequests = new LinkedList<>();
+			List<EmployeeRequest> employeeRequests = new LinkedList<>();
 			IntStream.range(0, RandomUtils.nextInt(20, 30))
-				.forEach((int value) -> EmployeeRequests
+				.forEach((int value) -> employeeRequests
 					.add(EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
 						.departmentName(departmentRequest.departmentName())
 						.create()));
 
-			for (EmployeeRequest employeeRequest : EmployeeRequests) {
+			for (EmployeeRequest employeeRequest : employeeRequests) {
 				EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
 			}
 			String unknownId = UUID.randomUUID().toString();
@@ -139,7 +139,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 		@Test
 		@DisplayName("Finding an employee with a correct employee uuid returns the related employee")
-		void givenEmployee_whenFind_thenReturnEmployee() {
+		void givenEmployee_whenFindById_thenReturnEmployee() {
 			// Arrange
 			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();
@@ -211,6 +211,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.create();
 			EmployeeServiceIntegrationTests.this.departmentService.create(newDepartmentRequest);
 			String id = employee.getId();
+			assert id != null;
 
 			// Act
 			EmployeeServiceIntegrationTests.this.employeeService.doFullUpdate(id, updateRequest);
@@ -253,6 +254,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String id = employee.getId();
+			assert id != null;
 
 			// Act
 			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
@@ -291,6 +293,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String id = employee.getId();
+			assert id != null;
 
 			// Act
 			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
@@ -374,6 +377,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String id = employee.getId();
+			assert id != null;
 
 			// Act
 			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateParameters);
@@ -414,6 +418,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String id = employee.getId();
+			assert id != null;
 
 			// Act
 			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
@@ -460,9 +465,10 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 			EmployeeRequest update = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.createDefault();
 
 			// Act / Assert
-			Assertions.assertThatExceptionOfType(BadRequestException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(employee.getId(),
-						update));
+			Assertions.assertThatExceptionOfType(BadRequestException.class).isThrownBy(() -> {
+				assert employee.getId() != null;
+				EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(employee.getId(), update);
+			});
 		}
 
 	}
@@ -473,7 +479,7 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 		@Test
 		@DisplayName("Deleting an employee with a wrong uuid fails")
-		void givenUnknownUuid_whenFind_thenThrowNotFoundException() {
+		void givenUnknownUuid_whenDelete_thenThrowNotFoundException() {
 			// Arrange
 			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
 				.createDefault();

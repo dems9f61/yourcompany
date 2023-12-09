@@ -13,6 +13,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
 
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Persistable;
  * @author Stéphan Minko
  */
 @Audited
+@Getter
 @MappedSuperclass
 public abstract class AbstractEntity<ID extends Serializable> implements Persistable<ID> {
 

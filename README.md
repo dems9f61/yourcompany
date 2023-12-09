@@ -18,9 +18,13 @@ REST API. It should contain endpoints to:
     3. Full name (first and last name)
     4. Birthday (format yyyy-MM-dd)
     5. Employee's department
-3. Get a specific employee by uuid (response in JSON Object format)
-4. Update an employee
-5. Delete an employee
+3. Get a specific employee by its uuid (response in JSON Object format)
+4. Get a specific department by its id (response in JSON Object format) 
+5. Get all employees belonging to a specific department (response in array of JSON Object format)
+6. Update an employee
+7. Update a department
+8. Delete an employee
+9. Delete a department (if there's no employee associated with it)
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 

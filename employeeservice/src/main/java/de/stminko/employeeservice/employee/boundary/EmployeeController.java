@@ -197,7 +197,6 @@ public class EmployeeController {
 	public void doPartialUpdate(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("id") String id,
-
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Partial employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
@@ -228,7 +227,6 @@ public class EmployeeController {
 	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("id") String id,
-
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
@@ -244,7 +242,7 @@ public class EmployeeController {
 	 * </p>
 	 * @param id the unique identifier of the employee to be deleted.
 	 */
-	@Operation(summary = "Delete an employee", description = "Deletes an employee by their ID")
+	@Operation(summary = "Deletes an employee", description = "Deletes an employee by their ID")
 	@ApiResponses({
 			@ApiResponse(responseCode = "204",
 					description = "Employee successfully deleted, no content in the response"),
