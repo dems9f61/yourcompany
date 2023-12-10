@@ -76,5 +76,5 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     

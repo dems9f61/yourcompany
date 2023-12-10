@@ -55,7 +55,7 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(department).isNotNull();
 			Assertions.assertThat(department.getId()).isGreaterThan(0L);
 			Assertions.assertThat(department.getCreatedAt()).isNotNull();
-			Assertions.assertThat(department.getModifiedAt()).isNotNull();
+			Assertions.assertThat(department.getLastModifiedAt()).isNotNull();
 			Assertions.assertThat(department.getDepartmentName())
 				.isNotBlank()
 				.isEqualTo(departmentRequest.departmentName());
@@ -210,8 +210,8 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 			Assertions.assertThat(foundDepartment.getId()).isEqualTo(id);
 			Assertions.assertThat(foundDepartment.getCreatedAt())
 				.isEqualToIgnoringNanos(createdDepartment.getCreatedAt());
-			Assertions.assertThat(foundDepartment.getModifiedAt())
-				.isEqualToIgnoringNanos(createdDepartment.getModifiedAt());
+			Assertions.assertThat(foundDepartment.getLastModifiedAt())
+				.isEqualToIgnoringNanos(createdDepartment.getLastModifiedAt());
 		}
 
 		@Test

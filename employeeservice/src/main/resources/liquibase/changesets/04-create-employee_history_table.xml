@@ -7,17 +7,17 @@
         <sql>
             CREATE TABLE history.employee_history
             (
-                id            VARCHAR(36) NOT NULL,
-                rev           BIGINT      NOT NULL
+                id               VARCHAR(36) NOT NULL,
+                rev              BIGINT      NOT NULL
                     CONSTRAINT fk_employee_history_to_audit_trail REFERENCES history.audit_trail,
-                revtype       SMALLINT,
-                birthday      TIMESTAMP,
-                email_address varchar(255),
-                first_name    varchar(255),
-                last_name     varchar(255),
-                department_id BIGINT,
-                created_at    TIMESTAMP,
-                modified_at   TIMESTAMP,
+                revtype          SMALLINT,
+                birthday         TIMESTAMP(6) WITH TIME ZONE,
+                email_address    VARCHAR(255),
+                first_name       VARCHAR(255),
+                last_name        VARCHAR(255),
+                department_id    BIGINT,
+                last_modified_at TIMESTAMP(6) WITH TIME ZONE,
+                last_modified_by VARCHAR(255),
                 CONSTRAINT employees_history_pkey PRIMARY KEY (id, rev)
             );
         </sql>

@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonView;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
@@ -17,7 +18,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Abstract base class for entities providing common audit fields and lifecycle callbacks.
@@ -30,23 +36,44 @@ import org.springframework.data.domain.Persistable;
 @Audited
 @Getter
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity<ID extends Serializable> implements Persistable<ID> {
 
 	/**
 	 * Timestamp of when the entity was created.
 	 */
 	@JsonView(DataView.GET.class)
-	@NotNull(groups = { DataView.GET.class })
-	@Column(nullable = false)
+	@NotNull
+	@CreatedDate
+	@Column(nullable = false, updatable = false)
 	private ZonedDateTime createdAt;
+
+	/**
+	 * The createdBy variable represents the identifier of the user who created the
+	 * entity.
+	 */
+	@JsonView({ DataView.GET.class })
+	@NotNull
+	@CreatedBy
+	@Column(updatable = false)
+	private String createdBy;
 
 	/**
 	 * Timestamp of when the entity was last modified.
 	 */
 	@JsonView(DataView.GET.class)
-	@NotNull(groups = { DataView.GET.class })
+	@NotNull
 	@Column(nullable = false)
-	private ZonedDateTime modifiedAt;
+	@LastModifiedDate
+	private ZonedDateTime lastModifiedAt;
+
+	/**
+	 * The lastModifiedBy variable represents the user who last modified the data.
+	 */
+	@JsonView({ DataView.GET.class })
+	@NotNull
+	@LastModifiedBy
+	private String lastModifiedBy;
 
 	/**
 	 * Version number for optimistic locking.
@@ -70,7 +97,6 @@ public abstract class AbstractEntity<ID extends Serializable> implements Persist
 	 */
 	@PrePersist
 	public final void prePersist() {
-		patchAuditData();
 		onPrePersist();
 	}
 
@@ -79,7 +105,6 @@ public abstract class AbstractEntity<ID extends Serializable> implements Persist
 	 */
 	@PreUpdate
 	public final void preUpdate() {
-		patchAuditData();
 		onPreUpdate();
 	}
 
@@ -92,14 +117,14 @@ public abstract class AbstractEntity<ID extends Serializable> implements Persist
 	}
 
 	/**
-	 * Provides a string representation of the entity, including its identifier, creation,
-	 * and modification timestamps.
-	 * @return a string representation of the entity
+	 * Returns a string representation of the object.
+	 * @return a string representation of the object.
 	 */
 	@Override
 	public String toString() {
-		return "AbstractEntity{" + "id=" + getId() + ", created at=" + this.createdAt + ", modified At="
-				+ this.modifiedAt + '}';
+		return "AbstractEntity{" + "createdAt=" + this.createdAt + ", createdBy='" + this.createdBy + '\''
+				+ ", lastModifiedAt=" + this.lastModifiedAt + ", lastModifiedBy='" + this.lastModifiedBy + '\''
+				+ ", version=" + this.version + '}';
 	}
 
 	/**
@@ -118,16 +143,6 @@ public abstract class AbstractEntity<ID extends Serializable> implements Persist
 	 * Hook method to perform action on post-load event.
 	 */
 	protected void onPostLoad() {
-	}
-
-	/**
-	 * Updates audit data fields (createdAt and modifiedAt).
-	 */
-	private void patchAuditData() {
-		this.modifiedAt = ZonedDateTime.now();
-		if (this.createdAt == null) {
-			this.createdAt = this.modifiedAt;
-		}
 	}
 
 }

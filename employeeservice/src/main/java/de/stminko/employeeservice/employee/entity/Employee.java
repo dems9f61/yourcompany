@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 
 /**
@@ -42,7 +43,8 @@ import org.hibernate.envers.Audited;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Audited
-@AuditOverride(forClass = AbstractEntity.class)
+@AuditOverrides({ @AuditOverride(forClass = AbstractEntity.class, isAudited = false, name = "createdAt"),
+		@AuditOverride(forClass = AbstractEntity.class, isAudited = false, name = "createdBy") })
 @Getter
 @Setter
 @ToString(callSuper = true)

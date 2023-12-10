@@ -7,11 +7,13 @@
             CREATE SEQUENCE data.department_sequence;
             CREATE TABLE data.department
             (
-                id              BIGINT       NOT NULL DEFAULT NEXTVAL('data.department_sequence') PRIMARY KEY,
-                created_at      TIMESTAMP(6) NOT NULL,
-                modified_at     TIMESTAMP(6) NOT NULL,
-                version         BIGINT       NOT NULL,
-                department_name VARCHAR(50)  NOT NULL
+                id               BIGINT                      NOT NULL DEFAULT NEXTVAL('data.department_sequence') PRIMARY KEY,
+                created_at       TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+                created_by       VARCHAR(255)                NOT NULL,
+                last_modified_at TIMESTAMP(6) WITH TIME ZONE NOT NULL,
+                last_modified_by VARCHAR(255)                NOT NULL,
+                version          BIGINT                      NOT NULL,
+                department_name  VARCHAR(50)                 NOT NULL
                     CONSTRAINT uk_department_department_name
                         UNIQUE
             );

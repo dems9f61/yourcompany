@@ -7,13 +7,13 @@
         <sql>
             create table history.department_history
             (
-                id              BIGINT NOT NULL,
-                rev             BIGINT NOT NULL
+                id               BIGINT NOT NULL,
+                rev              BIGINT NOT NULL
                     CONSTRAINT fk_department_history_to_audit_trail REFERENCES history.audit_trail,
-                revtype         SMALLINT,
-                department_name VARCHAR(50),
-                created_at      TIMESTAMP,
-                modified_at     TIMESTAMP,
+                revtype          SMALLINT,
+                department_name  VARCHAR(50),
+                last_modified_at TIMESTAMP(6) WITH TIME ZONE,
+                last_modified_by VARCHAR(255),
                 CONSTRAINT departments_history_pkey PRIMARY KEY (id, rev)
             );
         </sql>
