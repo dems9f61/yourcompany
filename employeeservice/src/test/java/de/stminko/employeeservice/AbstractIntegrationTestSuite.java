@@ -30,8 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 import org.springframework.util.StopWatch;
 
-@ExtendWith(SpringExtension.class)
-@ExtendWith(ErrorDecorator.class)
+@ExtendWith({ SpringExtension.class, ErrorDecorator.class })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		classes = { EmployeeServiceApplication.class })
 @ActiveProfiles("local")

@@ -40,16 +40,22 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	@Autowired
 	private DepartmentRepository departmentRepository;
 
-	private DepartmentResponse saveRandomDepartment() throws Exception {
-		DepartmentRequest departmentRequest = this.departmentRequestTestFactory.createDefault();
-		String departmentRequestAsJson = transformRequestToJSONByView(departmentRequest, DataView.POST.class);
-		MvcResult departmentMvcResult = this.mockMvc
-			.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(departmentRequestAsJson))
-			.andReturn();
-		return this.objectMapper.readValue(departmentMvcResult.getResponse().getContentAsString(),
-				DepartmentResponse.class);
+	private DepartmentResponse saveRandomDepartment() {
+		try {
+			DepartmentRequest departmentRequest = this.departmentRequestTestFactory.createDefault();
+			String departmentRequestAsJson = transformRequestToJSONByView(departmentRequest, DataView.POST.class);
+			MvcResult departmentMvcResult = this.mockMvc
+				.perform(MockMvcRequestBuilders.post(DepartmentController.BASE_URI)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(departmentRequestAsJson))
+				.andReturn();
+			return this.objectMapper.readValue(departmentMvcResult.getResponse().getContentAsString(),
+					DepartmentResponse.class);
+		}
+		catch (Exception caught) {
+			throw new RuntimeException(caught);
+		}
+
 	}
 
 	private EmployeeResponse saveRandomEmployee(String departmentName) {
@@ -224,15 +230,15 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.perform(MockMvcRequestBuilders.get(uri, id).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(employeeResponseList.size())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].emailAddress").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].firstName").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].lastName").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].birthday").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].departmentName").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].departmentName",
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(employeeResponseList.size())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].firstName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].lastName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].birthday").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName",
 						Matchers.everyItem(Matchers.is(departmentResponse.departmentName()))))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.[*].id").exists());
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
 		}
 
 		@Test
@@ -265,7 +271,64 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.perform(MockMvcRequestBuilders.get(uri, id).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(0)));
+		}
+
+		@Test
+		@DisplayName("GET: 'https://.../departments/{id}/revisions succeeds on existing department")
+		void givenExistingDepartment_whenFindRevisions_thenSuccessAndReturnPageOfRevisions() throws Exception {
+			// Arrange
+			DepartmentResponse departmentResponse = saveRandomDepartment();
+
+			DepartmentRequest updateDepartmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
+				.builder()
+				.departmentName(RandomStringUtils.randomAlphabetic(23))
+				.create();
+
+			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
+			String updateUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(updateRequestAsJson));
+
+			String deleteUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON));
+
+			String revisionUri = "%s/{id}/revisions".formatted(DepartmentController.BASE_URI);
+
+			// Act / Assert
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(3)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].metadata.revisionType", Matchers.is("INSERT")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[1].metadata.revisionType", Matchers.is("UPDATE")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[2].metadata.revisionType", Matchers.is("DELETE")));
+
+		}
+
+		@Test
+		@DisplayName("GET: 'https://.../departments succeeds and returns all departments in a page")
+		void givenDepartments_whenFindAll_thenSuccessAndReturnPageOfDepartments() throws Exception {
+			// Arrange
+			int count = RandomUtils.nextInt(20, 30);
+			IntStream.range(0, count).forEach((int i) -> saveRandomDepartment());
+
+			String uri = DepartmentController.BASE_URI;
+
+			// Act / Assert
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(uri).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(count)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
 		}
 
 	}

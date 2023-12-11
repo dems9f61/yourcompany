@@ -1,13 +1,13 @@
 package de.stminko.employeeservice.department.boundary;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import de.stminko.employeeservice.department.control.DepartmentRepository;
 import de.stminko.employeeservice.department.entity.Department;
 import de.stminko.employeeservice.department.entity.DepartmentRequest;
+import de.stminko.employeeservice.employee.boundary.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.DepartmentNotEmptyException;
@@ -18,11 +18,15 @@ import de.stminko.employeeservice.runtime.validation.constraints.boundary.Messag
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +51,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class DepartmentService {
 
 	private final DepartmentRepository repository;
+
+	private final EmployeeService employeeService;
 
 	private final Validator validator;
 
@@ -118,20 +124,24 @@ public class DepartmentService {
 	}
 
 	/**
-	 * Retrieves all departments from the repository.
+	 * Retrieves a paginated list of all departments.
 	 * <p>
-	 * This method operates within a transactional context with the SUPPORTS propagation.
-	 * It means the method will participate in a transaction if one already exists, but it
-	 * does not require a transaction to be executed. If no transaction exists, the method
-	 * will still be executed, but without transactional support.
-	 * </p>
-	 * @return a list of {@link Department} objects representing all departments in the
-	 * repository. The list may be empty if no departments are found.
+	 * This method returns a {@link Page} of {@link Department} objects, each representing
+	 * a department. The result is paginated according to the provided {@link Pageable}
+	 * object, which specifies the page number and size, along with sorting parameters.
+	 * @param pageable a {@link Pageable} object to specify the pagination and sorting
+	 * information.
+	 * @return a {@link Page} of {@link Department} objects containing the paginated
+	 * department data.
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
-	public List<Department> findAll() {
+	public Page<Department> findAll(@NonNull Pageable pageable) {
 		log.info("findAll()");
-		return this.repository.findAll();
+		return this.repository.findAll(pageable);
+	}
+
+	public Page<Revision<Long, Department>> findRevisions(@NotNull Long id, @NotNull Pageable pageable) {
+		return this.repository.findRevisions(id, pageable);
 	}
 
 	/**
@@ -229,15 +239,17 @@ public class DepartmentService {
 	/**
 	 * retrieves all employees associated with a department identified by the provided ID.
 	 * @param id the unique identifier of the department
+	 * @param pageable a {@link Pageable} object to specify pagination information.
 	 * @return a set of employees associated with the department
 	 * @throws NotFoundException if the department with the provided ID does not exist
 	 */
-	Set<Employee> findAllEmployeesById(@NonNull Long id) {
+	Page<Employee> findAllEmployeesById(@NonNull Long id, @NonNull Pageable pageable) {
 		log.info("findAllEmployeesById( id= [{}] )", id);
-		Department department = this.repository.findDepartmentWithEmployees(id)
-			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
-		return department.getEmployees();
+		if (!this.repository.existsById(id)) {
+			throw new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString()));
+		}
+		return this.employeeService.findAllEmployeesByDepartmentId(id, pageable);
 	}
 
 	private Department update(Long id, DepartmentRequest departmentRequest, Class<? extends DataView> validationGroup) {

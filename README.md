@@ -11,20 +11,22 @@ REST API. It should contain endpoints to:
 
 1. Create a department
     1. Id (auto-increment)
-    2. Name
+    2. Name 
 2. Create an employee in an existing department
-    1. Uuid (generated automatically)
+    1. UUID (generated automatically)
     2. E-mail
     3. Full name (first and last name)
     4. Birthday (format yyyy-MM-dd)
-    5. Employee's department
+    5. Employee's department 
 3. Get a specific employee by its uuid (response in JSON Object format)
 4. Get a specific department by its id (response in JSON Object format) 
-5. Get all employees belonging to a specific department (response in array of JSON Object format)
-6. Update an employee
-7. Update a department
-8. Delete an employee
-9. Delete a department (if there's no employee associated with it)
+5. Get all departments 
+6. Get all employees belonging to a specific department by its id (response in array of JSON Object format)
+7. Update an employee 
+8. Update a department 
+9. Delete an employee 
+10. Delete a department (if there's no employee associated with it)
+11. Get all revisions for a specific department by its id 
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 

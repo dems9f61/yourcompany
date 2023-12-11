@@ -4,8 +4,11 @@ import java.util.List;
 
 import de.stminko.employeeservice.employee.entity.Employee;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.history.RevisionRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,5 +16,7 @@ public interface EmployeeRepository
 		extends JpaRepository<Employee, String>, RevisionRepository<Employee, String, Long> {
 
 	List<Employee> findByEmailAddress(String emailAddress);
+
+	Page<Employee> findAllByDepartmentId(@Param("departmentId") Long departmentId, Pageable pageable);
 
 }

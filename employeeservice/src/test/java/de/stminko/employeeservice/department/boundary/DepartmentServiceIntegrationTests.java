@@ -2,14 +2,13 @@ package de.stminko.employeeservice.department.boundary;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import de.stminko.employeeservice.AbstractIntegrationTestSuite;
 import de.stminko.employeeservice.department.control.DepartmentRepository;
 import de.stminko.employeeservice.department.entity.Department;
 import de.stminko.employeeservice.department.entity.DepartmentRequest;
-import de.stminko.employeeservice.employee.control.EmployeeService;
+import de.stminko.employeeservice.employee.boundary.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
@@ -24,6 +23,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.RevisionMetadata;
 
 @DisplayName("Integration tests for the department service")
 class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
@@ -123,12 +127,14 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 			for (DepartmentRequest creationRequest : creationRequests) {
 				DepartmentServiceIntegrationTests.this.departmentService.create(creationRequest);
 			}
+			Pageable pageRequest = PageRequest.of(0, 200);
 
 			// Act
-			List<Department> all = DepartmentServiceIntegrationTests.this.departmentService.findAll();
+			Page<Department> departmentPage = DepartmentServiceIntegrationTests.this.departmentService
+				.findAll(pageRequest);
 
 			// Assert
-			Assertions.assertThat(all.size()).isEqualTo(creationRequests.size());
+			Assertions.assertThat(departmentPage.stream().count()).isEqualTo(creationRequests.size());
 		}
 
 		@Test
@@ -231,10 +237,11 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 					.create(employeeRequest));
 			Long id = department.getId();
 			assert id != null;
+			Pageable pageRequest = PageRequest.of(0, 200);
 
 			// Act
-			Set<Employee> associatedEmployees = DepartmentServiceIntegrationTests.this.departmentService
-				.findAllEmployeesById(id);
+			Page<Employee> associatedEmployees = DepartmentServiceIntegrationTests.this.departmentService
+				.findAllEmployeesById(id, pageRequest);
 
 			// Assert
 			Assertions.assertThat(associatedEmployees).isNotEmpty().hasSize(count);
@@ -249,13 +256,44 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 			Department department = DepartmentServiceIntegrationTests.this.departmentService.create(departmentRequest);
 			Long id = department.getId();
 			assert id != null;
+			Pageable pageRequest = PageRequest.of(0, 200);
 
 			// Act
-			Set<Employee> associatedEmployees = DepartmentServiceIntegrationTests.this.departmentService
-				.findAllEmployeesById(id);
+			Page<Employee> associatedEmployees = DepartmentServiceIntegrationTests.this.departmentService
+				.findAllEmployeesById(id, pageRequest);
 
 			// Assert
 			Assertions.assertThat(associatedEmployees).isEmpty();
+		}
+
+		@DisplayName("Find revisions succeeds on existing departments")
+		@Test
+		void givenExistingDepartment_whenFindRevisions_thenSuccessAndReturnPageOfRevisions() {
+			// Arrange
+			DepartmentRequest createRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory
+				.createDefault();
+			Department department = DepartmentServiceIntegrationTests.this.departmentService.create(createRequest);
+
+			DepartmentRequest updateRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory
+				.createDefault();
+
+			Long id = department.getId();
+			assert id != null;
+			DepartmentServiceIntegrationTests.this.departmentService.doFullUpdate(id, updateRequest);
+
+			DepartmentServiceIntegrationTests.this.departmentService.deleteById(id);
+
+			// Act
+			Page<Revision<Long, Department>> revisions = DepartmentServiceIntegrationTests.this.departmentService
+				.findRevisions(id, PageRequest.of(0, 20));
+
+			// Arrange
+			Assertions.assertThat(revisions).isNotNull();
+			List<Revision<Long, Department>> revisionList = revisions.getContent();
+			Assertions.assertThat(revisionList)
+				.extracting((Revision<Long, Department> value) -> value.getMetadata().getRevisionType())
+				.containsExactly(RevisionMetadata.RevisionType.INSERT, RevisionMetadata.RevisionType.UPDATE,
+						RevisionMetadata.RevisionType.DELETE);
 		}
 
 	}

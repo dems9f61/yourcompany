@@ -12,7 +12,7 @@
  * requests for managing employees. This includes operations like creating new employees,
  * retrieving employee details by ID, listing all employees, updating employee
  * information, and deleting employees. It leverages
- * {@link de.stminko.employeeservice.employee.control.EmployeeService} for business logic
+ * {@link de.stminko.employeeservice.employee.boundary.EmployeeService} for business logic
  * and data processing, ensuring a clean separation between the web layer and the service
  * layer.</li>
  * </ul>
@@ -24,7 +24,7 @@
  * </p>
  *
  * @author Stéphan Minko
- * @see de.stminko.employeeservice.employee.control.EmployeeService
+ * @see de.stminko.employeeservice.employee.boundary.EmployeeService
  * @see de.stminko.employeeservice.employee.boundary.EmployeeController
  */
 package de.stminko.employeeservice.employee.boundary;

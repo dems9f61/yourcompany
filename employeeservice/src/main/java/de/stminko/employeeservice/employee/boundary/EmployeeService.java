@@ -1,4 +1,4 @@
-package de.stminko.employeeservice.employee.control;
+package de.stminko.employeeservice.employee.boundary;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -8,6 +8,8 @@ import java.util.Set;
 
 import de.stminko.employeeservice.department.boundary.DepartmentService;
 import de.stminko.employeeservice.department.entity.Department;
+import de.stminko.employeeservice.employee.control.EmployeeEventPublisher;
+import de.stminko.employeeservice.employee.control.EmployeeRepository;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
@@ -18,11 +20,13 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +50,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @see Validator for validating request objects
  */
 @Slf4j
-@RequiredArgsConstructor
 @Transactional
 @Service
 public class EmployeeService {
@@ -60,6 +63,15 @@ public class EmployeeService {
 	private final Validator validator;
 
 	private final MessageSourceHelper messageSourceHelper;
+
+	public EmployeeService(EmployeeRepository repository, @Lazy DepartmentService departmentService,
+			EmployeeEventPublisher messagePublisher, Validator validator, MessageSourceHelper messageSourceHelper) {
+		this.repository = repository;
+		this.departmentService = departmentService;
+		this.messagePublisher = messagePublisher;
+		this.validator = validator;
+		this.messageSourceHelper = messageSourceHelper;
+	}
 
 	/**
 	 * Creates a new employee from the given request.
@@ -196,6 +208,11 @@ public class EmployeeService {
 					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
 		this.repository.deleteById(id);
 		this.messagePublisher.employeeDeleted(employee);
+	}
+
+	public Page<Employee> findAllEmployeesByDepartmentId(@NonNull Long departmentId, Pageable pageable) {
+		log.info("findAllEmployeesByDepartmentId( departmentId= [{}] )", departmentId);
+		return this.repository.findAllByDepartmentId(departmentId, pageable);
 	}
 
 	private void validateUniquenessOfEmail(String emailAddress) {

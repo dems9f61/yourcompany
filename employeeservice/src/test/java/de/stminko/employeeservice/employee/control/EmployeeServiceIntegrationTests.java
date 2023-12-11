@@ -13,6 +13,7 @@ import de.stminko.employeeservice.AbstractIntegrationTestSuite;
 import de.stminko.employeeservice.department.boundary.DepartmentService;
 import de.stminko.employeeservice.department.entity.Department;
 import de.stminko.employeeservice.department.entity.DepartmentRequest;
+import de.stminko.employeeservice.employee.boundary.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.employee.entity.UsableDateFormat;
