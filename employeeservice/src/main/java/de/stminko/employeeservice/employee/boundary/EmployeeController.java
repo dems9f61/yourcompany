@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import de.stminko.employeeservice.employee.control.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.employee.entity.EmployeeResponse;

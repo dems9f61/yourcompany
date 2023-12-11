@@ -3,6 +3,7 @@ package de.stminko.employeeservice.department.control;
 import java.util.Optional;
 
 import de.stminko.employeeservice.department.entity.Department;
+import lombok.NonNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,8 @@ public interface DepartmentRepository
 	Optional<Department> findByDepartmentName(String departmentName);
 
 	@Query("SELECT d FROM Department d LEFT JOIN FETCH d.employees WHERE d.id = :id")
-	Optional<Department> findDepartmentWithEmployees(@Param("id") Long id);
+	Optional<Department> findDepartmentWithEmployees(@Param("id") @NonNull Long id);
+
+	boolean existsById(@Param("id") @NonNull Long id);
 
 }

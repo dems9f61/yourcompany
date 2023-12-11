@@ -1,7 +1,6 @@
 package de.stminko.employeeservice.department.boundary;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import de.stminko.employeeservice.department.entity.Department;
@@ -23,6 +22,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -120,68 +124,6 @@ public class DepartmentController {
 	}
 
 	/**
-	 * Finds and returns a single department by their ID.
-	 * <p>
-	 * This endpoint retrieves the details of an department specified by the provided ID.
-	 * If the employee is found, their information is returned; otherwise, a 404 error is
-	 * generated.
-	 * </p>
-	 * @param id the unique identifier of the employee.
-	 * @return the {@link DepartmentResponse} containing the department's details.
-	 */
-	@Operation(summary = "Find an department by ID", description = "Returns a single department by their ID")
-	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "Successfully found and returned the department details",
-					content = @Content(mediaType = "application/json",
-							schema = @Schema(implementation = DepartmentResponse.class))),
-			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@JsonView(DataView.GET.class)
-	@ResponseStatus(HttpStatus.OK)
-	public DepartmentResponse findDepartment(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long id) {
-		log.info("findDepartment( id=[{}] )", id);
-		Department department = this.departmentService.findById(id);
-		return new DepartmentResponse(department.getId(), department.getDepartmentName());
-	}
-
-	/**
-	 * Retrieves a set of all employees belonging to a specific department identified by
-	 * its ID.
-	 * <p>
-	 * This method returns a set of {@link EmployeeResponse} objects representing the
-	 * employees of the specified department. If the department has no employees or if the
-	 * department itself is not found, an empty set is returned. In case the department
-	 * with the given ID does not exist, a 404 error is returned.
-	 * @param id the unique identifier of the department.
-	 * @return a set of {@link EmployeeResponse} objects for the employees in the given
-	 * department.
-	 * @throws NotFoundException if no department is found with the provided ID.
-	 */
-	@Operation(summary = "List all employees by the department's ID",
-			description = "Returns a set of all employees by the department's ID")
-	@ApiResponses({ @ApiResponse(responseCode = "200",
-			description = "Successfully found and returned a set of all employees by the department's ID or an empty set if there are no employees",
-			content = @Content(mediaType = "application/json",
-					schema = @Schema(implementation = EmployeeResponse.class, type = "array"))),
-			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
-	@GetMapping(value = "/{id}/employees", produces = MediaType.APPLICATION_JSON_VALUE)
-	@JsonView(DataView.GET.class)
-	@ResponseStatus(HttpStatus.OK)
-	public Set<EmployeeResponse> findEmployeesByDepartment(@Parameter(
-			description = "Unique identifier of the department", required = true) @PathVariable("id") Long id) {
-		log.info("findEmployeesByDepartment( id= [{}] )", id);
-		Set<Employee> employeeSet = this.departmentService.findAllEmployeesById(id);
-		return employeeSet.stream().map((Employee employee) -> {
-			Employee.FullName fullName = employee.getFullName();
-			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-					(fullName != null) ? fullName.getFirstName() : null,
-					(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
-					employee.getDepartment().getDepartmentName());
-		}).collect(Collectors.toSet());
-	}
-
-	/**
 	 * Fully updates an existing department's data.
 	 * <p>
 	 * This endpoint allows for complete updates to an department's information. All
@@ -209,6 +151,136 @@ public class DepartmentController {
 							implementation = DepartmentRequest.class))) @RequestBody DepartmentRequest departmentRequest) {
 		log.info("doFullUpdate( id= [{}], request= [{}])", id, departmentRequest);
 		this.departmentService.doFullUpdate(id, departmentRequest);
+	}
+
+	/**
+	 * Finds and returns a single department by their ID.
+	 * <p>
+	 * This endpoint retrieves the details of an department specified by the provided ID.
+	 * If the employee is found, their information is returned; otherwise, a 404 error is
+	 * generated.
+	 * </p>
+	 * @param id the unique identifier of the employee.
+	 * @return the {@link DepartmentResponse} containing the department's details.
+	 */
+	@Operation(summary = "Find an department by ID", description = "Returns a single department by their ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Successfully found and returned the department details",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = DepartmentResponse.class))),
+			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
+	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	@ResponseStatus(HttpStatus.OK)
+	public DepartmentResponse findDepartment(@Parameter(description = "Unique identifier of the department",
+			required = true) @PathVariable("id") Long id) {
+		log.info("findDepartment( id=[{}] )", id);
+		Department department = this.departmentService.findById(id);
+		return new DepartmentResponse(department.getId(), department.getDepartmentName());
+	}
+
+	/**
+	 * Retrieves a paginated list of all departments.
+	 * <p>
+	 * This method returns a {@link Page} of {@link DepartmentResponse} objects, each
+	 * representing a department. The result is paginated based on the provided
+	 * {@link Pageable} object, which specifies the page number, page size, and sorting
+	 * parameters.
+	 * @param pageable a {@link Pageable} object specifying the pagination and sorting
+	 * information.
+	 * @return a {@link Page} of {@link DepartmentResponse} objects containing the
+	 * paginated department data.
+	 */
+	@Operation(summary = "Find all departments", description = "Returns a paginated list of departments")
+	@ApiResponse(responseCode = "200", description = "Successfully retrieved the list of departments",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
+	@JsonView(DataView.GET.class)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.OK)
+	public Page<DepartmentResponse> findAllDepartments(@PageableDefault(50) Pageable pageable) {
+		log.info("findAllDepartments()");
+		Page<Department> departmentPage = this.departmentService.findAll(pageable);
+		List<DepartmentResponse> departmentResponses = departmentPage.getContent()
+			.stream()
+			.map((Department department) -> new DepartmentResponse(department.getId(), department.getDepartmentName()))
+			.toList();
+
+		return new PageImpl<>(departmentResponses, departmentPage.getPageable(), departmentPage.getTotalElements());
+	}
+
+	/**
+	 * Retrieves a paginated list of revisions for a specific department.
+	 * <p>
+	 * This method returns a page of {@link Revision} objects, each containing a
+	 * {@link DepartmentResponse} that represents a state of the department at a certain
+	 * point in time. Each revision includes metadata such as the revision type (insert,
+	 * update, delete) and the timestamp of the revision.
+	 * @param id the ID of the department for which to retrieve the revisions.
+	 * @param pageable a {@link Pageable} object specifying the pagination information
+	 * (page number, page size).
+	 * @return a {@link Page} of {@link Revision} objects containing
+	 * {@link DepartmentResponse} and revision metadata.
+	 */
+	@Operation(summary = "Find all revisions for a department",
+			description = "Returns a page of revisions for the specified department ID")
+	@ApiResponse(responseCode = "200", description = "Successfully retrieved the revisions",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
+	@GetMapping(value = "/{id}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	public Page<Revision<Long, DepartmentResponse>> findAllRevisions(@PathVariable Long id,
+			@PageableDefault(50) Pageable pageable) {
+		log.info("findAllRevisions( id= [{}] )", id);
+		Page<Revision<Long, Department>> departmentRevisions = this.departmentService.findRevisions(id, pageable);
+		List<Revision<Long, DepartmentResponse>> responseRevisions = departmentRevisions.getContent()
+			.stream()
+			.map((Revision<Long, Department> revision) -> {
+				Department department = revision.getEntity();
+				DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
+						department.getDepartmentName());
+				return Revision.of(revision.getMetadata(), departmentResponse);
+			})
+			.toList();
+
+		return new PageImpl<>(responseRevisions, departmentRevisions.getPageable(),
+				departmentRevisions.getTotalElements());
+	}
+
+	/**
+	 * Retrieves a paginated list of employees for a specific department.
+	 * <p>
+	 * This method returns a {@link Page} of {@link EmployeeResponse} objects for the
+	 * department specified by the given ID. Each {@link EmployeeResponse} includes
+	 * details such as employee ID, email address, full name, birthday, and department
+	 * name. The list is paginated based on the provided {@link Pageable} object.
+	 * @param id the unique identifier of the department for which to retrieve employees.
+	 * @param pageable a {@link Pageable} object specifying the pagination information
+	 * (page number, page size).
+	 * @return a {@link Page} of {@link EmployeeResponse} objects representing the
+	 * employees in the specified department.
+	 * @throws NotFoundException if no department is found with the provided ID.
+	 */
+	@Operation(summary = "Find employees by department ID",
+			description = "Returns a paginated list of employees belonging to the specified department ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Successfully retrieved the list of employees",
+					content = @Content(mediaType = "application/json",
+							schema = @Schema(implementation = PageImpl.class))),
+			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
+	@GetMapping(value = "/{id}/employees", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	@ResponseStatus(HttpStatus.OK)
+	public Page<EmployeeResponse> findAllEmployeesById(@Parameter(description = "Unique identifier of the department",
+			required = true) @PathVariable("id") Long id, @PageableDefault(50) Pageable pageable) {
+		log.info("findEmployeesByDepartment( id= [{}] )", id);
+		Page<Employee> employeePage = this.departmentService.findAllEmployeesById(id, pageable);
+		List<EmployeeResponse> employeeResponses = employeePage.getContent().stream().map((Employee employee) -> {
+			Employee.FullName fullName = employee.getFullName();
+			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
+					(fullName != null) ? fullName.getFirstName() : null,
+					(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
+					employee.getDepartment().getDepartmentName());
+		}).toList();
+		return new PageImpl<>(employeeResponses, employeePage.getPageable(), employeePage.getTotalElements());
 	}
 
 	/**

@@ -33,6 +33,6 @@
  * @author Stéphan Minko
  * @see de.stminko.employeeservice.employee.control.EmployeeEventPublisher
  * @see de.stminko.employeeservice.employee.control.EmployeeRepository
- * @see de.stminko.employeeservice.employee.control.EmployeeService
+ * @see de.stminko.employeeservice.employee.boundary.EmployeeService
  */
 package de.stminko.employeeservice.employee.control;
