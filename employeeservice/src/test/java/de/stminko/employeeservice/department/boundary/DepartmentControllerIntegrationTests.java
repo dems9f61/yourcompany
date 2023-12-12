@@ -276,7 +276,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 
 		@Test
 		@DisplayName("GET: 'https://.../departments/{id}/revisions succeeds on existing department")
-		void givenExistingDepartment_whenFindRevisions_thenSuccessAndReturnPageOfRevisions() throws Exception {
+		void givenExistingDepartment_whenFindRevisions_thenStatusOkAndReturnPageOfRevisions() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
 
@@ -309,6 +309,42 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].metadata.revisionType", Matchers.is("INSERT")))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[1].metadata.revisionType", Matchers.is("UPDATE")))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[2].metadata.revisionType", Matchers.is("DELETE")));
+
+		}
+
+		@Test
+		@DisplayName("GET: 'https://.../departments/{id}/revisions/latest succeeds on existing department")
+		void givenExistingDepartment_whenFindLatestRevision_thenStatusOkAndReturnLatestRevision() throws Exception {
+			// Arrange
+			DepartmentResponse departmentResponse = saveRandomDepartment();
+
+			DepartmentRequest updateDepartmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
+				.builder()
+				.departmentName(RandomStringUtils.randomAlphabetic(23))
+				.create();
+
+			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
+			String updateUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(updateRequestAsJson));
+
+			String deleteUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON));
+
+			String revisionUri = "%s/{id}/revisions/latest".formatted(DepartmentController.BASE_URI);
+
+			// Act / Assert
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.id())
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.metadata.revisionType", Matchers.is("DELETE")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.metadata.revisionNumber").isNotEmpty());
 
 		}
 

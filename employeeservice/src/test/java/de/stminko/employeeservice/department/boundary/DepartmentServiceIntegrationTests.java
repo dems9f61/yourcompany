@@ -296,6 +296,32 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 						RevisionMetadata.RevisionType.DELETE);
 		}
 
+		@DisplayName("Find latest revision succeeds on existing department")
+		@Test
+		void givenExistingDepartment_whenFindLatestRevision_thenSuccessAndReturnLatestRevision() {
+			// Arrange
+			DepartmentRequest createRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory
+				.createDefault();
+			Department department = DepartmentServiceIntegrationTests.this.departmentService.create(createRequest);
+
+			DepartmentRequest updateRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory
+				.createDefault();
+
+			Long id = department.getId();
+			assert id != null;
+			Department updatedDepartment = DepartmentServiceIntegrationTests.this.departmentService.doPartialUpdate(id,
+					updateRequest);
+
+			// Act
+			Revision<Long, Department> latestRevision = DepartmentServiceIntegrationTests.this.departmentService
+				.findLastChangeRevision(id);
+
+			Assertions.assertThat(latestRevision).isNotNull();
+			Assertions.assertThat(latestRevision.getMetadata().getRevisionType())
+				.isEqualTo(RevisionMetadata.RevisionType.UPDATE);
+			Assertions.assertThat(latestRevision.getEntity()).isEqualTo(updatedDepartment);
+		}
+
 	}
 
 	@Nested

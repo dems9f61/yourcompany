@@ -1,14 +1,12 @@
 spring.profiles.active: ${mode:local}
 server.port: 8081
 datasource-debug.enabled: true
+rest.controller.loggingInterceptor.enabled: true
 spring:
   banner:
     location: classpath:/banner.txt
   application.name: employee-service
   output.ansi.enabled: ALWAYS
-  jackson:
-    mapper:
-      default-view-inclusion: true
   jpa:
     open-in-view: false
     hibernate:
@@ -68,6 +66,7 @@ spring:
 
 ---
 spring.config.activate.on-profile: local-hibernate
+rest.controller.loggingInterceptor.enabled: false
 database:
   host: localhost
   port: 5434

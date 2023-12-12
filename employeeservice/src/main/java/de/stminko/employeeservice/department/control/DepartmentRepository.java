@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface DepartmentRepository
 		extends JpaRepository<Department, Long>, RevisionRepository<Department, Long, Long> {
 
-	Optional<Department> findByDepartmentName(String departmentName);
+	Optional<Department> findByDepartmentName(@NonNull String departmentName);
 
 	@Query("SELECT d FROM Department d LEFT JOIN FETCH d.employees WHERE d.id = :id")
 	Optional<Department> findDepartmentWithEmployees(@Param("id") @NonNull Long id);

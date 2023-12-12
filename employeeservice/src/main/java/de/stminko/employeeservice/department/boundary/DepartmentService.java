@@ -18,7 +18,6 @@ import de.stminko.employeeservice.runtime.validation.constraints.boundary.Messag
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,8 +139,29 @@ public class DepartmentService {
 		return this.repository.findAll(pageable);
 	}
 
-	public Page<Revision<Long, Department>> findRevisions(@NotNull Long id, @NotNull Pageable pageable) {
+	/**
+	 * Finds the revision information of a department with the specified id.
+	 * @param id the id of the department to find revisions for (must not be null)
+	 * @param pageable the pagination information for the result (must not be null)
+	 * @return a Page object containing the revisions of the department
+	 */
+	public Page<Revision<Long, Department>> findRevisions(@NonNull Long id, @NonNull Pageable pageable) {
+		log.info("findRevisions( id= [{}] )", id);
 		return this.repository.findRevisions(id, pageable);
+	}
+
+	/**
+	 * Find the latest revision information for the given department id.
+	 * @param id the id of the entity the revision history should be fetched for
+	 * @return a single {@link Revision} for the last data change on the Entity with given
+	 * Id
+	 * @throws NotFoundException if no revision information could be found (the department
+	 * for given Id does not exist)
+	 */
+	public Revision<Long, Department> findLastChangeRevision(@NonNull Long id) {
+		return this.repository.findLastChangeRevision(id)
+			.orElseThrow(() -> new NotFoundException(
+					"Could not find latest Revision for department with Id: [%s]".formatted(id.toString())));
 	}
 
 	/**

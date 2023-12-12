@@ -27,6 +27,7 @@ REST API. It should contain endpoints to:
 9. Delete an employee 
 10. Delete a department (if there's no employee associated with it)
 11. Get all revisions for a specific department by its id 
+12. Find the latest revision for a specific department by its id
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 

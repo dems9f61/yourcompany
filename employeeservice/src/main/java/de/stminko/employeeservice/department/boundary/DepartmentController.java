@@ -227,7 +227,8 @@ public class DepartmentController {
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
 	@GetMapping(value = "/{id}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
-	public Page<Revision<Long, DepartmentResponse>> findAllRevisions(@PathVariable Long id,
+	public Page<Revision<Long, DepartmentResponse>> findAllRevisions(
+			@Parameter(description = "Unique identifier of the department", required = true) @PathVariable Long id,
 			@PageableDefault(50) Pageable pageable) {
 		log.info("findAllRevisions( id= [{}] )", id);
 		Page<Revision<Long, Department>> departmentRevisions = this.departmentService.findRevisions(id, pageable);
@@ -243,6 +244,30 @@ public class DepartmentController {
 
 		return new PageImpl<>(responseRevisions, departmentRevisions.getPageable(),
 				departmentRevisions.getTotalElements());
+	}
+
+	/**
+	 * Find the latest {@link Revision} for a department identified by its id.
+	 * @param id the id of the entity to retrieve the latest {@link Revision} for
+	 * @return the latest {@link Revision} of the given entity
+	 * @throws NotFoundException if no such {@link Revision} entry exists
+	 */
+	@Operation(summary = "Find the latest change revision of a department",
+			description = "Returns the latest revision of a department by its ID")
+	@ApiResponse(responseCode = "200", description = "Successful retrieval",
+			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+					schema = @Schema(implementation = DepartmentResponse.class)))
+	@ApiResponse(responseCode = "404", description = "Department not found")
+	@GetMapping(value = "/{id}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	public Revision<Long, DepartmentResponse> findLastChangeRevision(
+			@Parameter(description = "ID of the department") @PathVariable Long id) {
+		log.info("findLastChangeRevision( id= [{}])", id);
+		Revision<Long, Department> lastChangeRevision = this.departmentService.findLastChangeRevision(id);
+		Department department = lastChangeRevision.getEntity();
+		DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
+				department.getDepartmentName());
+		return Revision.of(lastChangeRevision.getMetadata(), departmentResponse);
 	}
 
 	/**
