@@ -7,6 +7,9 @@ spring:
     location: classpath:/banner.txt
   application.name: employee-service
   output.ansi.enabled: ALWAYS
+  jackson:
+    mapper:
+      default-view-inclusion: true
   jpa:
     open-in-view: false
     hibernate:
