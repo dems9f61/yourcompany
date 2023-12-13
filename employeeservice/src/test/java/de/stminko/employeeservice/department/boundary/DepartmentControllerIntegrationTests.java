@@ -82,7 +82,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenCreate {
 
 		@Test
-		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on empty department name")
+		@DisplayName("POST: 'hhtps://.../departments' returns BAD_REQUEST on empty department name")
 		void givenEmptyDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -100,7 +100,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on blank department name")
+		@DisplayName("POST: 'hhtps://.../departments' returns BAD_REQUEST on blank department name")
 		void givenBlankDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -118,7 +118,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../departments' returns BAD_REQUEST on null department name")
+		@DisplayName("POST: 'hhtps://.../departments' returns BAD_REQUEST on null department name")
 		void givenNullDepartmentName_whenCreate_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -136,7 +136,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../departments' returns CREATED on valid request")
+		@DisplayName("POST: 'hhtps://.../departments' returns CREATED on valid request")
 		void givenValidDepartmentRequest_whenCreate_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -374,7 +374,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenUpdate {
 
 		@Test
-		@DisplayName("PUT: 'http://.../departments/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PUT: 'hhtps://.../departments/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidFullRequest_whenFullUpdateDepartment_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -403,7 +403,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../departments/{id} returns NOT FOUND if the specified department does not exists ")
+		@DisplayName("PUT: 'hhtps://.../departments/{id} returns NOT FOUND if the specified department does not exists ")
 		void givenUnknownId_whenFullUpdateDepartment_thenStatus404() throws Exception {
 			// Arrange
 			DepartmentRequest updateDepartmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -434,7 +434,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../departments/{id} returns BAD REQUEST on null department name")
+		@DisplayName("PUT: 'hhtps://.../departments/{id} returns BAD REQUEST on null department name")
 		void givenNullDepartmentName_whenFullUpdateDepartment_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -466,7 +466,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../departments/{id} returns BAD REQUEST on already used department name")
+		@DisplayName("PUT: 'hhtps://.../departments/{id} returns BAD REQUEST on already used department name")
 		void givenAlreadyUsedDepartmentName_whenFullUpdateDepartment_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse_1 = saveRandomDepartment();
@@ -505,7 +505,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenDelete {
 
 		@Test
-		@DisplayName("DELETE: 'http://.../departments/{id}' returns NOT FOUND if the specified id doesn't exist")
+		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns NOT FOUND if the specified id doesn't exist")
 		void givenUnknownId_whenDeleteDepartmentById_thenStatus404() throws Exception {
 			// Arrange
 			Long unknownId = Long.MAX_VALUE;
@@ -528,7 +528,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("DELETE: 'http://.../departments/{id}' returns CONFLICT if the specified department isn't empty")
+		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns CONFLICT if the specified department isn't empty")
 		void givenNotEmptyDepartment_whenDeleteDepartmentById_thenStatus409() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -554,7 +554,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("DELETE: 'http://.../departments/{id}' returns NO CONTENT if the specified department exists and is empty")
+		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns NO CONTENT if the specified department exists and is empty")
 		void givenEmployee_whenDeleteDepartment_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();

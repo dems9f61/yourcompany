@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -211,9 +212,20 @@ public class EmployeeService {
 		this.messagePublisher.employeeDeleted(employee);
 	}
 
-	public Page<Employee> findAllEmployeesByDepartmentId(@NonNull Long departmentId, Pageable pageable) {
+	public Page<Employee> findAllEmployeesByDepartmentId(@NonNull Long departmentId, @NonNull Pageable pageable) {
 		log.info("findAllEmployeesByDepartmentId( departmentId= [{}] )", departmentId);
 		return this.repository.findAllByDepartmentId(departmentId, pageable);
+	}
+
+	/**
+	 * Find revisions of an employee by ID.
+	 * @param id the ID of the employee.
+	 * @param pageable the pagination information.
+	 * @return a Page object containing the revisions of the employee.
+	 */
+	public Page<Revision<Long, Employee>> findRevisions(@NonNull String id, @NonNull Pageable pageable) {
+		log.info("findRevisions( id= [{}] )", id);
+		return this.repository.findRevisions(id, pageable);
 	}
 
 	private void validateUniquenessOfEmail(String emailAddress) {

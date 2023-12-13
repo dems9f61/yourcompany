@@ -38,7 +38,7 @@ class EmployeeEventControllerIntegrationTests extends AbstractIntegrationTestSui
 	private MockMvc mockMvc;
 
 	@Test
-	@DisplayName("GET: 'http://.../events/{employeeId}' returns OK and an list ")
+	@DisplayName("GET: 'hhtps://.../events/{employeeId}' returns OK and an list ")
 	void givenEmployeeVents_whenFindByEmployeeId_thenStatus200AndContent() throws Exception {
 		// Arrange
 		String employeeId = UUID.randomUUID().toString();
@@ -69,7 +69,7 @@ class EmployeeEventControllerIntegrationTests extends AbstractIntegrationTestSui
 	}
 
 	@Test
-	@DisplayName("GET: 'http://.../events/{employeeId}' returns INTERNAL_ERROR and ErrorInfo if some unexpected exception is raised ")
+	@DisplayName("GET: 'hhtps://.../events/{employeeId}' returns INTERNAL_ERROR and ErrorInfo if some unexpected exception is raised ")
 	void givenUnexpectedExceptionThrown_whenFindByEmployeeId_thenStatus500AndErrorInfo(CapturedOutput output)
 			throws Exception {
 		// Arrange

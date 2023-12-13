@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -164,8 +165,7 @@ public class EmployeeController {
 	 * This endpoint returns a page of employees, with each page containing up to 50
 	 * employee records. The response is provided in JSON format and includes only the
 	 * fields defined in the {@link DataView.GET} view.
-	 *
-	 * <p>
+	 * </p>
 	 * @param pageable an object that encapsulates pagination information. This can be
 	 * overridden by the client by specifying 'page' and 'size' request parameters.
 	 * @return a {@link Page} of {@link EmployeeResponse} representing the paginated
@@ -182,6 +182,47 @@ public class EmployeeController {
 	public Page<EmployeeResponse> findAllEmployees(@PageableDefault(50) Pageable pageable) {
 		log.info("findAllEmployees()");
 		return createEmployeeResponsePage(this.employeeService.findAll(pageable));
+	}
+
+	/**
+	 * Retrieves a paginated list of revisions for a specific employee.
+	 * <p>
+	 * This method returns a page of {@link Revision} objects, each containing a
+	 * {@link EmployeeResponse} that represents a state of the department at a certain
+	 * point in time. Each revision includes metadata such as the revision type (insert,
+	 * update, delete) and the timestamp of the revision.
+	 * @param id the ID of the employee for which to retrieve the revisions.
+	 * @param pageable a {@link Pageable} object specifying the pagination information
+	 * (page number, page size).
+	 * @return a {@link Page} of {@link Revision} objects containing
+	 * {@link EmployeeResponse} and revision metadata.
+	 */
+	@Operation(summary = "Find all revisions for a employee",
+			description = "Returns a page of revisions for the specified employee ID")
+	@ApiResponse(responseCode = "200", description = "Successfully retrieved the revisions",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
+	@GetMapping(value = "/{id}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	public Page<Revision<Long, EmployeeResponse>> findAllRevisions(
+			@Parameter(description = "Unique identifier of the employee", required = true) @PathVariable String id,
+			@PageableDefault(50) Pageable pageable) {
+		log.info("findAllRevisions( id= [{}] )", id);
+		Page<Revision<Long, Employee>> employeeRevisionsPage = this.employeeService.findRevisions(id, pageable);
+		List<Revision<Long, EmployeeResponse>> responseRevisions = employeeRevisionsPage.getContent()
+			.stream()
+			.map((Revision<Long, Employee> revision) -> {
+				Employee employee = revision.getEntity();
+				Employee.FullName fullName = employee.getFullName();
+				EmployeeResponse employeeResponse = new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
+						(fullName != null) ? fullName.getFirstName() : null,
+						(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
+						employee.getDepartment().getDepartmentName());
+				return Revision.of(revision.getMetadata(), employeeResponse);
+			})
+			.toList();
+
+		return new PageImpl<>(responseRevisions, employeeRevisionsPage.getPageable(),
+				employeeRevisionsPage.getTotalElements());
 	}
 
 	/**

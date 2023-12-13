@@ -95,7 +95,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenCreate {
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns CREATED for valid request")
+		@DisplayName("POST: 'hhtps://.../employees' returns CREATED for valid request")
 		void givenValidRequest_whenCreateEmployee_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -135,7 +135,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns CREATED even if only the department name is specified")
+		@DisplayName("POST: 'hhtps://.../employees' returns CREATED even if only the department name is specified")
 		void givenOnlyDepartment_whenCreateEmployee_thenStatus201() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -177,7 +177,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified department name doesn't exist ")
+		@DisplayName("POST: 'hhtps://.../employees' returns BAD REQUEST if the specified department name doesn't exist ")
 		void givenUnknownDepartment_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
@@ -203,7 +203,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified email is not valid ")
+		@DisplayName("POST: 'hhtps://.../employees' returns BAD REQUEST if the specified email is not valid ")
 		void givenInvalidEmail_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
@@ -229,7 +229,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified birthday is not valid ")
+		@DisplayName("POST: 'hhtps://.../employees' returns BAD REQUEST if the specified birthday is not valid ")
 		void givenInvalidBirthday_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
@@ -262,7 +262,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified email already exists ")
+		@DisplayName("POST: 'hhtps://.../employees' returns BAD REQUEST if the specified email already exists ")
 		void givenAlreadyUsedEmail_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -299,7 +299,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if no field is set")
+		@DisplayName("POST: 'hhtps://.../employees' returns BAD REQUEST if no field is set")
 		void givenEmptyRequest_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
@@ -428,6 +428,77 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
 		}
 
+		@Test
+		@DisplayName("GET: 'https://.../employees/{id}/revisions succeeds on existing employee")
+		void givenExistingEmployee_whenFindRevisions_thenStatusOkAndReturnPageOfRevisions() throws Exception {
+			// Arrange
+			DepartmentResponse departmentResponse = saveRandomDepartment();
+
+			EmployeeRequest createEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
+				.builder()
+				.departmentName(departmentResponse.departmentName())
+				.create();
+			String requestAsJson = transformRequestToJSONByView(createEmployeeRequest, DataView.POST.class);
+			String createUri = "%s".formatted(EmployeeController.BASE_URI);
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.post(createUri)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestAsJson))
+				.andReturn();
+			EmployeeResponse persistedEmployeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
+				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
+
+			String newFirstName = RandomStringUtils.randomAlphabetic(23);
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
+				.builder()
+				.departmentName(null)
+				.emailAddress(null)
+				.firstName(newFirstName)
+				.lastName(null)
+				.birthday(null)
+				.create();
+			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
+			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(updateRequestAsJson));
+
+			String lastName = RandomStringUtils.randomAlphabetic(23);
+			updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory.builder()
+				.departmentName(null)
+				.emailAddress(null)
+				.firstName(null)
+				.lastName(lastName)
+				.birthday(null)
+				.create();
+			updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(updateRequestAsJson));
+
+			String deleteUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.delete(deleteUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON));
+
+			String revisionUri = "%s/{id}/revisions".formatted(EmployeeController.BASE_URI);
+
+			// Act / Assert
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(4)))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[0].metadata.revisionType", Matchers.is("INSERT")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[1].metadata.revisionType", Matchers.is("UPDATE")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[2].metadata.revisionType", Matchers.is("UPDATE")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[3].metadata.revisionType", Matchers.is("DELETE")));
+
+		}
+
 	}
 
 	@Nested
@@ -435,7 +506,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenPartialUpdate {
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id}' returns NOT FOUND if the specified employee doesn't exist ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id}' returns NOT FOUND if the specified employee doesn't exist ")
 		void givenUnknownEmployeeId_whenPartialUpdateEmployee_thenStatus404() throws Exception {
 			// Arrange
 			EmployeeRequest updateRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
@@ -462,7 +533,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id}' returns BAD REQUEST if the specified department doesn't exist ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id}' returns BAD REQUEST if the specified department doesn't exist ")
 		void givenUnknownDepartment_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -506,7 +577,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidRequestWithAllFieldsSet_whenPartialUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -556,7 +627,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT on only updating birthday")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating birthday")
 		void givenNewBirthDay_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyBirthDay() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -610,7 +681,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT on only updating first name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating first name")
 		void givenNewFirstName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyFirstName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -662,7 +733,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns BAD REQUEST on only updating first name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns BAD REQUEST on only updating first name")
 		void givenBlankFirstName_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -708,7 +779,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT on only updating last name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating last name")
 		void givenNewLastName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyLastName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -760,7 +831,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT on only updating email")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating email")
 		void givenNewEmail_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyEmail() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -811,7 +882,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns BAD REQUEST on invalid email")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns BAD REQUEST on invalid email")
 		void givenNewInvalidEmail_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -859,7 +930,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'http://.../employees/{id} returns NO CONTENT on only updating department")
+		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating department")
 		void givenNewDepartment_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyDeparmtent() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -917,7 +988,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenFullUpdate {
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidFullRequest_whenFullUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -967,7 +1038,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on null birthday")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null birthday")
 		void givenNullBirthDay_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1011,7 +1082,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on invalid email")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on invalid email")
 		void givenInvalidEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1055,7 +1126,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on null email")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null email")
 		void givenNullEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1099,7 +1170,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on null first name")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null first name")
 		void givenNullFirstName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1143,7 +1214,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on null last name")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null last name")
 		void givenNullLastName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1187,7 +1258,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'http://.../employees/{id} returns BAD REQUEST on null department name")
+		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null department name")
 		void givenNullDepartmentName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1236,7 +1307,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenDelete {
 
 		@Test
-		@DisplayName("DELETE: 'http://.../employees/{id}' returns NOT FOUND if the specified uuid doesn't exist")
+		@DisplayName("DELETE: 'hhtps://.../employees/{id}' returns NOT FOUND if the specified uuid doesn't exist")
 		void givenUnknownId_whenDeleteEmployeeById_thenStatus404() throws Exception {
 			// Arrange
 			String unknownId = UUID.randomUUID().toString();
@@ -1259,7 +1330,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("DELETE: 'http://.../employees/{id}' returns NO CONTENT if the specified uuid exists")
+		@DisplayName("DELETE: 'hhtps://.../employees/{id}' returns NO CONTENT if the specified uuid exists")
 		void givenEmployee_whenDeleteEmployeeById_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();

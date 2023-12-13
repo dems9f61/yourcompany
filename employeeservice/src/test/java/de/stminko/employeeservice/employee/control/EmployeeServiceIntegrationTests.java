@@ -33,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.RevisionMetadata;
 
 @DisplayName("Integration tests for the employee service")
 class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
@@ -188,6 +190,46 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Assert
 			Assertions.assertThat(all).hasSameSizeAs(employees);
+		}
+
+		@DisplayName("Find revisions succeeds on existing employees")
+		@Test
+		void givenExistingEmployee_whenFindRevisions_thenSuccessAndReturnPageOfRevisions() {
+			// Arrange
+			DepartmentRequest departmentRequest = EmployeeServiceIntegrationTests.this.departmentRequestTestFactory
+				.createDefault();
+			EmployeeServiceIntegrationTests.this.departmentService.create(departmentRequest);
+			EmployeeRequest createRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
+				.departmentName(departmentRequest.departmentName())
+				.create();
+
+			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(createRequest);
+
+			String expectedEmail = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
+				.generateRandomEmail();
+			EmployeeRequest updateRequest = EmployeeServiceIntegrationTests.this.employeeRequestTestFactory.builder()
+				.emailAddress(expectedEmail)
+				.departmentName(null)
+				.firstName(null)
+				.lastName(null)
+				.birthday(null)
+				.create();
+			String id = employee.getId();
+			assert id != null;
+			EmployeeServiceIntegrationTests.this.employeeService.doPartialUpdate(id, updateRequest);
+			EmployeeServiceIntegrationTests.this.employeeService.deleteById(id);
+
+			// Act
+			Page<Revision<Long, Employee>> revisionPage = EmployeeServiceIntegrationTests.this.employeeService
+				.findRevisions(id, PageRequest.of(0, 20));
+
+			// Assert
+			Assertions.assertThat(revisionPage).isNotNull();
+			List<Revision<Long, Employee>> revisionList = revisionPage.getContent();
+			Assertions.assertThat(revisionList)
+				.extracting((Revision<Long, Employee> value) -> value.getMetadata().getRevisionType())
+				.containsExactly(RevisionMetadata.RevisionType.INSERT, RevisionMetadata.RevisionType.UPDATE,
+						RevisionMetadata.RevisionType.DELETE);
 		}
 
 	}
@@ -517,19 +559,19 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 				.departmentName(departmentRequest.departmentName())
 				.create();
 			Employee employee = EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest);
-			String uuid = employee.getId();
-			assert uuid != null;
+			String id = employee.getId();
+			assert id != null;
 
 			// Act
-			EmployeeServiceIntegrationTests.this.employeeService.deleteById(uuid);
+			EmployeeServiceIntegrationTests.this.employeeService.deleteById(id);
 
 			// Assert
 			Assertions.assertThatExceptionOfType(NotFoundException.class)
-				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.findById(uuid));
+				.isThrownBy(() -> EmployeeServiceIntegrationTests.this.employeeService.findById(id));
 			Mockito.verify(EmployeeServiceIntegrationTests.this.employeeEventPublisher)
 				.employeeDeleted(AssertionMatcher
 					.assertArg((Employee publishedEmployee) -> Assertions.assertThat(publishedEmployee.getId())
-						.isEqualTo(uuid)));
+						.isEqualTo(id)));
 		}
 
 	}
