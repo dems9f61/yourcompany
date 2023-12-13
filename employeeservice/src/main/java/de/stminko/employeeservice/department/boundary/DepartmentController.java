@@ -47,8 +47,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  * application.
  * <p>
  * This controller provides a set of endpoints for various operations related to
- * departments, such as creating new departments. It utilizes {@link DepartmentService}
- * for the underlying business logic and data handling.
+ * departments, such as creating, updating or delete departments. It utilizes
+ * {@link DepartmentService} for the underlying business logic and data handling.
  * </p>
  *
  * @author Stéphan Minko
@@ -58,7 +58,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  * @see DepartmentRequest for the request object used for creating a department
  * @see DepartmentResponse for the response object returned after creating a department
  */
-
 @Slf4j
 @RestController
 @Tag(name = "Department", description = "The Department API")
@@ -85,17 +84,11 @@ public class DepartmentController {
 
 	/**
 	 * Creates a new department based on the provided request and returns it.
-	 * <p>
-	 * This endpoint accepts a request to create a new department. It validates the
-	 * request and, if valid, creates a new department. The endpoint responds with the
-	 * created department's details.
-	 * </p>
 	 * @param departmentRequest the request object containing the details for the new
 	 * department.
 	 * @return a {@link ResponseEntity} containing the created {@link DepartmentResponse}
 	 * and the HTTP status code. The response includes a 'Location' header with the URL of
 	 * the created department.
-	 * @author Stéphan Minko
 	 */
 	@Operation(summary = "Create a new department", description = "Creates a new department and returns it")
 	@ApiResponses({
@@ -183,9 +176,7 @@ public class DepartmentController {
 	 * Retrieves a paginated list of all departments.
 	 * <p>
 	 * This method returns a {@link Page} of {@link DepartmentResponse} objects, each
-	 * representing a department. The result is paginated based on the provided
-	 * {@link Pageable} object, which specifies the page number, page size, and sorting
-	 * parameters.
+	 * representing a department.
 	 * @param pageable a {@link Pageable} object specifying the pagination and sorting
 	 * information.
 	 * @return a {@link Page} of {@link DepartmentResponse} objects containing the
@@ -276,7 +267,7 @@ public class DepartmentController {
 	 * This method returns a {@link Page} of {@link EmployeeResponse} objects for the
 	 * department specified by the given ID. Each {@link EmployeeResponse} includes
 	 * details such as employee ID, email address, full name, birthday, and department
-	 * name. The list is paginated based on the provided {@link Pageable} object.
+	 * name.
 	 * @param id the unique identifier of the department for which to retrieve employees.
 	 * @param pageable a {@link Pageable} object specifying the pagination information
 	 * (page number, page size).

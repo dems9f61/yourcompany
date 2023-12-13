@@ -79,12 +79,6 @@ public class EmployeeController {
 	/**
 	 * Creates a new employee based on the provided request and returns the created
 	 * employee's details.
-	 * <p>
-	 * This endpoint accepts a request to create a new employee, validates the request,
-	 * and if valid, creates a new employee in the system. It returns the details of the
-	 * created employee along with a 'Location' header in the response pointing to the URI
-	 * of the new employee.
-	 * </p>
 	 * @param employeeRequest the request object containing the new employee's details.
 	 * @return a {@link ResponseEntity} containing the created {@link EmployeeResponse}
 	 * and the HTTP status code.
@@ -121,11 +115,6 @@ public class EmployeeController {
 
 	/**
 	 * Finds and returns a single employee by their ID.
-	 * <p>
-	 * This endpoint retrieves the details of an employee specified by the provided ID. If
-	 * the employee is found, their information is returned; otherwise, a 404 error is
-	 * generated.
-	 * </p>
 	 * @param id the unique identifier of the employee.
 	 * @return the {@link EmployeeResponse} containing the employee's details.
 	 */
@@ -150,10 +139,6 @@ public class EmployeeController {
 
 	/**
 	 * Lists all employees in the system.
-	 * <p>
-	 * This endpoint returns a list of all employees currently stored in the system. If no
-	 * employees are found, an empty list is returned.
-	 * </p>
 	 * @return a list of {@link EmployeeResponse} representing all the employees.
 	 */
 	@Operation(summary = "List all employees", description = "Returns a list of all employees")

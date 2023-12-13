@@ -95,7 +95,6 @@ public class EmployeeEventController {
 	public Page<EmployeeEventResponse> findByUuidOrderByCreatedAtAsc(
 			@Parameter(description = "Unique identifier of the employee",
 					required = true) @PathVariable("employeeId") String employeeId,
-
 			@Parameter(description = "Pagination and sorting parameters",
 					required = true) @PageableDefault(50) Pageable pageable) {
 		log.info("findByUuidOrderByCreatedAtAsc( employeeId= [{}])", employeeId);
