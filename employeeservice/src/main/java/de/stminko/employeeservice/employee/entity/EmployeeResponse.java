@@ -41,7 +41,7 @@ public record EmployeeResponse(
 		@Schema(description = "Employee's first name", example = "John") String firstName,
 
 		@Schema(description = "Employee's last name", example = "Doe") String lastName,
-		@JsonDeserialize(using = JsonDateDeSerializer.class) @JsonSerialize(
+		@JsonDeserialize(using = JsonDateDeserializer.class) @JsonSerialize(
 				using = JsonDateSerializer.class) @DateTimeFormat(
 						pattern = UsableDateFormat.Constants.DEFAULT_DATE_FORMAT) @Schema(
 								description = "Employee's birthday", example = "1990-01-01") ZonedDateTime birthday,

@@ -28,7 +28,7 @@ import de.stminko.employeeservice.runtime.validation.constraints.boundary.Messag
  *
  * @author Stéphan Minko
  */
-public final class JsonDateDeSerializer extends JsonDeserializer<ZonedDateTime> {
+public final class JsonDateDeserializer extends JsonDeserializer<ZonedDateTime> {
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter
 		.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
@@ -36,15 +36,15 @@ public final class JsonDateDeSerializer extends JsonDeserializer<ZonedDateTime> 
 	@Override
 	public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
 			throws IOException {
+		String dateValue = jsonParser.getValueAsString();
 		try {
-			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
-			LocalDate localDate = LocalDate.parse(jsonParser.getValueAsString(), dateFormatter);
+			LocalDate localDate = LocalDate.parse(dateValue, FORMATTER);
 			return localDate.atStartOfDay(ZoneOffset.UTC);
 		}
 		catch (DateTimeParseException caught) {
 			MessageSourceHelper messageSourceHelper = SpringContextProvider.getApplicationContext()
 				.getBean(MessageSourceHelper.class);
-			String errorMessage = messageSourceHelper.getMessage("errors.date.not-parseable", jsonParser.getText(),
+			String errorMessage = messageSourceHelper.getMessage("errors.date.not-parseable", dateValue,
 					UsableDateFormat.DEFAULT.getDateFormat());
 			throw InvalidFormatException.from(jsonParser, errorMessage, jsonParser.getText(), ZonedDateTime.class);
 		}

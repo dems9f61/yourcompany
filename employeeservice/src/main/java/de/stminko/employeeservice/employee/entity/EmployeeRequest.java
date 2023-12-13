@@ -65,7 +65,7 @@ public class EmployeeRequest {
 	private final String lastName;
 
 	@JsonView({ DataView.POST.class, DataView.PUT.class, DataView.PATCH.class })
-	@JsonDeserialize(using = JsonDateDeSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@DateTimeFormat(pattern = UsableDateFormat.Constants.DEFAULT_DATE_FORMAT)
 	@NotNull(groups = { DataView.PUT.class }, message = "{errors.employee.birthday.not-null}")
