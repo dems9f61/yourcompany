@@ -23,6 +23,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -228,6 +229,39 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
+		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified birthday is not valid ")
+		void givenInvalidBirthday_whenCreateEmployee_thenStatus400() throws Exception {
+			// Arrange
+			EmployeeRequest toPersist = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
+				.createDefault();
+			String requestAsJson = transformRequestToJSONByView(toPersist, DataView.POST.class);
+			JSONObject jsonObject = new JSONObject(requestAsJson);
+			String originalBirthday = jsonObject.getString("birthday");
+			LocalDate date = LocalDate.parse(originalBirthday);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy");
+			String modifiedBirthday = date.format(formatter);
+			jsonObject.put("birthday", modifiedBirthday);
+			requestAsJson = jsonObject.toString();
+			String uri = "%s".formatted(EmployeeController.BASE_URI);
+
+			// Act / Assert
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(
+						MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).content(requestAsJson))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest())
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.url", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpMethod", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.BAD_REQUEST.name())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage",
+						Matchers.containsString("Not parseable date: [%s]. Expected format: [%s]!"
+							.formatted(modifiedBirthday, UsableDateFormat.DEFAULT.getDateFormat()))));
+		}
+
+		@Test
 		@DisplayName("POST: 'http://.../employees' returns BAD REQUEST if the specified email already exists ")
 		void givenAlreadyUsedEmail_whenCreateEmployee_thenStatus400() throws Exception {
 			// Arrange
@@ -385,7 +419,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.perform(MockMvcRequestBuilders.get(uri).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(employeeResponses.size())));
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(employeeResponses.size())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].emailAddress").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].firstName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].lastName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].birthday").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
 		}
 
 	}

@@ -45,20 +45,20 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @Configuration
 public class MessageSourceConfig {
 
-	static final String VALIDATION_MESSAGES_CATALOG_NAME = "classpath:stminko-validation-messages";
+	static final String MESSAGES_CATALOG_NAME = "classpath:messages";
 
 	@Bean
-	LocalValidatorFactoryBean customValidationFactoryBean(MessageSource customValidationMessageSource) {
+	LocalValidatorFactoryBean customValidationFactoryBean(MessageSource customMessageSource) {
 		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-		localValidatorFactoryBean.setValidationMessageSource(customValidationMessageSource);
+		localValidatorFactoryBean.setValidationMessageSource(customMessageSource);
 		return localValidatorFactoryBean;
 	}
 
 	@Bean
-	MessageSource customValidationMessageSource() {
+	MessageSource customMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		// Set our own validation message property so we only have english version
-		messageSource.setBasenames(VALIDATION_MESSAGES_CATALOG_NAME);
+		messageSource.setBasenames(MESSAGES_CATALOG_NAME);
 		messageSource.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
 		messageSource.setDefaultLocale(Locale.ENGLISH);
 		return messageSource;

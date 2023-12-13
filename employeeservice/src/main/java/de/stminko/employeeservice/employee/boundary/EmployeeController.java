@@ -1,7 +1,6 @@
 package de.stminko.employeeservice.employee.boundary;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import de.stminko.employeeservice.employee.entity.Employee;
@@ -17,9 +16,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -75,6 +79,22 @@ public class EmployeeController {
 	public static final String BASE_URI = ApiVersions.V1 + "/employees";
 
 	private final EmployeeService employeeService;
+
+	/**
+	 * Creates a page of EmployeeResponse objects from a page of Employee objects.
+	 * @param employeePage the page of Employee objects to be converted
+	 * @return a page of EmployeeResponse objects
+	 */
+	public static Page<EmployeeResponse> createEmployeeResponsePage(@NonNull Page<Employee> employeePage) {
+		List<EmployeeResponse> employeeResponses = employeePage.getContent().stream().map((Employee employee) -> {
+			Employee.FullName fullName = employee.getFullName();
+			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
+					(fullName != null) ? fullName.getFirstName() : null,
+					(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
+					employee.getDepartment().getDepartmentName());
+		}).toList();
+		return new PageImpl<>(employeeResponses, employeePage.getPageable(), employeePage.getTotalElements());
+	}
 
 	/**
 	 * Creates a new employee based on the provided request and returns the created
@@ -138,25 +158,30 @@ public class EmployeeController {
 	}
 
 	/**
-	 * Lists all employees in the system.
-	 * @return a list of {@link EmployeeResponse} representing all the employees.
+	 * Retrieves a paginated list of all employees.
+	 *
+	 * <p>
+	 * This endpoint returns a page of employees, with each page containing up to 50
+	 * employee records. The response is provided in JSON format and includes only the
+	 * fields defined in the {@link DataView.GET} view.
+	 *
+	 * <p>
+	 * @param pageable an object that encapsulates pagination information. This can be
+	 * overridden by the client by specifying 'page' and 'size' request parameters.
+	 * @return a {@link Page} of {@link EmployeeResponse} representing the paginated
+	 * employee data.
+	 * @see EmployeeResponse
+	 * @see DataView.GET
 	 */
-	@Operation(summary = "List all employees", description = "Returns a list of all employees")
-	@ApiResponse(responseCode = "200", description = "Successfully retrieved and returned the list of all employees",
-			content = @Content(mediaType = "application/json",
-					schema = @Schema(implementation = EmployeeResponse.class, type = "array")))
+	@Operation(summary = "Get all employees", description = "Retrieves a paginated list of all employees.")
+	@ApiResponse(responseCode = "200", description = "Successful retrieval of employee list",
+			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
-	public List<EmployeeResponse> findAllEmployees() {
+	public Page<EmployeeResponse> findAllEmployees(@PageableDefault(50) Pageable pageable) {
 		log.info("findAllEmployees()");
-		return this.employeeService.findAll().stream().map((Employee employee) -> {
-			Employee.FullName fullName = employee.getFullName();
-			String firstName = (fullName != null) ? fullName.getFirstName() : null;
-			String lastName = (fullName != null) ? fullName.getLastName() : null;
-			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(), firstName, lastName,
-					employee.getBirthday(), employee.getDepartment().getDepartmentName());
-		}).collect(Collectors.toList());
+		return createEmployeeResponsePage(this.employeeService.findAll(pageable));
 	}
 
 	/**

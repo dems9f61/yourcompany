@@ -20,14 +20,15 @@ REST API. It should contain endpoints to:
     5. Employee's department 
 3. Get a specific employee by its uuid (response in JSON Object format)
 4. Get a specific department by its id (response in JSON Object format) 
-5. Get all departments 
-6. Get all employees belonging to a specific department by its id (response in array of JSON Object format)
-7. Update an employee 
-8. Update a department 
-9. Delete an employee 
-10. Delete a department (if there's no employee associated with it)
-11. Get all revisions for a specific department by its id 
-12. Find the latest revision for a specific department by its id
+5. Get all departments (response in array or page of JSON Object format)
+6. Get all employees  (response in array or page of JSON Object format)
+7. Get all employees belonging to a specific department by its id (response in array or page of JSON Object format)
+8. Update an employee 
+9. Update a department 
+10. Delete an employee 
+11. Delete a department (if there's no employee associated with it)
+12. Get all revisions for a specific department by its id  (response in array or page of JSON Object format)
+13. Find the latest revision for a specific department by its id  (response in array or page of JSON Object format)
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import de.stminko.employeeservice.department.entity.Department;
 import de.stminko.employeeservice.department.entity.DepartmentRequest;
 import de.stminko.employeeservice.department.entity.DepartmentResponse;
+import de.stminko.employeeservice.employee.boundary.EmployeeController;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeResponse;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
@@ -289,14 +290,7 @@ public class DepartmentController {
 			required = true) @PathVariable("id") Long id, @PageableDefault(50) Pageable pageable) {
 		log.info("findEmployeesByDepartment( id= [{}] )", id);
 		Page<Employee> employeePage = this.departmentService.findAllEmployeesById(id, pageable);
-		List<EmployeeResponse> employeeResponses = employeePage.getContent().stream().map((Employee employee) -> {
-			Employee.FullName fullName = employee.getFullName();
-			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-					(fullName != null) ? fullName.getFirstName() : null,
-					(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
-					employee.getDepartment().getDepartmentName());
-		}).toList();
-		return new PageImpl<>(employeeResponses, employeePage.getPageable(), employeePage.getTotalElements());
+		return EmployeeController.createEmployeeResponsePage(employeePage);
 	}
 
 	/**

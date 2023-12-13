@@ -30,6 +30,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("Integration tests for the employee service")
 class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
@@ -178,9 +181,10 @@ class EmployeeServiceIntegrationTests extends AbstractIntegrationTestSuite {
 					.create();
 				employees.add(EmployeeServiceIntegrationTests.this.employeeService.create(employeeRequest));
 			});
+			Pageable pageRequest = PageRequest.of(0, 200);
 
 			// Act
-			List<Employee> all = EmployeeServiceIntegrationTests.this.employeeService.findAll();
+			Page<Employee> all = EmployeeServiceIntegrationTests.this.employeeService.findAll(pageRequest);
 
 			// Assert
 			Assertions.assertThat(all).hasSameSizeAs(employees);

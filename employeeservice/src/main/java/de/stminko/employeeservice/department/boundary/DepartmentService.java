@@ -183,10 +183,11 @@ public class DepartmentService {
 		validateRequest(departmentRequest, DataView.POST.class);
 
 		String departmentName = departmentRequest.departmentName();
-		this.repository.findByDepartmentName(departmentName).ifPresent((Department dept) -> {
+		if (this.repository.existsByDepartmentName(departmentName)) {
 			throw new BadRequestException(
 					this.messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
-		});
+		}
+
 		Department department = new Department();
 		department.setDepartmentName(departmentName);
 		return this.repository.save(department);

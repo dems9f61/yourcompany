@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MessageSourceHelper {
 
-	private final MessageSource customValidationMessageSource;
+	private final MessageSource customMessageSource;
 
 	/**
 	 * Retrieves a localized message based on the provided message code and arguments.
@@ -44,10 +44,10 @@ public class MessageSourceHelper {
 		log.debug("getMessage(code= [{}], args= [{}])", code, ArrayUtils.toString(args));
 		LocaleContext localeContext = LocaleContextHolder.getLocaleContext();
 		if ((localeContext != null) && (localeContext.getLocale() != null)) {
-			return this.customValidationMessageSource.getMessage(code, args, localeContext.getLocale());
+			return this.customMessageSource.getMessage(code, args, localeContext.getLocale());
 		}
 		else {
-			return this.customValidationMessageSource.getMessage(code, args, Locale.getDefault());
+			return this.customMessageSource.getMessage(code, args, Locale.getDefault());
 		}
 	}
 

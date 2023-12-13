@@ -17,6 +17,8 @@ public interface DepartmentRepository
 
 	Optional<Department> findByDepartmentName(@NonNull String departmentName);
 
+	boolean existsByDepartmentName(@NonNull String departmentName);
+
 	@Query("SELECT d FROM Department d LEFT JOIN FETCH d.employees WHERE d.id = :id")
 	Optional<Department> findDepartmentWithEmployees(@Param("id") @NonNull Long id);
 

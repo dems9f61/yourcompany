@@ -5,10 +5,14 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import de.stminko.employeeservice.runtime.SpringContextProvider;
+import de.stminko.employeeservice.runtime.validation.constraints.boundary.MessageSourceHelper;
 
 /**
  * custom deserializer for converting JSON date strings into {@link ZonedDateTime}
@@ -24,14 +28,27 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
  *
  * @author Stéphan Minko
  */
-public class JsonDateDeSerializer extends JsonDeserializer<ZonedDateTime> {
+public final class JsonDateDeSerializer extends JsonDeserializer<ZonedDateTime> {
+
+	private static final DateTimeFormatter FORMATTER = DateTimeFormatter
+		.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
 
 	@Override
 	public ZonedDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
 			throws IOException {
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
-		LocalDate localDate = LocalDate.parse(jsonParser.getValueAsString(), dateFormatter);
-		return localDate.atStartOfDay(ZoneOffset.UTC);
+		try {
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(UsableDateFormat.DEFAULT.getDateFormat());
+			LocalDate localDate = LocalDate.parse(jsonParser.getValueAsString(), dateFormatter);
+			return localDate.atStartOfDay(ZoneOffset.UTC);
+		}
+		catch (DateTimeParseException caught) {
+			MessageSourceHelper messageSourceHelper = SpringContextProvider.getApplicationContext()
+				.getBean(MessageSourceHelper.class);
+			String errorMessage = messageSourceHelper.getMessage("errors.date.not-parseable", jsonParser.getText(),
+					UsableDateFormat.DEFAULT.getDateFormat());
+			throw InvalidFormatException.from(jsonParser, errorMessage, jsonParser.getText(), ZonedDateTime.class);
+		}
+
 	}
 
 }

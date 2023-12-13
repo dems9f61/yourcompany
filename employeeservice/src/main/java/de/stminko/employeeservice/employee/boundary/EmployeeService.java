@@ -132,13 +132,14 @@ public class EmployeeService {
 	}
 
 	/**
-	 * Retrieves all employees in the system.
-	 * @return a list of {@link Employee}
+	 * Finds all employees.
+	 * @param pageable the pageable object used for pagination
+	 * @return a page of employees
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
-	public List<Employee> findAll() {
+	public Page<Employee> findAll(Pageable pageable) {
 		log.info("findAll()");
-		return this.repository.findAll();
+		return this.repository.findAll(pageable);
 	}
 
 	/**
