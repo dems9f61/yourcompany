@@ -313,6 +313,32 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
+		@DisplayName("GET: 'https://.../departments/{id}/revisions/latest returns 404 for unknown id")
+		void givenUnknownId_whenFindLatestRevision_thenStatus404AndErrorMessage() throws Exception {
+			// Arrange
+			Long unknownId = Long.MAX_VALUE;
+			String revisionUri = "%s/{id}/revisions/latest".formatted(DepartmentController.BASE_URI);
+
+			// Act / Assert
+			DepartmentControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, unknownId).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.url", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpMethod", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.NOT_FOUND.name())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage",
+						Matchers
+							.containsString("The latest revision for the department with ID [%s] could not be found!"
+								.formatted(unknownId))));
+
+		}
+
+		@Test
 		@DisplayName("GET: 'https://.../departments/{id}/revisions/latest succeeds on existing department")
 		void givenExistingDepartment_whenFindLatestRevision_thenStatusOkAndReturnLatestRevision() throws Exception {
 			// Arrange

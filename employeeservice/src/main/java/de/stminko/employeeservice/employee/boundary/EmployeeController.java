@@ -3,9 +3,11 @@ package de.stminko.employeeservice.employee.boundary;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import de.stminko.employeeservice.department.entity.DepartmentResponse;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.employee.entity.EmployeeResponse;
+import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
 import de.stminko.employeeservice.runtime.rest.bondary.ApiVersions;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -210,19 +212,32 @@ public class EmployeeController {
 		Page<Revision<Long, Employee>> employeeRevisionsPage = this.employeeService.findRevisions(id, pageable);
 		List<Revision<Long, EmployeeResponse>> responseRevisions = employeeRevisionsPage.getContent()
 			.stream()
-			.map((Revision<Long, Employee> revision) -> {
-				Employee employee = revision.getEntity();
-				Employee.FullName fullName = employee.getFullName();
-				EmployeeResponse employeeResponse = new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-						(fullName != null) ? fullName.getFirstName() : null,
-						(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
-						employee.getDepartment().getDepartmentName());
-				return Revision.of(revision.getMetadata(), employeeResponse);
-			})
+			.map(this::createEmployeeResponseRevision)
 			.toList();
 
 		return new PageImpl<>(responseRevisions, employeeRevisionsPage.getPageable(),
 				employeeRevisionsPage.getTotalElements());
+	}
+
+	/**
+	 * Find the latest {@link Revision} for an employee identified by its id.
+	 * @param id the id of the employee to retrieve the latest {@link Revision} for
+	 * @return the latest {@link Revision} of the given employee
+	 * @throws NotFoundException if no such {@link Revision} entry exists
+	 */
+	@Operation(summary = "Find the latest change revision of a department",
+			description = "Returns the latest revision of a department by its ID")
+	@ApiResponse(responseCode = "200", description = "Successful retrieval",
+			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+					schema = @Schema(implementation = DepartmentResponse.class)))
+	@ApiResponse(responseCode = "404", description = "Revision not found")
+	@GetMapping(value = "/{id}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@JsonView(DataView.GET.class)
+	public Revision<Long, EmployeeResponse> findLastChangeRevision(
+			@Parameter(description = "ID of the department") @PathVariable String id) {
+		log.info("findLastChangeRevision( id= [{}])", id);
+		Revision<Long, Employee> lastChangeRevision = this.employeeService.findLastChangeRevision(id);
+		return createEmployeeResponseRevision(lastChangeRevision);
 	}
 
 	/**
@@ -303,6 +318,16 @@ public class EmployeeController {
 			required = true) @PathVariable("id") String id) {
 		log.info("deleteEmployee( id= [{}] )", id);
 		this.employeeService.deleteById(id);
+	}
+
+	private Revision<Long, EmployeeResponse> createEmployeeResponseRevision(
+			Revision<Long, Employee> lastChangeRevision) {
+		Employee employee = lastChangeRevision.getEntity();
+		Employee.FullName fullName = employee.getFullName();
+		EmployeeResponse employeeResponse = new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
+				(fullName != null) ? fullName.getFirstName() : null, (fullName != null) ? fullName.getLastName() : null,
+				employee.getBirthday(), employee.getDepartment().getDepartmentName());
+		return Revision.of(lastChangeRevision.getMetadata(), employeeResponse);
 	}
 
 }

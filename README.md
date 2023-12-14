@@ -30,6 +30,7 @@ REST API. It should contain endpoints to:
 12. **Retrieve All Revisions for a Specific Department by Its ID:** Response in an array or paginated format of JSON objects.
 13. **Retrieve All Revisions for a Specific Employee by Its ID:**  Response in an array or paginated format of JSON objects.
 14. **Find the latest revision for a Specific Department by its ID:** Response in JSON Object format.
+15. **Find the latest revision for a Specific Employee by its ID:** Response in JSON Object format.
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 

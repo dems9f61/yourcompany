@@ -499,6 +499,78 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 		}
 
+		@Test
+		@DisplayName("GET: 'https://.../employees/{id}/revisions/latest returns 404 for unknown id")
+		void givenUnknownId_whenFindLatestRevision_thenStatus404AndErrorMessage() throws Exception {
+			// Arrange
+			String unknownId = UUID.randomUUID().toString();
+			String revisionUri = "%s/{id}/revisions/latest".formatted(EmployeeController.BASE_URI);
+
+			// Act / Assert
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, unknownId).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isNotFound())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.url", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpMethod", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.httpStatus", Matchers.is(HttpStatus.NOT_FOUND.name())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorDateTime", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.containsString(
+						"The latest revision for the employee with ID [%s] could not be found!".formatted(unknownId))));
+
+		}
+
+		@Test
+		@DisplayName("GET: 'https://.../employees/{id}/revisions/latest succeeds on existing employee")
+		void givenExistingEmployee_whenFindLatestRevision_thenStatusOkAndReturnLatestRevision() throws Exception {
+			// Arrange
+			DepartmentResponse departmentResponse = saveRandomDepartment();
+
+			EmployeeRequest createEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
+				.builder()
+				.departmentName(departmentResponse.departmentName())
+				.create();
+			String requestAsJson = transformRequestToJSONByView(createEmployeeRequest, DataView.POST.class);
+			String createUri = "%s".formatted(EmployeeController.BASE_URI);
+			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.post(createUri)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestAsJson))
+				.andReturn();
+			EmployeeResponse persistedEmployeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
+				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
+
+			String newFirstName = RandomStringUtils.randomAlphabetic(23);
+			EmployeeRequest updateEmployeeRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
+				.builder()
+				.departmentName(null)
+				.emailAddress(null)
+				.firstName(newFirstName)
+				.lastName(null)
+				.birthday(null)
+				.create();
+			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
+			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(updateRequestAsJson));
+
+			String revisionUri = "%s/{id}/revisions/latest".formatted(EmployeeController.BASE_URI);
+
+			// Act / Assert
+			EmployeeControllerIntegrationTests.this.mockMvc
+				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.id())
+					.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.metadata.revisionType", Matchers.is("UPDATE")))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.metadata.revisionNumber").isNotEmpty());
+		}
+
 	}
 
 	@Nested

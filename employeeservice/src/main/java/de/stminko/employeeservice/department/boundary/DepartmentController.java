@@ -240,8 +240,8 @@ public class DepartmentController {
 
 	/**
 	 * Find the latest {@link Revision} for a department identified by its id.
-	 * @param id the id of the entity to retrieve the latest {@link Revision} for
-	 * @return the latest {@link Revision} of the given entity
+	 * @param id the id of the department to retrieve the latest {@link Revision} for
+	 * @return the latest {@link Revision} of the given department
 	 * @throws NotFoundException if no such {@link Revision} entry exists
 	 */
 	@Operation(summary = "Find the latest change revision of a department",
@@ -249,7 +249,7 @@ public class DepartmentController {
 	@ApiResponse(responseCode = "200", description = "Successful retrieval",
 			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = DepartmentResponse.class)))
-	@ApiResponse(responseCode = "404", description = "Department not found")
+	@ApiResponse(responseCode = "404", description = "Revision not found")
 	@GetMapping(value = "/{id}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	public Revision<Long, DepartmentResponse> findLastChangeRevision(

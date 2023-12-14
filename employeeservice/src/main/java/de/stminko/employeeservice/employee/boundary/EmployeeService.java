@@ -228,6 +228,21 @@ public class EmployeeService {
 		return this.repository.findRevisions(id, pageable);
 	}
 
+	/**
+	 * Find the latest revision information for the given employee id.
+	 * @param id the id of the entity the revision history should be fetched for
+	 * @return a single {@link Revision} for the last data change on the Entity with given
+	 * ID
+	 * @throws NotFoundException if no revision information could be found (the employee
+	 * for given ID does not exist)
+	 */
+	public Revision<Long, Employee> findLastChangeRevision(@NonNull String id) {
+		log.info("findLastChangeRevision( id= [{}] )", id);
+		return this.repository.findLastChangeRevision(id)
+			.orElseThrow(() -> new NotFoundException(
+					this.messageSourceHelper.getMessage("errors.employee.last-revision.not-found", id)));
+	}
+
 	private void validateUniquenessOfEmail(String emailAddress) {
 		List<Employee> employeesWithSameEmail = StringUtils.isBlank(emailAddress) ? Collections.emptyList()
 				: this.repository.findByEmailAddress(emailAddress);

@@ -159,9 +159,10 @@ public class DepartmentService {
 	 * for given Id does not exist)
 	 */
 	public Revision<Long, Department> findLastChangeRevision(@NonNull Long id) {
+		log.info("findLastChangeRevision( id= [{}] )", id);
 		return this.repository.findLastChangeRevision(id)
 			.orElseThrow(() -> new NotFoundException(
-					"Could not find latest Revision for department with Id: [%s]".formatted(id.toString())));
+					this.messageSourceHelper.getMessage("errors.department.last-revision.not-found", id.toString())));
 	}
 
 	/**
