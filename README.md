@@ -9,27 +9,27 @@ The purpose of this project is the implementation of two microservices: ***emplo
 As its name suggests, this service is responsible for handling the employees of a company. The application must expose a
 REST API. It should contain endpoints to:
 
-1. Create a department
+1. **Create a department:**
     1. Id (auto-increment)
     2. Name 
-2. Create an employee in an existing department
+2. **Create an employee in an existing department:**
     1. UUID (generated automatically)
     2. E-mail
     3. Full name (first and last name)
     4. Birthday (format yyyy-MM-dd)
     5. Employee's department 
-3. Get a specific employee by its id (response in JSON Object format)
-4. Get a specific department by its id (response in JSON Object format) 
-5. Get all departments (response in array or page of JSON Object format)
-6. Get all employees  (response in array or page of JSON Object format)
-7. Get all employees belonging to a specific department by its id (response in array or page of JSON Object format)
-8. Update an employee 
-9. Update a department 
-10. Delete an employee 
-11. Delete a department (if there's no employee associated with it)
-12. Get all revisions for a specific department by its id (response in array or page of JSON Object format)
-13. Get all revisions for a specific employee by its id (response in array or page of JSON Object format)
-14. Find the latest revision for a specific department by its id (response in array or page of JSON Object format)
+3. **Get a Specific Employee by its ID:** Response in JSON Object format.
+4. **Get a Specific Department by its ID:** Response in JSON Object format. 
+5. **Get all Departments:** Response in an array or paginated format of JSON objects.
+6. **Get all Employees:**  Response in an array or paginated format of JSON objects.
+7. **Get all Employees belonging to a Specific Department by its ID:** Response in an array or paginated format of JSON objects.
+8. **Update an employee** 
+9. **Update a department** 
+10. **Delete an employee** 
+11. **Delete a department:**  Only if no employees are associated with it.
+12. **Retrieve All Revisions for a Specific Department by Its ID:** Response in an array or paginated format of JSON objects.
+13. **Retrieve All Revisions for a Specific Employee by Its ID:**  Response in an array or paginated format of JSON objects.
+14. **Find the latest revision for a Specific Department by its ID:** Response in JSON Object format.
 
 **Restriction:** The email field is unique, i.e 2 employees cannot have the same email
 
