@@ -117,7 +117,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.header()
 					.string(HttpHeaders.LOCATION, Matchers.containsString(EmployeeController.BASE_URI)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.employeeId", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(toPersist.firstName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(toPersist.lastName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.birthday", Matchers.is(formattedBirthday)))
@@ -128,7 +128,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
 			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id());
+				.findById(employeeResponse.employeeId());
 			Assertions.assertThat(optionalEmployee)
 				.hasValueSatisfying((Employee value) -> Assertions.assertThat(value).isNotNull());
 
@@ -160,7 +160,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.header()
 					.string(HttpHeaders.LOCATION, Matchers.containsString(EmployeeController.BASE_URI)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.employeeId", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.nullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.nullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.birthday", Matchers.nullValue()))
@@ -171,7 +171,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
 			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id());
+				.findById(employeeResponse.employeeId());
 			Assertions.assertThat(optionalEmployee)
 				.hasValueSatisfying((Employee value) -> Assertions.assertThat(value).isNotNull());
 		}
@@ -362,11 +362,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			MvcResult mvcResult = EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(uri, persisted.id()).contentType(MediaType.APPLICATION_JSON))
+				.perform(
+						MockMvcRequestBuilders.get(uri, persisted.employeeId()).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(persisted.id())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.employeeId", Matchers.is(persisted.employeeId())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.birthday", Matchers.is(formattedBirthday)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(persisted.firstName())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(persisted.lastName())))
@@ -377,7 +378,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, EmployeeResponse.class);
 			Assertions.assertThat(employeeResponse).isNotNull();
-			Assertions.assertThat(employeeResponse.id()).isEqualTo(persisted.id());
+			Assertions.assertThat(employeeResponse.employeeId()).isEqualTo(persisted.employeeId());
 			Assertions.assertThat(employeeResponse.birthday()).isEqualTo(persisted.birthday());
 			Assertions.assertThat(employeeResponse.firstName()).isEqualTo(persisted.firstName());
 			Assertions.assertThat(employeeResponse.lastName()).isEqualTo(persisted.lastName());
@@ -394,11 +395,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(uri, persisted.id()).contentType(MediaType.APPLICATION_JSON))
+				.perform(
+						MockMvcRequestBuilders.get(uri, persisted.employeeId()).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(persisted.id())))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.employeeId", Matchers.is(persisted.employeeId())))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.birthday",
 						Matchers
 							.is(EmployeeControllerIntegrationTests.this.dateFormatter.format(persisted.birthday()))))
@@ -425,7 +427,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].lastName").exists())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].birthday").exists())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].employeeId").exists());
 		}
 
 		@Test
@@ -460,7 +462,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
 			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
@@ -474,20 +476,20 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.create();
 			updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
 			String deleteUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(deleteUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.delete(deleteUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON));
 
 			String revisionUri = "%s/{departmentId}/revisions".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -555,7 +557,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
 			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
@@ -563,7 +565,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.id())
+				.perform(MockMvcRequestBuilders.get(revisionUri, persistedEmployeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -633,7 +635,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -677,13 +679,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -732,13 +734,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -784,13 +786,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -835,7 +837,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -882,13 +884,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -934,13 +936,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -985,7 +987,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1034,13 +1036,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.patch(patchUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -1088,13 +1090,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Employee updateEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id())
+				.findById(employeeResponse.employeeId())
 				.orElseThrow();
 			Assertions
 				.assertThat(EmployeeControllerIntegrationTests.this.dateFormatter.format(updateEmployee.getBirthday()))
@@ -1138,7 +1140,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1182,7 +1184,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1226,7 +1228,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1270,7 +1272,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1314,7 +1316,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1357,7 +1359,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.put(putUri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -1423,12 +1425,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(uri, employeeResponse.id())
+				.perform(MockMvcRequestBuilders.delete(uri, employeeResponse.employeeId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Optional<Employee> optionalEmployee = EmployeeControllerIntegrationTests.this.employeeRepository
-				.findById(employeeResponse.id());
+				.findById(employeeResponse.employeeId());
 			Assertions.assertThat(optionalEmployee).isEmpty();
 		}
 

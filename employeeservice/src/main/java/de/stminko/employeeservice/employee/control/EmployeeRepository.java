@@ -3,6 +3,7 @@ package de.stminko.employeeservice.employee.control;
 import java.util.List;
 
 import de.stminko.employeeservice.employee.entity.Employee;
+import lombok.NonNull;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Repository;
 public interface EmployeeRepository
 		extends JpaRepository<Employee, String>, RevisionRepository<Employee, String, Long> {
 
-	List<Employee> findByEmailAddress(String emailAddress);
+	List<Employee> findByEmailAddress(@NonNull String emailAddress);
 
-	Page<Employee> findAllByDepartmentId(@Param("departmentId") Long departmentId, Pageable pageable);
+	Page<Employee> findAllByDepartmentId(@NonNull @Param("departmentId") Long departmentId, @NonNull Pageable pageable);
 
 }
