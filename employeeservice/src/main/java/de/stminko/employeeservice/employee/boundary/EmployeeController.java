@@ -154,11 +154,11 @@ public class EmployeeController {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = EmployeeResponse.class))),
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{employeeId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
 	public EmployeeResponse findEmployee(@Parameter(description = "Unique identifier of the employee",
-			required = true) @PathVariable("id") String employeeId) {
+			required = true) @PathVariable("employeeId") String employeeId) {
 		log.info("findEmployee( departmentId=[{}] )", employeeId);
 		Employee employee = this.employeeService.findById(employeeId);
 		return createEmployeeResponse(employee);
@@ -263,11 +263,11 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "400",
 					description = "Bad request, possibly due to invalid data or missing fields in the request"),
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
-	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/{employeeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doPartialUpdate(
 			@Parameter(description = "Unique identifier of the employee",
-					required = true) @PathVariable("id") String employeeId,
+					required = true) @PathVariable("employeeId") String employeeId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Partial employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
@@ -293,11 +293,11 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "400",
 					description = "Bad request, possibly due to invalid data or missing fields in the request"),
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
-	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/{employeeId}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the employee",
-					required = true) @PathVariable("id") String employeeId,
+					required = true) @PathVariable("employeeId") String employeeId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
@@ -318,10 +318,10 @@ public class EmployeeController {
 			@ApiResponse(responseCode = "204",
 					description = "Employee successfully deleted, no content in the response"),
 			@ApiResponse(responseCode = "404", description = "Employee not found with the provided ID") })
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{employeeId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteEmployee(@Parameter(description = "Unique identifier of the employee",
-			required = true) @PathVariable("id") String employeeId) {
+			required = true) @PathVariable("employeeId") String employeeId) {
 		log.info("deleteEmployee( departmentId= [{}] )", employeeId);
 		this.employeeService.deleteById(employeeId);
 	}

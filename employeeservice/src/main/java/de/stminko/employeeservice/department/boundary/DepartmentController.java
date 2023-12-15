@@ -138,11 +138,11 @@ public class DepartmentController {
 			@ApiResponse(responseCode = "400",
 					description = "Bad request, possibly due to invalid data or missing fields in the request"),
 			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
-	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/{departmentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the department",
-					required = true) @PathVariable("id") Long departmentId,
+					required = true) @PathVariable("departmentId") Long departmentId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full department data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = DepartmentRequest.class))) @RequestBody DepartmentRequest departmentRequest) {
@@ -166,11 +166,11 @@ public class DepartmentController {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = DepartmentResponse.class))),
 			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{departmentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
 	public DepartmentResponse findDepartment(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long departmentId) {
+			required = true) @PathVariable("departmentId") Long departmentId) {
 		log.info("findDepartment( departmentId=[{}] )", departmentId);
 		Department department = this.departmentService.findById(departmentId);
 		return DepartmentResponse.builder()
@@ -300,11 +300,13 @@ public class DepartmentController {
 					content = @Content(mediaType = "application/json",
 							schema = @Schema(implementation = PageImpl.class))),
 			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID") })
-	@GetMapping(value = "/{id}/employees", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{departmentId}/employees", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
-	public Page<EmployeeResponse> findAllEmployeesById(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long departmentId, @PageableDefault(50) Pageable pageable) {
+	public Page<EmployeeResponse> findAllEmployeesById(
+			@Parameter(description = "Unique identifier of the department",
+					required = true) @PathVariable("departmentId") Long departmentId,
+			@PageableDefault(50) Pageable pageable) {
 		log.info("findEmployeesByDepartment( departmentId= [{}] )", departmentId);
 		Page<Employee> employeePage = this.departmentService.findAllEmployeesById(departmentId, pageable);
 		return EmployeeController.createEmployeeResponsePage(employeePage);
@@ -325,10 +327,10 @@ public class DepartmentController {
 					description = "Department successfully deleted, no content in the response"),
 			@ApiResponse(responseCode = "404", description = "Department not found with the provided ID"),
 			@ApiResponse(responseCode = "409", description = "Department still associated to some employee") })
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{departmentId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteDepartment(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long departmentId) {
+			required = true) @PathVariable("departmentId") Long departmentId) {
 		log.info("deleteDepartment( departmentId= [{}] )", departmentId);
 		this.departmentService.deleteById(departmentId);
 	}

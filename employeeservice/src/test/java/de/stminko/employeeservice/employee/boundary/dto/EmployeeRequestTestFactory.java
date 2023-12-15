@@ -62,8 +62,14 @@ public class EmployeeRequestTestFactory
 		}
 
 		public EmployeeRequest create() {
-			return new EmployeeRequest(this.emailAddress, this.firstName, this.lastName, this.birthday,
-					this.departmentName);
+			return EmployeeRequest.builder()
+				.emailAddress(this.emailAddress)
+				.firstName(this.firstName)
+				.lastName(this.lastName)
+				.birthday(this.birthday)
+				.departmentName(this.departmentName)
+				.build();
+
 		}
 
 	}
