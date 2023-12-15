@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import javax.sql.DataSource;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
@@ -56,12 +57,12 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 	 * ProxyDataSourceBuilder, providing additional functionalities like logging and query
 	 * analysis. Finally, it returns the proxy object if the conditions are met, otherwise
 	 * it returns the original bean.
-	 * @param bean The bean object being initialized.
-	 * @param beanName The name of the bean.
-	 * @return The initialized bean object, either the original bean or the proxy bean.
+	 * @param bean the bean object being initialized.
+	 * @param beanName the name of the bean.
+	 * @return the initialized bean object, either the original bean or the proxy bean.
 	 */
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) {
+	public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) {
 		if ((bean instanceof DataSource source) && !(bean instanceof ProxyDataSource)) {
 			final ProxyFactory factory = new ProxyFactory(bean);
 			factory.setProxyTargetClass(true);
@@ -74,8 +75,12 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 	private record ProxyDataSourceInterceptor(DataSource dataSource) implements MethodInterceptor {
 
 		private ProxyDataSourceInterceptor(final DataSource dataSource) {
-			this.dataSource = ProxyDataSourceBuilder.create(dataSource).name("MyDS").multiline()
-					.logQueryBySlf4j(SLF4JLogLevel.INFO).listener(new DataSourceQueryCountListener()).build();
+			this.dataSource = ProxyDataSourceBuilder.create(dataSource)
+				.name("MyDS")
+				.multiline()
+				.logQueryBySlf4j(SLF4JLogLevel.INFO)
+				.listener(new DataSourceQueryCountListener())
+				.build();
 		}
 
 		@Override
