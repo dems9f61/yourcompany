@@ -19,11 +19,11 @@ import org.springframework.format.annotation.DateTimeFormat;
  * services. It includes fields like ID, email address, first name, last name, birthday,
  * and department name.
  * <p>
- * Fields: - id: The unique identifier of the employee. It's non-null. - emailAddress: The
- * email address of the employee. - firstName: The first name of the employee. - lastName:
- * The last name of the employee. - birthday: The birthday of the employee, formatted
- * according to UsableDateFormat.Constants.DEFAULT_DATE_FORMAT. - departmentName: The name
- * of the department the employee belongs to.
+ * Fields: - departmentId: The unique identifier of the employee. It's non-null. -
+ * emailAddress: The email address of the employee. - firstName: The first name of the
+ * employee. - lastName: The last name of the employee. - birthday: The birthday of the
+ * employee, formatted according to UsableDateFormat.Constants.DEFAULT_DATE_FORMAT. -
+ * departmentName: The name of the department the employee belongs to.
  *
  * @param id The unique identifier of the employee. It's non-null.
  * @param emailAddress The email address of the employee.

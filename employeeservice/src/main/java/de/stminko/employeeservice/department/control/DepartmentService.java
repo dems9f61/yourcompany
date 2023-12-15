@@ -62,15 +62,15 @@ public class DepartmentService {
 	 * Searches for an department using the provided ID. If the department is not found, a
 	 * {@link NotFoundException} is thrown.
 	 * </p>
-	 * @param id the unique identifier of the employee
+	 * @param departmentId the unique identifier of the employee
 	 * @return the found {@link Department}
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
-	public Department findById(@NonNull Long id) {
-		log.info("findById( id= [{}] )", id);
-		return this.repository.findById(id)
+	public Department findById(@NonNull Long departmentId) {
+		log.info("findById( departmentId= [{}] )", departmentId);
+		return this.repository.findById(departmentId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", departmentId.toString())));
 	}
 
 	/**
@@ -139,29 +139,31 @@ public class DepartmentService {
 	}
 
 	/**
-	 * Finds the revision information of a department with the specified id.
-	 * @param id the id of the department to find revisions for (must not be null)
+	 * Finds the revision information of a department with the specified departmentId.
+	 * @param departmentId the departmentId of the department to find revisions for (must
+	 * not be null)
 	 * @param pageable the pagination information for the result (must not be null)
 	 * @return a Page object containing the revisions of the department
 	 */
-	public Page<Revision<Long, Department>> findRevisions(@NonNull Long id, @NonNull Pageable pageable) {
-		log.info("findRevisions( id= [{}] )", id);
-		return this.repository.findRevisions(id, pageable);
+	public Page<Revision<Long, Department>> findRevisions(@NonNull Long departmentId, @NonNull Pageable pageable) {
+		log.info("findRevisions( departmentId= [{}] )", departmentId);
+		return this.repository.findRevisions(departmentId, pageable);
 	}
 
 	/**
-	 * Find the latest revision information for the given department id.
-	 * @param id the id of the entity the revision history should be fetched for
+	 * Find the latest revision information for the given department departmentId.
+	 * @param departmentId the departmentId of the entity the revision history should be
+	 * fetched for
 	 * @return a single {@link Revision} for the last data change on the Entity with given
 	 * Id
 	 * @throws NotFoundException if no revision information could be found (the department
 	 * for given Id does not exist)
 	 */
-	public Revision<Long, Department> findLastChangeRevision(@NonNull Long id) {
-		log.info("findLastChangeRevision( id= [{}] )", id);
-		return this.repository.findLastChangeRevision(id)
-			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.last-revision.not-found", id.toString())));
+	public Revision<Long, Department> findLastChangeRevision(@NonNull Long departmentId) {
+		log.info("findLastChangeRevision( departmentId= [{}] )", departmentId);
+		return this.repository.findLastChangeRevision(departmentId)
+			.orElseThrow(() -> new NotFoundException(this.messageSourceHelper
+				.getMessage("errors.department.last-revision.not-found", departmentId.toString())));
 	}
 
 	/**
@@ -199,14 +201,14 @@ public class DepartmentService {
 	 * Updates the department identified by the provided ID with the new data from the
 	 * request object. Validates the request and applies the changes.
 	 * </p>
-	 * @param id the unique identifier of the department
+	 * @param departmentId the unique identifier of the department
 	 * @param departmentRequest the request object containing new details for the
 	 * department
 	 * @return the updated {@link Department}
 	 */
-	public Department doFullUpdate(Long id, DepartmentRequest departmentRequest) {
-		log.info("doFullUpdate ( id= [{}], departmentRequest= [{}] ) ", id, departmentRequest);
-		return update(id, departmentRequest, DataView.PUT.class);
+	public Department doFullUpdate(Long departmentId, DepartmentRequest departmentRequest) {
+		log.info("doFullUpdate ( departmentId= [{}], departmentRequest= [{}] ) ", departmentId, departmentRequest);
+		return update(departmentId, departmentRequest, DataView.PUT.class);
 	}
 
 	/**
@@ -215,14 +217,14 @@ public class DepartmentService {
 	 * Updates the department identified by the provided ID with the new data from the
 	 * request object. Validates the request and applies the changes.
 	 * </p>
-	 * @param id the unique identifier of the department
+	 * @param departmentId the unique identifier of the department
 	 * @param departmentRequest the request object containing new details for the
 	 * department
 	 * @return the updated {@link Department}
 	 */
-	public Department doPartialUpdate(Long id, DepartmentRequest departmentRequest) {
-		log.info("doFullUpdate ( id= [{}], departmentRequest= [{}] ) ", id, departmentRequest);
-		return update(id, departmentRequest, DataView.PATCH.class);
+	public Department doPartialUpdate(Long departmentId, DepartmentRequest departmentRequest) {
+		log.info("doFullUpdate ( departmentId= [{}], departmentRequest= [{}] ) ", departmentId, departmentRequest);
+		return update(departmentId, departmentRequest, DataView.PATCH.class);
 	}
 
 	/**
@@ -239,49 +241,50 @@ public class DepartmentService {
 	 * <p>
 	 * Finally, deletes the department from the repository.
 	 * </p>
-	 * @param id the unique identifier of the department to be deleted
+	 * @param departmentId the unique identifier of the department to be deleted
 	 * @throws NotFoundException if the department with the provided ID does not exist
 	 * @throws DepartmentNotEmptyException if the department has employees associated with
 	 * it
 	 */
-	public void deleteById(@NonNull Long id) {
-		log.info("deleteById( id= [{}] )", id);
-		Department department = this.repository.findDepartmentWithEmployees(id)
+	public void deleteById(@NonNull Long departmentId) {
+		log.info("deleteById( departmentId= [{}] )", departmentId);
+		Department department = this.repository.findDepartmentWithEmployees(departmentId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", departmentId.toString())));
 		Set<Employee> employees = department.getEmployees();
 		if (CollectionUtils.isNotEmpty(employees)) {
-			throw new DepartmentNotEmptyException(
-					this.messageSourceHelper.getMessage("errors.department.not-deletable-on-employee", id.toString()));
+			throw new DepartmentNotEmptyException(this.messageSourceHelper
+				.getMessage("errors.department.not-deletable-on-employee", departmentId.toString()));
 		}
-		this.repository.deleteById(id);
+		this.repository.deleteById(departmentId);
 	}
 
 	/**
 	 * retrieves all employees associated with a department identified by the provided ID.
-	 * @param id the unique identifier of the department
+	 * @param departmentId the unique identifier of the department
 	 * @param pageable a {@link Pageable} object to specify pagination information.
 	 * @return a set of employees associated with the department
 	 * @throws NotFoundException if the department with the provided ID does not exist
 	 */
-	public Page<Employee> findAllEmployeesById(@NonNull Long id, @NonNull Pageable pageable) {
-		log.info("findAllEmployeesById( id= [{}] )", id);
-		if (!this.repository.existsById(id)) {
+	public Page<Employee> findAllEmployeesById(@NonNull Long departmentId, @NonNull Pageable pageable) {
+		log.info("findAllEmployeesById( departmentId= [{}] )", departmentId);
+		if (!this.repository.existsById(departmentId)) {
 			throw new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString()));
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", departmentId.toString()));
 		}
-		return this.employeeService.findAllEmployeesByDepartmentId(id, pageable);
+		return this.employeeService.findAllEmployeesByDepartmentId(departmentId, pageable);
 	}
 
-	private Department update(Long id, DepartmentRequest departmentRequest, Class<? extends DataView> validationGroup) {
+	private Department update(Long departmentId, DepartmentRequest departmentRequest,
+			Class<? extends DataView> validationGroup) {
 		validateRequest(departmentRequest, validationGroup);
-		Department departmentToUpdate = this.repository.findById(id)
+		Department departmentToUpdate = this.repository.findById(departmentId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.department.id.not-found", id.toString())));
+					this.messageSourceHelper.getMessage("errors.department.id.not-found", departmentId.toString())));
 
 		String departmentName = departmentRequest.departmentName();
 		this.repository.findByDepartmentName(departmentName).ifPresent((Department department) -> {
-			if (!Objects.equals(id, department.getId())) {
+			if (!Objects.equals(departmentId, department.getId())) {
 				throw new BadRequestException(
 						this.messageSourceHelper.getMessage("errors.department.name.already-exists", departmentName));
 			}

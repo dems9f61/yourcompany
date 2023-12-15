@@ -106,12 +106,14 @@ public class DepartmentController {
 					implementation = DepartmentRequest.class))) @RequestBody DepartmentRequest departmentRequest) {
 		log.info("create( departmentRequest=[{}] )", departmentRequest);
 		Department department = this.departmentService.create(departmentRequest);
-		DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
-				department.getDepartmentName());
+		DepartmentResponse departmentResponse = DepartmentResponse.builder()
+			.departmentId(department.getId())
+			.departmentName(department.getDepartmentName())
+			.build();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.LOCATION,
 				ServletUriComponentsBuilder.fromCurrentRequestUri()
-					.path("/{id}")
+					.path("/{departmentId}")
 					.buildAndExpand(department.getId())
 					.toUri()
 					.toASCIIString());
@@ -125,7 +127,7 @@ public class DepartmentController {
 	 * fields will be updated to the values provided in the request. If the department is
 	 * not found, a 404 error is generated.
 	 * </p>
-	 * @param id the unique identifier of the department to be updated.
+	 * @param departmentId the unique identifier of the department to be updated.
 	 * @param departmentRequest the request object containing the new details of the
 	 * employee.
 	 */
@@ -140,12 +142,12 @@ public class DepartmentController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the department",
-					required = true) @PathVariable("id") Long id,
+					required = true) @PathVariable("id") Long departmentId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full department data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = DepartmentRequest.class))) @RequestBody DepartmentRequest departmentRequest) {
-		log.info("doFullUpdate( id= [{}], request= [{}])", id, departmentRequest);
-		this.departmentService.doFullUpdate(id, departmentRequest);
+		log.info("doFullUpdate( departmentId= [{}], request= [{}])", departmentId, departmentRequest);
+		this.departmentService.doFullUpdate(departmentId, departmentRequest);
 	}
 
 	/**
@@ -155,7 +157,7 @@ public class DepartmentController {
 	 * If the employee is found, their information is returned; otherwise, a 404 error is
 	 * generated.
 	 * </p>
-	 * @param id the unique identifier of the employee.
+	 * @param departmentId the unique identifier of the employee.
 	 * @return the {@link DepartmentResponse} containing the department's details.
 	 */
 	@Operation(summary = "Find an department by ID", description = "Returns a single department by their ID")
@@ -168,10 +170,13 @@ public class DepartmentController {
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
 	public DepartmentResponse findDepartment(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long id) {
-		log.info("findDepartment( id=[{}] )", id);
-		Department department = this.departmentService.findById(id);
-		return new DepartmentResponse(department.getId(), department.getDepartmentName());
+			required = true) @PathVariable("id") Long departmentId) {
+		log.info("findDepartment( departmentId=[{}] )", departmentId);
+		Department department = this.departmentService.findById(departmentId);
+		return DepartmentResponse.builder()
+			.departmentId(department.getId())
+			.departmentName(department.getDepartmentName())
+			.build();
 	}
 
 	/**
@@ -195,7 +200,10 @@ public class DepartmentController {
 		Page<Department> departmentPage = this.departmentService.findAll(pageable);
 		List<DepartmentResponse> departmentResponses = departmentPage.getContent()
 			.stream()
-			.map((Department department) -> new DepartmentResponse(department.getId(), department.getDepartmentName()))
+			.map((Department department) -> DepartmentResponse.builder()
+				.departmentId(department.getId())
+				.departmentName(department.getDepartmentName())
+				.build())
 			.toList();
 
 		return new PageImpl<>(departmentResponses, departmentPage.getPageable(), departmentPage.getTotalElements());
@@ -208,7 +216,7 @@ public class DepartmentController {
 	 * {@link DepartmentResponse} that represents a state of the department at a certain
 	 * point in time. Each revision includes metadata such as the revision type (insert,
 	 * update, delete) and the timestamp of the revision.
-	 * @param id the ID of the department for which to retrieve the revisions.
+	 * @param departmentId the ID of the department for which to retrieve the revisions.
 	 * @param pageable a {@link Pageable} object specifying the pagination information
 	 * (page number, page size).
 	 * @return a {@link Page} of {@link Revision} objects containing
@@ -218,19 +226,23 @@ public class DepartmentController {
 			description = "Returns a page of revisions for the specified department ID")
 	@ApiResponse(responseCode = "200", description = "Successfully retrieved the revisions",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
-	@GetMapping(value = "/{id}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{departmentId}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	public Page<Revision<Long, DepartmentResponse>> findAllRevisions(
-			@Parameter(description = "Unique identifier of the department", required = true) @PathVariable Long id,
+			@Parameter(description = "Unique identifier of the department",
+					required = true) @PathVariable Long departmentId,
 			@PageableDefault(50) Pageable pageable) {
-		log.info("findAllRevisions( id= [{}] )", id);
-		Page<Revision<Long, Department>> departmentRevisions = this.departmentService.findRevisions(id, pageable);
+		log.info("findAllRevisions( departmentId= [{}] )", departmentId);
+		Page<Revision<Long, Department>> departmentRevisions = this.departmentService.findRevisions(departmentId,
+				pageable);
 		List<Revision<Long, DepartmentResponse>> responseRevisions = departmentRevisions.getContent()
 			.stream()
 			.map((Revision<Long, Department> revision) -> {
 				Department department = revision.getEntity();
-				DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
-						department.getDepartmentName());
+				DepartmentResponse departmentResponse = DepartmentResponse.builder()
+					.departmentId(department.getId())
+					.departmentName(department.getDepartmentName())
+					.build();
 				return Revision.of(revision.getMetadata(), departmentResponse);
 			})
 			.toList();
@@ -240,8 +252,9 @@ public class DepartmentController {
 	}
 
 	/**
-	 * Find the latest {@link Revision} for a department identified by its id.
-	 * @param id the id of the department to retrieve the latest {@link Revision} for
+	 * Find the latest {@link Revision} for a department identified by its departmentId.
+	 * @param departmentId the departmentId of the department to retrieve the latest
+	 * {@link Revision} for
 	 * @return the latest {@link Revision} of the given department
 	 * @throws NotFoundException if no such {@link Revision} entry exists
 	 */
@@ -251,15 +264,17 @@ public class DepartmentController {
 			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = DepartmentResponse.class)))
 	@ApiResponse(responseCode = "404", description = "Revision not found")
-	@GetMapping(value = "/{id}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{departmentId}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	public Revision<Long, DepartmentResponse> findLastChangeRevision(
-			@Parameter(description = "ID of the department") @PathVariable Long id) {
-		log.info("findLastChangeRevision( id= [{}])", id);
-		Revision<Long, Department> lastChangeRevision = this.departmentService.findLastChangeRevision(id);
+			@Parameter(description = "ID of the department") @PathVariable Long departmentId) {
+		log.info("findLastChangeRevision( departmentId= [{}])", departmentId);
+		Revision<Long, Department> lastChangeRevision = this.departmentService.findLastChangeRevision(departmentId);
 		Department department = lastChangeRevision.getEntity();
-		DepartmentResponse departmentResponse = new DepartmentResponse(department.getId(),
-				department.getDepartmentName());
+		DepartmentResponse departmentResponse = DepartmentResponse.builder()
+			.departmentId(department.getId())
+			.departmentName(department.getDepartmentName())
+			.build();
 		return Revision.of(lastChangeRevision.getMetadata(), departmentResponse);
 	}
 
@@ -270,7 +285,8 @@ public class DepartmentController {
 	 * department specified by the given ID. Each {@link EmployeeResponse} includes
 	 * details such as employee ID, email address, full name, birthday, and department
 	 * name.
-	 * @param id the unique identifier of the department for which to retrieve employees.
+	 * @param departmentId the unique identifier of the department for which to retrieve
+	 * employees.
 	 * @param pageable a {@link Pageable} object specifying the pagination information
 	 * (page number, page size).
 	 * @return a {@link Page} of {@link EmployeeResponse} objects representing the
@@ -288,9 +304,9 @@ public class DepartmentController {
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
 	public Page<EmployeeResponse> findAllEmployeesById(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long id, @PageableDefault(50) Pageable pageable) {
-		log.info("findEmployeesByDepartment( id= [{}] )", id);
-		Page<Employee> employeePage = this.departmentService.findAllEmployeesById(id, pageable);
+			required = true) @PathVariable("id") Long departmentId, @PageableDefault(50) Pageable pageable) {
+		log.info("findEmployeesByDepartment( departmentId= [{}] )", departmentId);
+		Page<Employee> employeePage = this.departmentService.findAllEmployeesById(departmentId, pageable);
 		return EmployeeController.createEmployeeResponsePage(employeePage);
 	}
 
@@ -301,7 +317,7 @@ public class DepartmentController {
 	 * the department is not found, a 404 error is generated. If department is associated
 	 * to some employee, a 409 is generated
 	 * </p>
-	 * @param id the unique identifier of the department to be deleted.
+	 * @param departmentId the unique identifier of the department to be deleted.
 	 */
 	@Operation(summary = "Deletes an department", description = "Deletes an department by their ID")
 	@ApiResponses({
@@ -312,9 +328,9 @@ public class DepartmentController {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteDepartment(@Parameter(description = "Unique identifier of the department",
-			required = true) @PathVariable("id") Long id) {
-		log.info("deleteDepartment( id= [{}] )", id);
-		this.departmentService.deleteById(id);
+			required = true) @PathVariable("id") Long departmentId) {
+		log.info("deleteDepartment( departmentId= [{}] )", departmentId);
+		this.departmentService.deleteById(departmentId);
 	}
 
 }

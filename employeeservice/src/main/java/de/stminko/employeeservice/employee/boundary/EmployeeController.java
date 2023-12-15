@@ -130,7 +130,7 @@ public class EmployeeController {
 		assert newId != null;
 		headers.add(HttpHeaders.LOCATION,
 				ServletUriComponentsBuilder.fromCurrentRequestUri()
-					.path("/{id}")
+					.path("/{departmentId}")
 					.buildAndExpand(newId)
 					.toUri()
 					.toASCIIString());
@@ -153,7 +153,7 @@ public class EmployeeController {
 	@ResponseStatus(HttpStatus.OK)
 	public EmployeeResponse findEmployee(@Parameter(description = "Unique identifier of the employee",
 			required = true) @PathVariable("id") String id) {
-		log.info("findEmployee( id=[{}] )", id);
+		log.info("findEmployee( departmentId=[{}] )", id);
 		Employee employee = this.employeeService.findById(id);
 		Employee.FullName fullName = employee.getFullName();
 		return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
@@ -209,7 +209,7 @@ public class EmployeeController {
 	public Page<Revision<Long, EmployeeResponse>> findAllRevisions(
 			@Parameter(description = "Unique identifier of the employee", required = true) @PathVariable String id,
 			@PageableDefault(50) Pageable pageable) {
-		log.info("findAllRevisions( id= [{}] )", id);
+		log.info("findAllRevisions( departmentId= [{}] )", id);
 		Page<Revision<Long, Employee>> employeeRevisionsPage = this.employeeService.findRevisions(id, pageable);
 		List<Revision<Long, EmployeeResponse>> responseRevisions = employeeRevisionsPage.getContent()
 			.stream()
@@ -221,8 +221,9 @@ public class EmployeeController {
 	}
 
 	/**
-	 * Find the latest {@link Revision} for an employee identified by its id.
-	 * @param id the id of the employee to retrieve the latest {@link Revision} for
+	 * Find the latest {@link Revision} for an employee identified by its departmentId.
+	 * @param id the departmentId of the employee to retrieve the latest {@link Revision}
+	 * for
 	 * @return the latest {@link Revision} of the given employee
 	 * @throws NotFoundException if no such {@link Revision} entry exists
 	 */
@@ -236,7 +237,7 @@ public class EmployeeController {
 	@JsonView(DataView.GET.class)
 	public Revision<Long, EmployeeResponse> findLastChangeRevision(
 			@Parameter(description = "ID of the department") @PathVariable String id) {
-		log.info("findLastChangeRevision( id= [{}])", id);
+		log.info("findLastChangeRevision( departmentId= [{}])", id);
 		Revision<Long, Employee> lastChangeRevision = this.employeeService.findLastChangeRevision(id);
 		return createEmployeeResponseRevision(lastChangeRevision);
 	}
@@ -266,7 +267,7 @@ public class EmployeeController {
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Partial employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
-		log.info("doPartialUpdate( id= [{}], request= [{}])", id, employeeRequest);
+		log.info("doPartialUpdate( departmentId= [{}], request= [{}])", id, employeeRequest);
 		this.employeeService.doPartialUpdate(id, employeeRequest);
 	}
 
@@ -296,7 +297,7 @@ public class EmployeeController {
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
-		log.info("doFullUpdate( id= [{}], request= [{}])", id, employeeRequest);
+		log.info("doFullUpdate( departmentId= [{}], request= [{}])", id, employeeRequest);
 		this.employeeService.doFullUpdate(id, employeeRequest);
 	}
 
@@ -317,7 +318,7 @@ public class EmployeeController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteEmployee(@Parameter(description = "Unique identifier of the employee",
 			required = true) @PathVariable("id") String id) {
-		log.info("deleteEmployee( id= [{}] )", id);
+		log.info("deleteEmployee( departmentId= [{}] )", id);
 		this.employeeService.deleteById(id);
 	}
 

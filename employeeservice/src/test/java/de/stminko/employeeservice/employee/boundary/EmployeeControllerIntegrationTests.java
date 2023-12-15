@@ -336,11 +336,11 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenAccess {
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}' returns NOT FOUND for unknown id ")
+		@DisplayName("GET: 'https://.../employees/{departmentId}' returns NOT FOUND for unknown departmentId ")
 		void givenUnknownId_whenFindById_thenStatus404() throws Exception {
 			// Arrange
 			String unknownId = UUID.randomUUID().toString();
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -352,11 +352,11 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}' returns OK and valid employee response")
+		@DisplayName("GET: 'https://.../employees/{departmentId}' returns OK and valid employee response")
 		void givenEmployee_whenFindById_thenStatus200AndReturnValidEmployeeResponse() throws Exception {
 			// Arrange
 			EmployeeResponse persisted = saveRandomEmployees(1).get(0);
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			String formattedBirthday = EmployeeControllerIntegrationTests.this.dateFormatter
 				.format(persisted.birthday());
 
@@ -385,12 +385,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}' returns OK and valid employee response on multiple employees")
+		@DisplayName("GET: 'https://.../employees/{departmentId}' returns OK and valid employee response on multiple employees")
 		void givenEmployees_whenFindById_thenStatus200AndReturnValidEmployeeResponse() throws Exception {
 			// Arrange
 			int count = 10;
 			EmployeeResponse persisted = saveRandomEmployees(count).get(RandomUtils.nextInt(0, count - 1));
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -429,7 +429,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}/revisions succeeds on existing employee")
+		@DisplayName("GET: 'https://.../employees/{departmentId}/revisions succeeds on existing employee")
 		void givenExistingEmployee_whenFindRevisions_thenStatusOkAndReturnPageOfRevisions() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -458,7 +458,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
@@ -478,12 +478,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
-			String deleteUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String deleteUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.delete(deleteUri, persistedEmployeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON));
 
-			String revisionUri = "%s/{id}/revisions".formatted(EmployeeController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -500,11 +500,11 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}/revisions/latest returns 404 for unknown id")
+		@DisplayName("GET: 'https://.../employees/{departmentId}/revisions/latest returns 404 for unknown departmentId")
 		void givenUnknownId_whenFindLatestRevision_thenStatus404AndErrorMessage() throws Exception {
 			// Arrange
 			String unknownId = UUID.randomUUID().toString();
-			String revisionUri = "%s/{id}/revisions/latest".formatted(EmployeeController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions/latest".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -524,7 +524,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../employees/{id}/revisions/latest succeeds on existing employee")
+		@DisplayName("GET: 'https://.../employees/{departmentId}/revisions/latest succeeds on existing employee")
 		void givenExistingEmployee_whenFindLatestRevision_thenStatusOkAndReturnLatestRevision() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -553,13 +553,13 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			EmployeeControllerIntegrationTests.this.mockMvc
 				.perform(MockMvcRequestBuilders.patch(patchUri, persistedEmployeeResponse.id())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
-			String revisionUri = "%s/{id}/revisions/latest".formatted(EmployeeController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions/latest".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -578,12 +578,12 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenPartialUpdate {
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id}' returns NOT FOUND if the specified employee doesn't exist ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId}' returns NOT FOUND if the specified employee doesn't exist ")
 		void givenUnknownEmployeeId_whenPartialUpdateEmployee_thenStatus404() throws Exception {
 			// Arrange
 			EmployeeRequest updateRequest = EmployeeControllerIntegrationTests.this.employeeRequestTestFactory
 				.createDefault();
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 			String requestAsJson = transformRequestToJSONByView(updateRequest, DataView.PATCH.class);
 			String wrongId = UUID.randomUUID().toString();
 
@@ -605,7 +605,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id}' returns BAD REQUEST if the specified department doesn't exist ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId}' returns BAD REQUEST if the specified department doesn't exist ")
 		void givenUnknownDepartment_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -629,7 +629,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.departmentName(newDepartmentName)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -649,7 +649,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidRequestWithAllFieldsSet_whenPartialUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -673,7 +673,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.departmentName(otherDepartmentResponse.departmentName())
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -699,7 +699,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating birthday")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT on only updating birthday")
 		void givenNewBirthDay_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyBirthDay() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -728,7 +728,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(newBirthDay)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -753,7 +753,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating first name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT on only updating first name")
 		void givenNewFirstName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyFirstName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -780,7 +780,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -805,7 +805,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns BAD REQUEST on only updating first name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on only updating first name")
 		void givenBlankFirstName_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -831,7 +831,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -851,7 +851,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating last name")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT on only updating last name")
 		void givenNewLastName_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyLastName() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -878,7 +878,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -903,7 +903,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating email")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT on only updating email")
 		void givenNewEmail_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyEmail() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -930,7 +930,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -954,7 +954,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns BAD REQUEST on invalid email")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on invalid email")
 		void givenNewInvalidEmail_whenPartialUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -981,7 +981,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1002,7 +1002,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PATCH: 'hhtps://.../employees/{id} returns NO CONTENT on only updating department")
+		@DisplayName("PATCH: 'hhtps://.../employees/{departmentId} returns NO CONTENT on only updating department")
 		void givenNewDepartment_whenPartialUpdateEmployee_thenStatus204andUpdateOnlyDeparmtent() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1030,7 +1030,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String patchUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String patchUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1060,7 +1060,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenFullUpdate {
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidFullRequest_whenFullUpdateEmployee_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1084,7 +1084,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.departmentName(otherDepartmentResponse.departmentName())
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PUT.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1110,7 +1110,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null birthday")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on null birthday")
 		void givenNullBirthDay_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1134,7 +1134,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.birthday(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PUT.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1154,7 +1154,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on invalid email")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on invalid email")
 		void givenInvalidEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1178,7 +1178,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.emailAddress(RandomStringUtils.randomAlphabetic(10))
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PUT.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1198,7 +1198,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null email")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on null email")
 		void givenNullEmail_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1222,7 +1222,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.emailAddress(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1242,7 +1242,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null first name")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on null first name")
 		void givenNullFirstName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1266,7 +1266,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.firstName(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1286,7 +1286,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null last name")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on null last name")
 		void givenNullLastName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1310,7 +1310,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.lastName(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1330,7 +1330,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../employees/{id} returns BAD REQUEST on null department name")
+		@DisplayName("PUT: 'hhtps://.../employees/{departmentId} returns BAD REQUEST on null department name")
 		void givenNullDepartmentName_whenFullUpdateEmployee_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1353,7 +1353,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.departmentName(null)
 				.create();
 			String updateRequestAsJson = transformRequestToJSONByView(updateEmployeeRequest, DataView.PATCH.class);
-			String putUri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String putUri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1379,11 +1379,11 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenDelete {
 
 		@Test
-		@DisplayName("DELETE: 'hhtps://.../employees/{id}' returns NOT FOUND if the specified uuid doesn't exist")
+		@DisplayName("DELETE: 'hhtps://.../employees/{departmentId}' returns NOT FOUND if the specified uuid doesn't exist")
 		void givenUnknownId_whenDeleteEmployeeById_thenStatus404() throws Exception {
 			// Arrange
 			String unknownId = UUID.randomUUID().toString();
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc
@@ -1402,7 +1402,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("DELETE: 'hhtps://.../employees/{id}' returns NO CONTENT if the specified uuid exists")
+		@DisplayName("DELETE: 'hhtps://.../employees/{departmentId}' returns NO CONTENT if the specified uuid exists")
 		void givenEmployee_whenDeleteEmployeeById_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -1419,7 +1419,7 @@ class EmployeeControllerIntegrationTests extends AbstractIntegrationTestSuite {
 				.andReturn();
 			EmployeeResponse employeeResponse = EmployeeControllerIntegrationTests.this.objectMapper
 				.readValue(mvcResult.getResponse().getContentAsString(), EmployeeResponse.class);
-			String uri = "%s/{id}".formatted(EmployeeController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(EmployeeController.BASE_URI);
 
 			// Act / Assert
 			EmployeeControllerIntegrationTests.this.mockMvc

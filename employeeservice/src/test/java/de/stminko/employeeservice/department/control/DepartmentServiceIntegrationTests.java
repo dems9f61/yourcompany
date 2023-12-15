@@ -177,7 +177,7 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("Finding an department with a wrong id throws NotFoundException")
+		@DisplayName("Finding an department with a wrong departmentId throws NotFoundException")
 		void givenUnknownId_whenFindById_thenThrowNotFoundException() {
 			// Arrange
 			List<DepartmentRequest> departmentRequests = new LinkedList<>();
@@ -198,7 +198,7 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("Finding an department with a correct department id returns the related department")
+		@DisplayName("Finding an department with a correct department departmentId returns the related department")
 		void givenDepartment_whenFindById_thenReturnDepartment() {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory
@@ -408,7 +408,7 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 	class WhenDelete {
 
 		@Test
-		@DisplayName("Deleting a department with a wrong id fails")
+		@DisplayName("Deleting a department with a wrong departmentId fails")
 		void givenUnknownId_whenDeleteById_thenThrowNotFoundException() {
 			// Arrange
 			List<DepartmentRequest> departmentRequests = new LinkedList<>();
@@ -450,7 +450,7 @@ class DepartmentServiceIntegrationTests extends AbstractIntegrationTestSuite {
 		}
 
 		@Test
-		@DisplayName("Deleting a department with a correct department id succeeds")
+		@DisplayName("Deleting a department with a correct department departmentId succeeds")
 		void givenDepartment_whenDelete_thenSucceed() {
 			// Arrange
 			DepartmentRequest departmentRequest = DepartmentServiceIntegrationTests.this.departmentRequestTestFactory

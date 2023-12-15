@@ -8,6 +8,7 @@ import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import de.stminko.employeeservice.runtime.validation.constraints.boundary.NullOrNotBlank;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -45,6 +46,7 @@ import lombok.ToString;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode
+@Builder
 @ToString
 public class DepartmentRequest {
 

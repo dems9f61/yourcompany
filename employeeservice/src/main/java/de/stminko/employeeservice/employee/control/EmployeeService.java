@@ -124,7 +124,7 @@ public class EmployeeService {
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public Employee findById(@NonNull String id) {
-		log.info("findById( id= [{}] )", id);
+		log.info("findById( departmentId= [{}] )", id);
 		return this.repository.findById(id)
 			.orElseThrow(() -> new NotFoundException(
 					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
@@ -202,7 +202,7 @@ public class EmployeeService {
 	 * @param id the unique identifier of the employee to be deleted
 	 */
 	public void deleteById(@NonNull String id) {
-		log.info("deleteById( id= [{}] )", id);
+		log.info("deleteById( departmentId= [{}] )", id);
 		Employee employee = this.repository.findById(id)
 			.orElseThrow(() -> new NotFoundException(
 					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
@@ -222,20 +222,20 @@ public class EmployeeService {
 	 * @return a Page object containing the revisions of the employee.
 	 */
 	public Page<Revision<Long, Employee>> findRevisions(@NonNull String id, @NonNull Pageable pageable) {
-		log.info("findRevisions( id= [{}] )", id);
+		log.info("findRevisions( departmentId= [{}] )", id);
 		return this.repository.findRevisions(id, pageable);
 	}
 
 	/**
-	 * Find the latest revision information for the given employee id.
-	 * @param id the id of the entity the revision history should be fetched for
+	 * Find the latest revision information for the given employee departmentId.
+	 * @param id the departmentId of the entity the revision history should be fetched for
 	 * @return a single {@link Revision} for the last data change on the Entity with given
 	 * ID
 	 * @throws NotFoundException if no revision information could be found (the employee
 	 * for given ID does not exist)
 	 */
 	public Revision<Long, Employee> findLastChangeRevision(@NonNull String id) {
-		log.info("findLastChangeRevision( id= [{}] )", id);
+		log.info("findLastChangeRevision( departmentId= [{}] )", id);
 		return this.repository.findLastChangeRevision(id)
 			.orElseThrow(() -> new NotFoundException(
 					this.messageSourceHelper.getMessage("errors.employee.last-revision.not-found", id)));

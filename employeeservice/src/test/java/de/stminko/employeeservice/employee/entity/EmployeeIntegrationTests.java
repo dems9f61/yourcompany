@@ -23,7 +23,7 @@ class EmployeeIntegrationTests extends AbstractIntegrationTestSuite {
 	private DepartmentRepository departmentRepository;
 
 	@Test
-	@DisplayName("two employees with the same id and values are equal")
+	@DisplayName("two employees with the same departmentId and values are equal")
 	void givenTwoEmployeesWithSameIdAndValues_whenCompare_thenEqual() {
 		// Arrange
 		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
@@ -56,7 +56,7 @@ class EmployeeIntegrationTests extends AbstractIntegrationTestSuite {
 	}
 
 	@Test
-	@DisplayName("two employees with the same id and values are mapped to the same hash code")
+	@DisplayName("two employees with the same departmentId and values are mapped to the same hash code")
 	void givenTwoEmployeesWithSameIdAndValues_whenHash_thenSameHashCode() {
 		// Arrange
 		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();
@@ -71,7 +71,7 @@ class EmployeeIntegrationTests extends AbstractIntegrationTestSuite {
 	}
 
 	@Test
-	@DisplayName("two employees with the same id and values are consistently mapped to the same hash code")
+	@DisplayName("two employees with the same departmentId and values are consistently mapped to the same hash code")
 	void givenTwoEmployeesWithSameValues_whenHashMultipleTimes_thenSameHashCode() {
 		// Arrange
 		Department toPersistDepartment = this.departmentTestFactory.builder().id(null).create();

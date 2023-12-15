@@ -11,7 +11,7 @@ package de.stminko.employeeservice.runtime.errorhandling.boundary;
  * <p>
  * Example: <pre>
  *     if (userRepository.findById(userId) == null) {
- *         throw new NotFoundException("User with id " + userId + " not found");
+ *         throw new NotFoundException("User with departmentId " + userId + " not found");
  *     }
  * </pre>
  *

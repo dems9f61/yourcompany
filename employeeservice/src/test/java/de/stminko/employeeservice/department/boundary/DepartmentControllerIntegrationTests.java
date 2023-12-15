@@ -151,7 +151,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.andExpect(MockMvcResultMatchers.status().isCreated())
 				.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.notNullValue()))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentId", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName",
 						Matchers.is(departmentRequest.departmentName())))
 				.andExpect(MockMvcResultMatchers.header()
@@ -161,7 +161,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 			DepartmentResponse departmentResponse = DepartmentControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, DepartmentResponse.class);
 			Optional<Department> optionalDepartment = DepartmentControllerIntegrationTests.this.departmentRepository
-				.findById(departmentResponse.id());
+				.findById(departmentResponse.departmentId());
 			Assertions.assertThat(optionalDepartment)
 				.hasValueSatisfying((Department value) -> Assertions.assertThat(value).isNotNull());
 		}
@@ -173,11 +173,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenAccess {
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}' returns NOT FOUND for unknown id ")
+		@DisplayName("GET: 'https://.../departments/{departmentId}' returns NOT FOUND for unknown departmentId ")
 		void givenUnknownId_whenFindById_thenStatus404() throws Exception {
 			// Arrange
 			Long unknownId = Long.MAX_VALUE;
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -189,15 +189,16 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}' returns OK and valid department response")
+		@DisplayName("GET: 'https://.../departments/{departmentId}' returns OK and valid department response")
 		void givenDepartment_whenFindById_thenStatus200AndReturnValidDepartmentResponse() throws Exception {
 			// Arrange
 			DepartmentResponse persisted = saveRandomDepartment();
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			MvcResult mvcResult = DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(uri, persisted.id()).contentType(MediaType.APPLICATION_JSON))
+				.perform(MockMvcRequestBuilders.get(uri, persisted.departmentId())
+					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.departmentName", Matchers.is(persisted.departmentName())))
@@ -207,12 +208,12 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 			DepartmentResponse departmentResponse = DepartmentControllerIntegrationTests.this.objectMapper
 				.readValue(contentAsString, DepartmentResponse.class);
 			Assertions.assertThat(departmentResponse).isNotNull();
-			Assertions.assertThat(departmentResponse.id()).isEqualTo(persisted.id());
+			Assertions.assertThat(departmentResponse.departmentId()).isEqualTo(persisted.departmentId());
 			Assertions.assertThat(departmentResponse.departmentName()).isEqualTo(persisted.departmentName());
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/employees  returns all employees associated to a department")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/employees  returns all employees associated to a department")
 		void givenMultipleEmployeesAssociatedToDepartment_whenFindAllAssociatedEmployeesByDepId_thenReturnAllAssociatedEmployees()
 				throws Exception {
 			// Arrange
@@ -222,8 +223,8 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 			List<EmployeeResponse> employeeResponseList = IntStream.range(0, count)
 				.mapToObj((int value) -> saveRandomEmployee(departmentResponse.departmentName()))
 				.toList();
-			Long id = departmentResponse.id();
-			String uri = "%s/{id}/employees".formatted(DepartmentController.BASE_URI);
+			Long id = departmentResponse.departmentId();
+			String uri = "%s/{departmentId}/employees".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -242,11 +243,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/employees Finding returns 404 for unknown id")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/employees Finding returns 404 for unknown departmentId")
 		void givenUnknownId_whenFindAllAssociatedEmployeesByDepId_thenStatus404() throws Exception {
 			// Arrange
 			Long unknownId = Long.MAX_VALUE;
-			String uri = "%s/{id}/employees".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}/employees".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -258,13 +259,13 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/employees  returns no employees associated to a department if there is no employee associates to the department")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/employees  returns no employees associated to a department if there is no employee associates to the department")
 		void givenNoEmployeeAssociatedToDepartment_whenFindAllAssociatedEmployeesByDepId_thenReturnNoAssociatedEmployees()
 				throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			Long id = departmentResponse.id();
-			String uri = "%s/{id}/employees".formatted(DepartmentController.BASE_URI);
+			Long id = departmentResponse.departmentId();
+			String uri = "%s/{departmentId}/employees".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -275,7 +276,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/revisions succeeds on existing department")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/revisions succeeds on existing department")
 		void givenExistingDepartment_whenFindRevisions_thenStatusOkAndReturnPageOfRevisions() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -286,22 +287,22 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
-			String updateUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String updateUri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
-			String deleteUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String deleteUri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON));
 
-			String revisionUri = "%s/{id}/revisions".formatted(DepartmentController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -313,11 +314,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/revisions/latest returns 404 for unknown id")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/revisions/latest returns 404 for unknown departmentId")
 		void givenUnknownId_whenFindLatestRevision_thenStatus404AndErrorMessage() throws Exception {
 			// Arrange
 			Long unknownId = Long.MAX_VALUE;
-			String revisionUri = "%s/{id}/revisions/latest".formatted(DepartmentController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions/latest".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -339,7 +340,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("GET: 'https://.../departments/{id}/revisions/latest succeeds on existing department")
+		@DisplayName("GET: 'https://.../departments/{departmentId}/revisions/latest succeeds on existing department")
 		void givenExistingDepartment_whenFindLatestRevision_thenStatusOkAndReturnLatestRevision() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -350,22 +351,22 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
-			String updateUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String updateUri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.put(updateUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson));
 
-			String deleteUri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String deleteUri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.delete(deleteUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON));
 
-			String revisionUri = "%s/{id}/revisions/latest".formatted(DepartmentController.BASE_URI);
+			String revisionUri = "%s/{departmentId}/revisions/latest".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.get(revisionUri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -390,7 +391,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(count)))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentId").exists());
 		}
 
 	}
@@ -400,7 +401,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenUpdate {
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../departments/{id} returns NO CONTENT if the specified request (all fields set) is valid ")
+		@DisplayName("PUT: 'hhtps://.../departments/{departmentId} returns NO CONTENT if the specified request (all fields set) is valid ")
 		void givenValidFullRequest_whenFullUpdateDepartment_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -411,17 +412,17 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(uri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.put(uri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Department updatedDepartment = DepartmentControllerIntegrationTests.this.departmentRepository
-				.findById(departmentResponse.id())
+				.findById(departmentResponse.departmentId())
 				.orElseThrow();
 			Assertions.assertThat(updatedDepartment.getDepartmentName())
 				.isEqualTo(updateDepartmentRequest.departmentName());
@@ -429,7 +430,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../departments/{id} returns NOT FOUND if the specified department does not exists ")
+		@DisplayName("PUT: 'hhtps://.../departments/{departmentId} returns NOT FOUND if the specified department does not exists ")
 		void givenUnknownId_whenFullUpdateDepartment_thenStatus404() throws Exception {
 			// Arrange
 			DepartmentRequest updateDepartmentRequest = DepartmentControllerIntegrationTests.this.departmentRequestTestFactory
@@ -438,7 +439,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			Long unknownId = Long.MAX_VALUE;
 
 			// Act / Assert
@@ -460,7 +461,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../departments/{id} returns BAD REQUEST on null department name")
+		@DisplayName("PUT: 'hhtps://.../departments/{departmentId} returns BAD REQUEST on null department name")
 		void givenNullDepartmentName_whenFullUpdateDepartment_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
@@ -471,11 +472,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest, DataView.PUT.class);
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(uri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.put(uri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -492,7 +493,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("PUT: 'hhtps://.../departments/{id} returns BAD REQUEST on already used department name")
+		@DisplayName("PUT: 'hhtps://.../departments/{departmentId} returns BAD REQUEST on already used department name")
 		void givenAlreadyUsedDepartmentName_whenFullUpdateDepartment_thenStatus400() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse_1 = saveRandomDepartment();
@@ -504,11 +505,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.create();
 
 			String updateRequestAsJson = transformRequestToJSONByView(updateDepartmentRequest_2, DataView.PUT.class);
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.put(uri, departmentResponse_2.id())
+				.perform(MockMvcRequestBuilders.put(uri, departmentResponse_2.departmentId())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(updateRequestAsJson))
 				.andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -531,11 +532,11 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 	class WhenDelete {
 
 		@Test
-		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns NOT FOUND if the specified id doesn't exist")
+		@DisplayName("DELETE: 'hhtps://.../departments/{departmentId}' returns NOT FOUND if the specified departmentId doesn't exist")
 		void givenUnknownId_whenDeleteDepartmentById_thenStatus404() throws Exception {
 			// Arrange
 			Long unknownId = Long.MAX_VALUE;
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
@@ -554,16 +555,16 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 		}
 
 		@Test
-		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns CONFLICT if the specified department isn't empty")
+		@DisplayName("DELETE: 'hhtps://.../departments/{departmentId}' returns CONFLICT if the specified department isn't empty")
 		void givenNotEmptyDepartment_whenDeleteDepartmentById_thenStatus409() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 			saveRandomEmployee(departmentResponse.departmentName());
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(uri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.delete(uri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isConflict())
 				.andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -576,24 +577,24 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage", Matchers.notNullValue()))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage",
 						Matchers.containsString("Cannot delete department with ID [%s] as it still has employees!"
-							.formatted(departmentResponse.id()))));
+							.formatted(departmentResponse.departmentId()))));
 		}
 
 		@Test
-		@DisplayName("DELETE: 'hhtps://.../departments/{id}' returns NO CONTENT if the specified department exists and is empty")
+		@DisplayName("DELETE: 'hhtps://.../departments/{departmentId}' returns NO CONTENT if the specified department exists and is empty")
 		void givenEmployee_whenDeleteDepartment_thenStatus204() throws Exception {
 			// Arrange
 			DepartmentResponse departmentResponse = saveRandomDepartment();
-			String uri = "%s/{id}".formatted(DepartmentController.BASE_URI);
+			String uri = "%s/{departmentId}".formatted(DepartmentController.BASE_URI);
 
 			// Act / Assert
 			DepartmentControllerIntegrationTests.this.mockMvc
-				.perform(MockMvcRequestBuilders.delete(uri, departmentResponse.id())
+				.perform(MockMvcRequestBuilders.delete(uri, departmentResponse.departmentId())
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isNoContent());
 
 			Optional<Department> optionalEmployee = DepartmentControllerIntegrationTests.this.departmentRepository
-				.findById(departmentResponse.id());
+				.findById(departmentResponse.departmentId());
 			Assertions.assertThat(optionalEmployee).isEmpty();
 		}
 
