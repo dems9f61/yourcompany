@@ -13,6 +13,12 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Component;
 
+/**
+ * this class represents an event listener for the application context. It logs the
+ * environment and configuration details when the application context is refreshed.
+ *
+ * @author Stéphan Minko
+ */
 @Slf4j
 @Component
 class AppContextEventListener {
@@ -27,11 +33,12 @@ class AppContextEventListener {
 		for (PropertySource<?> ps : sources) {
 			if (ps instanceof EnumerablePropertySource<?> eps) {
 				Arrays.stream(eps.getPropertyNames())
-					.filter((String propName) -> !isSystemOrManagementProperty(propName))
-					.forEach((String propName) -> {
-						String propValue = env.getProperty(propName);
-						map.append(propName).append(" = ").append((propValue != null) ? propValue : "").append('\n');
-					});
+						.filter((String propName) -> !isSystemOrManagementProperty(propName))
+						.forEach((String propName) -> {
+							String propValue = env.getProperty(propName);
+							map.append(propName).append(" = ").append((propValue != null) ? propValue : "")
+									.append('\n');
+						});
 			}
 		}
 		log.info("[{}]", map);

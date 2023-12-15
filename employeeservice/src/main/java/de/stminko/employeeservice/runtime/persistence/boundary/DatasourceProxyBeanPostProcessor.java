@@ -48,6 +48,18 @@ import org.springframework.util.ReflectionUtils;
 @RequiredArgsConstructor
 public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 
+	/**
+	 * this method is called after the initialization of a bean. It checks if the bean is
+	 * an instance of DataSource and not an instance of ProxyDataSource. If the conditions
+	 * are true, it creates a ProxyFactory and adds a ProxyDataSourceInterceptor to the
+	 * factory. The ProxyDataSourceInterceptor wraps the original DataSource with a
+	 * ProxyDataSourceBuilder, providing additional functionalities like logging and query
+	 * analysis. Finally, it returns the proxy object if the conditions are met, otherwise
+	 * it returns the original bean.
+	 * @param bean The bean object being initialized.
+	 * @param beanName The name of the bean.
+	 * @return The initialized bean object, either the original bean or the proxy bean.
+	 */
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) {
 		if ((bean instanceof DataSource source) && !(bean instanceof ProxyDataSource)) {
@@ -62,12 +74,8 @@ public class DatasourceProxyBeanPostProcessor implements BeanPostProcessor {
 	private record ProxyDataSourceInterceptor(DataSource dataSource) implements MethodInterceptor {
 
 		private ProxyDataSourceInterceptor(final DataSource dataSource) {
-			this.dataSource = ProxyDataSourceBuilder.create(dataSource)
-				.name("MyDS")
-				.multiline()
-				.logQueryBySlf4j(SLF4JLogLevel.INFO)
-				.listener(new DataSourceQueryCountListener())
-				.build();
+			this.dataSource = ProxyDataSourceBuilder.create(dataSource).name("MyDS").multiline()
+					.logQueryBySlf4j(SLF4JLogLevel.INFO).listener(new DataSourceQueryCountListener()).build();
 		}
 
 		@Override
