@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.NonNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,7 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  * employee, formatted according to UsableDateFormat.Constants.DEFAULT_DATE_FORMAT. -
  * departmentName: The name of the department the employee belongs to.
  *
- * @param id The unique identifier of the employee. It's non-null.
+ * @param employeeId The unique identifier of the employee. It's non-null.
  * @param emailAddress The email address of the employee.
  * @param firstName The first name of the employee.
  * @param lastName The last name of the employee.
@@ -34,9 +35,10 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @param departmentName The name of the department the employee belongs to.
  * @author Stéphan Minko
  */
+@Builder
 @JsonView(DataView.GET.class)
 public record EmployeeResponse(
-		@NonNull @Schema(description = "The unique identifier of the employee", example = "12345") String id,
+		@NonNull @Schema(description = "The unique identifier of the employee", example = "12345") String employeeId,
 		@Schema(description = "Employee's email address", example = "employee@example.com") String emailAddress,
 		@Schema(description = "Employee's first name", example = "John") String firstName,
 
@@ -49,11 +51,11 @@ public record EmployeeResponse(
 				example = "Human Resources") String departmentName) {
 
 	@JsonCreator
-	public EmployeeResponse(@JsonProperty("id") String id, @JsonProperty("emailAddress") String emailAddress,
-			@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
-			@JsonProperty("birthday") ZonedDateTime birthday,
+	public EmployeeResponse(@JsonProperty(value = "employeeId", required = true) String employeeId,
+			@JsonProperty("emailAddress") String emailAddress, @JsonProperty("firstName") String firstName,
+			@JsonProperty("lastName") String lastName, @JsonProperty("birthday") ZonedDateTime birthday,
 			@JsonProperty(value = "departmentName", required = true) String departmentName) {
-		this.id = id;
+		this.employeeId = employeeId;
 		this.emailAddress = emailAddress;
 		this.firstName = firstName;
 		this.lastName = lastName;

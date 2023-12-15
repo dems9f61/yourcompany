@@ -239,7 +239,7 @@ class DepartmentControllerIntegrationTests extends AbstractIntegrationTestSuite 
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName").exists())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].departmentName",
 						Matchers.everyItem(Matchers.is(departmentResponse.departmentName()))))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].id").exists());
+				.andExpect(MockMvcResultMatchers.jsonPath("$.content[*].employeeId").exists());
 		}
 
 		@Test

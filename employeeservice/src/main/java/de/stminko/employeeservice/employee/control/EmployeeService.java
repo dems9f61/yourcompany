@@ -119,15 +119,15 @@ public class EmployeeService {
 	 * Searches for an employee using the provided ID. If the employee is not found, a
 	 * {@link NotFoundException} is thrown.
 	 * </p>
-	 * @param id the unique identifier of the employee
+	 * @param employeeId the unique identifier of the employee
 	 * @return the found {@link Employee}
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS)
-	public Employee findById(@NonNull String id) {
-		log.info("findById( departmentId= [{}] )", id);
-		return this.repository.findById(id)
+	public Employee findById(@NonNull String employeeId) {
+		log.info("findById( departmentId= [{}] )", employeeId);
+		return this.repository.findById(employeeId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", employeeId)));
 	}
 
 	/**
@@ -148,13 +148,13 @@ public class EmployeeService {
 	 * request object. Validates the request and applies the changes. An event is
 	 * published if any change occurs.
 	 * </p>
-	 * @param id the unique identifier of the employee
+	 * @param employeeId the unique identifier of the employee
 	 * @param updateRequest the request object containing new details for the employee
 	 * @return the updated {@link Employee}
 	 */
-	public Employee doFullUpdate(@NonNull String id, @NonNull EmployeeRequest updateRequest) {
-		log.info("doFullUpdate ( [{}],[{}] ) ", id, updateRequest);
-		return update(id, updateRequest, DataView.PUT.class);
+	public Employee doFullUpdate(@NonNull String employeeId, @NonNull EmployeeRequest updateRequest) {
+		log.info("doFullUpdate ( [{}],[{}] ) ", employeeId, updateRequest);
+		return update(employeeId, updateRequest, DataView.PUT.class);
 	}
 
 	/**
@@ -163,20 +163,21 @@ public class EmployeeService {
 	 * Similar to {@link #doFullUpdate}, but only updates the fields provided in the
 	 * update request. An event is published if any change occurs.
 	 * </p>
-	 * @param id the unique identifier of the employee
+	 * @param employeeId the unique identifier of the employee
 	 * @param updateRequest the request object containing fields to update
 	 * @return the updated {@link Employee}
 	 */
-	public Employee doPartialUpdate(@NonNull String id, @NonNull EmployeeRequest updateRequest) {
-		log.info("doFullUpdate ( [{}],[{}] ) ", id, updateRequest);
-		return update(id, updateRequest, DataView.PATCH.class);
+	public Employee doPartialUpdate(@NonNull String employeeId, @NonNull EmployeeRequest updateRequest) {
+		log.info("doFullUpdate ( [{}],[{}] ) ", employeeId, updateRequest);
+		return update(employeeId, updateRequest, DataView.PATCH.class);
 	}
 
-	private Employee update(String id, EmployeeRequest updateRequest, Class<? extends DataView> validationGroup) {
+	private Employee update(String employeeId, EmployeeRequest updateRequest,
+			Class<? extends DataView> validationGroup) {
 		validateRequest(updateRequest, validationGroup);
-		Employee employeeToUpdate = this.repository.findById(id)
+		Employee employeeToUpdate = this.repository.findById(employeeId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", employeeId)));
 
 		boolean hasChanged = hasEmailAddressChangedAfterUpdate(updateRequest, employeeToUpdate);
 		hasChanged = hasFullNameChangedAfterUpdate(updateRequest, employeeToUpdate) || hasChanged;
@@ -199,14 +200,14 @@ public class EmployeeService {
 	 * an event is published via {@link EmployeeEventPublisher} to indicate that an
 	 * employee has been deleted.
 	 * </p>
-	 * @param id the unique identifier of the employee to be deleted
+	 * @param employeeId the unique identifier of the employee to be deleted
 	 */
-	public void deleteById(@NonNull String id) {
-		log.info("deleteById( departmentId= [{}] )", id);
-		Employee employee = this.repository.findById(id)
+	public void deleteById(@NonNull String employeeId) {
+		log.info("deleteById( departmentId= [{}] )", employeeId);
+		Employee employee = this.repository.findById(employeeId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.employee.id.not-found", id)));
-		this.repository.deleteById(id);
+					this.messageSourceHelper.getMessage("errors.employee.id.not-found", employeeId)));
+		this.repository.deleteById(employeeId);
 		this.messagePublisher.employeeDeleted(employee);
 	}
 
@@ -228,17 +229,18 @@ public class EmployeeService {
 
 	/**
 	 * Find the latest revision information for the given employee departmentId.
-	 * @param id the departmentId of the entity the revision history should be fetched for
+	 * @param employeeId the departmentId of the entity the revision history should be
+	 * fetched for
 	 * @return a single {@link Revision} for the last data change on the Entity with given
 	 * ID
 	 * @throws NotFoundException if no revision information could be found (the employee
 	 * for given ID does not exist)
 	 */
-	public Revision<Long, Employee> findLastChangeRevision(@NonNull String id) {
-		log.info("findLastChangeRevision( departmentId= [{}] )", id);
-		return this.repository.findLastChangeRevision(id)
+	public Revision<Long, Employee> findLastChangeRevision(@NonNull String employeeId) {
+		log.info("findLastChangeRevision( departmentId= [{}] )", employeeId);
+		return this.repository.findLastChangeRevision(employeeId)
 			.orElseThrow(() -> new NotFoundException(
-					this.messageSourceHelper.getMessage("errors.employee.last-revision.not-found", id)));
+					this.messageSourceHelper.getMessage("errors.employee.last-revision.not-found", employeeId)));
 	}
 
 	private void validateUniquenessOfEmail(String emailAddress) {

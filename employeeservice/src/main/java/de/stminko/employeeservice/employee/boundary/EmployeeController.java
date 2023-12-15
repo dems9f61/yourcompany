@@ -90,14 +90,24 @@ public class EmployeeController {
 	 * @return a page of EmployeeResponse objects
 	 */
 	public static Page<EmployeeResponse> createEmployeeResponsePage(@NonNull Page<Employee> employeePage) {
-		List<EmployeeResponse> employeeResponses = employeePage.getContent().stream().map((Employee employee) -> {
-			Employee.FullName fullName = employee.getFullName();
-			return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-					(fullName != null) ? fullName.getFirstName() : null,
-					(fullName != null) ? fullName.getLastName() : null, employee.getBirthday(),
-					employee.getDepartment().getDepartmentName());
-		}).toList();
+		List<EmployeeResponse> employeeResponses = employeePage.getContent()
+			.stream()
+			.map(EmployeeController::createEmployeeResponse)
+			.toList();
 		return new PageImpl<>(employeeResponses, employeePage.getPageable(), employeePage.getTotalElements());
+	}
+
+	private static EmployeeResponse createEmployeeResponse(Employee employee) {
+		Employee.FullName fullName = employee.getFullName();
+		assert employee.getId() != null;
+		return EmployeeResponse.builder()
+			.employeeId(employee.getId())
+			.emailAddress(employee.getEmailAddress())
+			.firstName((fullName != null) ? fullName.getFirstName() : null)
+			.lastName((fullName != null) ? fullName.getLastName() : null)
+			.birthday(employee.getBirthday())
+			.departmentName(employee.getDepartment().getDepartmentName())
+			.build();
 	}
 
 	/**
@@ -122,16 +132,12 @@ public class EmployeeController {
 					implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
 		log.info("createEmployee( employeeRequest= [{}] )", employeeRequest);
 		Employee employee = this.employeeService.create(employeeRequest);
-		String newId = employee.getId();
-		EmployeeResponse employeeResponse = new EmployeeResponse(newId, employee.getEmailAddress(),
-				employee.getFullName().getFirstName(), employee.getFullName().getLastName(), employee.getBirthday(),
-				employee.getDepartment().getDepartmentName());
+		EmployeeResponse employeeResponse = createEmployeeResponse(employee);
 		HttpHeaders headers = new HttpHeaders();
-		assert newId != null;
 		headers.add(HttpHeaders.LOCATION,
 				ServletUriComponentsBuilder.fromCurrentRequestUri()
 					.path("/{departmentId}")
-					.buildAndExpand(newId)
+					.buildAndExpand(employee.getId())
 					.toUri()
 					.toASCIIString());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(employeeResponse);
@@ -139,7 +145,7 @@ public class EmployeeController {
 
 	/**
 	 * Finds and returns a single employee by their ID.
-	 * @param id the unique identifier of the employee.
+	 * @param employeeId the unique identifier of the employee.
 	 * @return the {@link EmployeeResponse} containing the employee's details.
 	 */
 	@Operation(summary = "Find an employee by ID", description = "Returns a single employee by their ID")
@@ -152,13 +158,10 @@ public class EmployeeController {
 	@JsonView(DataView.GET.class)
 	@ResponseStatus(HttpStatus.OK)
 	public EmployeeResponse findEmployee(@Parameter(description = "Unique identifier of the employee",
-			required = true) @PathVariable("id") String id) {
-		log.info("findEmployee( departmentId=[{}] )", id);
-		Employee employee = this.employeeService.findById(id);
-		Employee.FullName fullName = employee.getFullName();
-		return new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-				(fullName != null) ? fullName.getFirstName() : null, (fullName != null) ? fullName.getLastName() : null,
-				employee.getBirthday(), employee.getDepartment().getDepartmentName());
+			required = true) @PathVariable("id") String employeeId) {
+		log.info("findEmployee( departmentId=[{}] )", employeeId);
+		Employee employee = this.employeeService.findById(employeeId);
+		return createEmployeeResponse(employee);
 	}
 
 	/**
@@ -194,7 +197,7 @@ public class EmployeeController {
 	 * {@link EmployeeResponse} that represents a state of the department at a certain
 	 * point in time. Each revision includes metadata such as the revision type (insert,
 	 * update, delete) and the timestamp of the revision.
-	 * @param id the ID of the employee for which to retrieve the revisions.
+	 * @param employeeId the ID of the employee for which to retrieve the revisions.
 	 * @param pageable a {@link Pageable} object specifying the pagination information
 	 * (page number, page size).
 	 * @return a {@link Page} of {@link Revision} objects containing
@@ -204,13 +207,14 @@ public class EmployeeController {
 			description = "Returns a page of revisions for the specified employee ID")
 	@ApiResponse(responseCode = "200", description = "Successfully retrieved the revisions",
 			content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageImpl.class)))
-	@GetMapping(value = "/{id}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{employeeId}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	public Page<Revision<Long, EmployeeResponse>> findAllRevisions(
-			@Parameter(description = "Unique identifier of the employee", required = true) @PathVariable String id,
+			@Parameter(description = "Unique identifier of the employee",
+					required = true) @PathVariable String employeeId,
 			@PageableDefault(50) Pageable pageable) {
-		log.info("findAllRevisions( departmentId= [{}] )", id);
-		Page<Revision<Long, Employee>> employeeRevisionsPage = this.employeeService.findRevisions(id, pageable);
+		log.info("findAllRevisions( employeeId= [{}] )", employeeId);
+		Page<Revision<Long, Employee>> employeeRevisionsPage = this.employeeService.findRevisions(employeeId, pageable);
 		List<Revision<Long, EmployeeResponse>> responseRevisions = employeeRevisionsPage.getContent()
 			.stream()
 			.map(this::createEmployeeResponseRevision)
@@ -222,8 +226,8 @@ public class EmployeeController {
 
 	/**
 	 * Find the latest {@link Revision} for an employee identified by its departmentId.
-	 * @param id the departmentId of the employee to retrieve the latest {@link Revision}
-	 * for
+	 * @param employeeId the departmentId of the employee to retrieve the latest
+	 * {@link Revision} for
 	 * @return the latest {@link Revision} of the given employee
 	 * @throws NotFoundException if no such {@link Revision} entry exists
 	 */
@@ -233,12 +237,12 @@ public class EmployeeController {
 			content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = DepartmentResponse.class)))
 	@ApiResponse(responseCode = "404", description = "Revision not found")
-	@GetMapping(value = "/{id}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{employeeId}/revisions/latest", produces = MediaType.APPLICATION_JSON_VALUE)
 	@JsonView(DataView.GET.class)
 	public Revision<Long, EmployeeResponse> findLastChangeRevision(
-			@Parameter(description = "ID of the department") @PathVariable String id) {
-		log.info("findLastChangeRevision( departmentId= [{}])", id);
-		Revision<Long, Employee> lastChangeRevision = this.employeeService.findLastChangeRevision(id);
+			@Parameter(description = "ID of the department") @PathVariable String employeeId) {
+		log.info("findLastChangeRevision( employeeId= [{}])", employeeId);
+		Revision<Long, Employee> lastChangeRevision = this.employeeService.findLastChangeRevision(employeeId);
 		return createEmployeeResponseRevision(lastChangeRevision);
 	}
 
@@ -249,7 +253,7 @@ public class EmployeeController {
 	 * provided fields in the request will be updated. If the employee is not found, a 404
 	 * error is generated.
 	 * </p>
-	 * @param id the unique identifier of the employee to be updated.
+	 * @param employeeId the unique identifier of the employee to be updated.
 	 * @param employeeRequest the request object containing the fields to be updated.
 	 */
 	@Operation(summary = "Partially update an employee", description = "Updates a subset of an employee's data")
@@ -263,12 +267,12 @@ public class EmployeeController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doPartialUpdate(
 			@Parameter(description = "Unique identifier of the employee",
-					required = true) @PathVariable("id") String id,
+					required = true) @PathVariable("id") String employeeId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Partial employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
-		log.info("doPartialUpdate( departmentId= [{}], request= [{}])", id, employeeRequest);
-		this.employeeService.doPartialUpdate(id, employeeRequest);
+		log.info("doPartialUpdate( departmentId= [{}], request= [{}])", employeeId, employeeRequest);
+		this.employeeService.doPartialUpdate(employeeId, employeeRequest);
 	}
 
 	/**
@@ -278,7 +282,7 @@ public class EmployeeController {
 	 * will be updated to the values provided in the request. If the employee is not
 	 * found, a 404 error is generated.
 	 * </p>
-	 * @param id the unique identifier of the employee to be updated.
+	 * @param employeeId the unique identifier of the employee to be updated.
 	 * @param employeeRequest the request object containing the new details of the
 	 * employee.
 	 */
@@ -293,12 +297,12 @@ public class EmployeeController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void doFullUpdate(
 			@Parameter(description = "Unique identifier of the employee",
-					required = true) @PathVariable("id") String id,
+					required = true) @PathVariable("id") String employeeId,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Full employee data for update",
 					required = true, content = @Content(schema = @Schema(
 							implementation = EmployeeRequest.class))) @RequestBody EmployeeRequest employeeRequest) {
-		log.info("doFullUpdate( departmentId= [{}], request= [{}])", id, employeeRequest);
-		this.employeeService.doFullUpdate(id, employeeRequest);
+		log.info("doFullUpdate( departmentId= [{}], request= [{}])", employeeId, employeeRequest);
+		this.employeeService.doFullUpdate(employeeId, employeeRequest);
 	}
 
 	/**
@@ -307,7 +311,7 @@ public class EmployeeController {
 	 * This endpoint removes an employee from the system based on the provided ID. If the
 	 * employee is not found, a 404 error is generated.
 	 * </p>
-	 * @param id the unique identifier of the employee to be deleted.
+	 * @param employeeId the unique identifier of the employee to be deleted.
 	 */
 	@Operation(summary = "Deletes an employee", description = "Deletes an employee by their ID")
 	@ApiResponses({
@@ -317,18 +321,14 @@ public class EmployeeController {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteEmployee(@Parameter(description = "Unique identifier of the employee",
-			required = true) @PathVariable("id") String id) {
-		log.info("deleteEmployee( departmentId= [{}] )", id);
-		this.employeeService.deleteById(id);
+			required = true) @PathVariable("id") String employeeId) {
+		log.info("deleteEmployee( departmentId= [{}] )", employeeId);
+		this.employeeService.deleteById(employeeId);
 	}
 
 	private Revision<Long, EmployeeResponse> createEmployeeResponseRevision(
 			Revision<Long, Employee> lastChangeRevision) {
-		Employee employee = lastChangeRevision.getEntity();
-		Employee.FullName fullName = employee.getFullName();
-		EmployeeResponse employeeResponse = new EmployeeResponse(employee.getId(), employee.getEmailAddress(),
-				(fullName != null) ? fullName.getFirstName() : null, (fullName != null) ? fullName.getLastName() : null,
-				employee.getBirthday(), employee.getDepartment().getDepartmentName());
+		EmployeeResponse employeeResponse = createEmployeeResponse(lastChangeRevision.getEntity());
 		return Revision.of(lastChangeRevision.getMetadata(), employeeResponse);
 	}
 
