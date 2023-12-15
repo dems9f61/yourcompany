@@ -3,10 +3,11 @@ package de.stminko.employeeservice.employee.boundary;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import de.stminko.employeeservice.department.entity.DepartmentResponse;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentResponse;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequest;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeResponse;
+import de.stminko.employeeservice.employee.control.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeRequest;
-import de.stminko.employeeservice.employee.entity.EmployeeResponse;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
 import de.stminko.employeeservice.runtime.rest.bondary.ApiVersions;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;

@@ -1,4 +1,4 @@
-package de.stminko.employeeservice.department.entity;
+package de.stminko.employeeservice.department.boundary.dto;
 
 import de.stminko.employeeservice.AbstractTestFactory;
 import org.apache.commons.lang3.RandomStringUtils;

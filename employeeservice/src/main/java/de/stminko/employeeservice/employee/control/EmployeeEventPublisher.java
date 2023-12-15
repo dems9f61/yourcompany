@@ -1,7 +1,7 @@
 package de.stminko.employeeservice.employee.control;
 
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeMessage;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeMessage;
 import de.stminko.employeeservice.runtime.amqp.boundary.AmqpConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -2,8 +2,8 @@ package de.stminko.eventservice.employee.control;
 
 import java.util.Date;
 
-import de.stminko.eventservice.employee.entity.Employee;
-import de.stminko.eventservice.employee.entity.EmployeeEvent;
+import de.stminko.eventservice.employee.boundary.dto.Employee;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEvent;
 import de.stminko.eventservice.employee.entity.PersistentEmployeeEvent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

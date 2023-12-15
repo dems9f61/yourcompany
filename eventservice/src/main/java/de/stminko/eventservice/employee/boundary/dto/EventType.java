@@ -1,4 +1,4 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 /**
  * Represents the types of events that can occur in the system.

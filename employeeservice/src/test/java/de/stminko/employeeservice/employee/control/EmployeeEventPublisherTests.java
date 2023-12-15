@@ -2,8 +2,8 @@ package de.stminko.employeeservice.employee.control;
 
 import java.util.function.Consumer;
 
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeMessage;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeMessage;
 import de.stminko.employeeservice.employee.entity.EmployeeTestFactory;
 import de.stminko.employeeservice.runtime.amqp.boundary.AmqpConfig;
 import info.solidsoft.mockito.java8.AssertionMatcher;

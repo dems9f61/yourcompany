@@ -1,13 +1,12 @@
-package de.stminko.employeeservice.department.boundary;
+package de.stminko.employeeservice.department.control;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Set;
 
-import de.stminko.employeeservice.department.control.DepartmentRepository;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentRequest;
 import de.stminko.employeeservice.department.entity.Department;
-import de.stminko.employeeservice.department.entity.DepartmentRequest;
-import de.stminko.employeeservice.employee.boundary.EmployeeService;
+import de.stminko.employeeservice.employee.control.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.DepartmentNotEmptyException;
@@ -265,7 +264,7 @@ public class DepartmentService {
 	 * @return a set of employees associated with the department
 	 * @throws NotFoundException if the department with the provided ID does not exist
 	 */
-	Page<Employee> findAllEmployeesById(@NonNull Long id, @NonNull Pageable pageable) {
+	public Page<Employee> findAllEmployeesById(@NonNull Long id, @NonNull Pageable pageable) {
 		log.info("findAllEmployeesById( id= [{}] )", id);
 		if (!this.repository.existsById(id)) {
 			throw new NotFoundException(

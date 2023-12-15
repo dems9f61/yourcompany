@@ -1,4 +1,4 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

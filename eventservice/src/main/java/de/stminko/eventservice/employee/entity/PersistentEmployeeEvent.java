@@ -3,6 +3,7 @@ package de.stminko.eventservice.employee.entity;
 import java.time.Instant;
 import java.util.Date;
 
+import de.stminko.eventservice.employee.boundary.dto.EventType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

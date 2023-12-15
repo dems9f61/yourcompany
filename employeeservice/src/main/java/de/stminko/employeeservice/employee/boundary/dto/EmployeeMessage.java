@@ -1,5 +1,6 @@
-package de.stminko.employeeservice.employee.entity;
+package de.stminko.employeeservice.employee.boundary.dto;
 
+import de.stminko.employeeservice.employee.entity.Employee;
 import lombok.Data;
 
 /**

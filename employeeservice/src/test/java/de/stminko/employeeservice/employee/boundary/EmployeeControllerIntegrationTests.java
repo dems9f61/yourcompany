@@ -11,13 +11,13 @@ import java.util.UUID;
 
 import de.stminko.employeeservice.AbstractIntegrationTestSuite;
 import de.stminko.employeeservice.department.boundary.DepartmentController;
-import de.stminko.employeeservice.department.entity.DepartmentRequest;
-import de.stminko.employeeservice.department.entity.DepartmentResponse;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentRequest;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentResponse;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequest;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeResponse;
+import de.stminko.employeeservice.employee.boundary.dto.UsableDateFormat;
 import de.stminko.employeeservice.employee.control.EmployeeRepository;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeRequest;
-import de.stminko.employeeservice.employee.entity.EmployeeResponse;
-import de.stminko.employeeservice.employee.entity.UsableDateFormat;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

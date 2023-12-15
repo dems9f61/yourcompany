@@ -7,12 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.stminko.eventservice.employee.boundary.EmployeeMessageReceiver;
+import de.stminko.eventservice.employee.boundary.dto.Employee;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEventTestFactory;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeMessage;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeMessageTestFactory;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeTestFactory;
 import de.stminko.eventservice.employee.control.EmployeeEventService;
-import de.stminko.eventservice.employee.entity.Employee;
-import de.stminko.eventservice.employee.entity.EmployeeEventTestFactory;
-import de.stminko.eventservice.employee.entity.EmployeeMessage;
-import de.stminko.eventservice.employee.entity.EmployeeMessageTestFactory;
-import de.stminko.eventservice.employee.entity.EmployeeTestFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;

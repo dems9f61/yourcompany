@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.stminko.eventservice.AbstractIntegrationTestSuite;
 import de.stminko.eventservice.CustomPageImpl;
-import de.stminko.eventservice.employee.entity.EmployeeEventResponse;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEventResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;

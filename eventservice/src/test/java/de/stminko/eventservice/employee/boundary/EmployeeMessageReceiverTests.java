@@ -1,8 +1,8 @@
 package de.stminko.eventservice.employee.boundary;
 
 import de.stminko.eventservice.AbstractUnitTestSuite;
-import de.stminko.eventservice.employee.entity.EmployeeEvent;
-import de.stminko.eventservice.employee.entity.EmployeeMessage;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEvent;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeMessage;
 import info.solidsoft.mockito.java8.AssertionMatcher;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;

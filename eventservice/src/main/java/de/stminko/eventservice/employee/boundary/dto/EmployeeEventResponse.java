@@ -1,4 +1,4 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.stminko.eventservice.employee.entity.PersistentEmployeeEvent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

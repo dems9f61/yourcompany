@@ -1,7 +1,7 @@
 package de.stminko.eventservice.employee.boundary;
 
-import de.stminko.eventservice.employee.entity.EmployeeEvent;
-import de.stminko.eventservice.employee.entity.EmployeeMessage;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEvent;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeMessage;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

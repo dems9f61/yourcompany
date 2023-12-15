@@ -7,8 +7,8 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 import de.stminko.eventservice.AbstractIntegrationTestSuite;
-import de.stminko.eventservice.employee.entity.Employee;
-import de.stminko.eventservice.employee.entity.EmployeeEvent;
+import de.stminko.eventservice.employee.boundary.dto.Employee;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEvent;
 import de.stminko.eventservice.employee.entity.PersistentEmployeeEvent;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;

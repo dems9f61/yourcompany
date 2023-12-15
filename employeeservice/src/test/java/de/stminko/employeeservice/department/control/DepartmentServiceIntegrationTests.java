@@ -1,16 +1,15 @@
-package de.stminko.employeeservice.department.boundary;
+package de.stminko.employeeservice.department.control;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import de.stminko.employeeservice.AbstractIntegrationTestSuite;
-import de.stminko.employeeservice.department.control.DepartmentRepository;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentRequest;
 import de.stminko.employeeservice.department.entity.Department;
-import de.stminko.employeeservice.department.entity.DepartmentRequest;
-import de.stminko.employeeservice.employee.boundary.EmployeeService;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequest;
+import de.stminko.employeeservice.employee.control.EmployeeService;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.DepartmentNotEmptyException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;

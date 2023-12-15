@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import de.stminko.employeeservice.department.entity.DepartmentRequestTestFactory;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentRequestTestFactory;
 import de.stminko.employeeservice.department.entity.DepartmentTestFactory;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequestTestFactory;
 import de.stminko.employeeservice.employee.control.EmployeeEventPublisher;
-import de.stminko.employeeservice.employee.entity.EmployeeRequestTestFactory;
 import de.stminko.employeeservice.employee.entity.EmployeeTestFactory;
 import lombok.extern.slf4j.Slf4j;
 import nz.lae.stacksrc.junit5.ErrorDecorator;

@@ -1,7 +1,7 @@
 package de.stminko.eventservice.employee.boundary;
 
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEventResponse;
 import de.stminko.eventservice.employee.control.EmployeeEventService;
-import de.stminko.eventservice.employee.entity.EmployeeEventResponse;
 import de.stminko.eventservice.runtime.rest.boundary.ApiVersions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

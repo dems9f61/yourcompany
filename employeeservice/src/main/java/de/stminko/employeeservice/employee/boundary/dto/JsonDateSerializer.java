@@ -1,4 +1,4 @@
-package de.stminko.employeeservice.employee.entity;
+package de.stminko.employeeservice.employee.boundary.dto;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;

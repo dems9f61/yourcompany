@@ -1,7 +1,7 @@
 package de.stminko.eventservice;
 
-import de.stminko.eventservice.employee.entity.EmployeeEventTestFactory;
-import de.stminko.eventservice.employee.entity.EmployeeMessageTestFactory;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeEventTestFactory;
+import de.stminko.eventservice.employee.boundary.dto.EmployeeMessageTestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

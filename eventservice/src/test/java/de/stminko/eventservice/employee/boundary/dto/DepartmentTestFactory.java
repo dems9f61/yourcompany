@@ -1,4 +1,4 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

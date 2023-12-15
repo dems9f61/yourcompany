@@ -1,4 +1,4 @@
-package de.stminko.employeeservice.employee.boundary;
+package de.stminko.employeeservice.employee.control;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import de.stminko.employeeservice.department.boundary.DepartmentService;
+import de.stminko.employeeservice.department.control.DepartmentService;
 import de.stminko.employeeservice.department.entity.Department;
-import de.stminko.employeeservice.employee.control.EmployeeEventPublisher;
-import de.stminko.employeeservice.employee.control.EmployeeRepository;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequest;
 import de.stminko.employeeservice.employee.entity.Employee;
-import de.stminko.employeeservice.employee.entity.EmployeeRequest;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.BadRequestException;
 import de.stminko.employeeservice.runtime.errorhandling.boundary.NotFoundException;
 import de.stminko.employeeservice.runtime.rest.bondary.DataView;

@@ -1,13 +1,13 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmployeeEventTestFactory {
+public class EmployeeMessageTestFactory {
 
-	public EmployeeEvent createDefault() {
+	public EmployeeMessage createDefault() {
 		return builder().create();
 	}
 
@@ -39,8 +39,8 @@ public class EmployeeEventTestFactory {
 			return this;
 		}
 
-		public EmployeeEvent create() {
-			return new EmployeeEvent(this.employee, this.eventType);
+		public EmployeeMessage create() {
+			return new EmployeeMessage(this.eventType, this.employee);
 		}
 
 	}

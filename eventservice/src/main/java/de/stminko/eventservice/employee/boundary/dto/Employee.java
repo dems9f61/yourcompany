@@ -1,4 +1,4 @@
-package de.stminko.eventservice.employee.entity;
+package de.stminko.eventservice.employee.boundary.dto;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;

@@ -1,8 +1,8 @@
 package de.stminko.employeeservice;
 
-import de.stminko.employeeservice.department.entity.DepartmentRequestTestFactory;
+import de.stminko.employeeservice.department.boundary.dto.DepartmentRequestTestFactory;
 import de.stminko.employeeservice.department.entity.DepartmentTestFactory;
-import de.stminko.employeeservice.employee.entity.EmployeeRequestTestFactory;
+import de.stminko.employeeservice.employee.boundary.dto.EmployeeRequestTestFactory;
 import de.stminko.employeeservice.employee.entity.EmployeeTestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
