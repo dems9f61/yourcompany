@@ -17,7 +17,6 @@
         <module>employeeservice</module>
         <module>eventservice</module>
     </modules>
-
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -35,7 +34,6 @@
         <!-- Default Surefire Plugin activation -->
         <skipTests>false</skipTests>
     </properties>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -156,7 +154,7 @@
                     <execution>
                         <id>jacoco-check</id>
                         <phase>test</phase>
-<!--                        <phase>verify</phase>-->
+                        <!--                        <phase>verify</phase>-->
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -239,5 +237,13 @@
             </plugin>
         </plugins>
     </build>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>4.8.165</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
