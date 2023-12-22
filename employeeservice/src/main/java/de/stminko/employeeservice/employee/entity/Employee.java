@@ -67,7 +67,7 @@ public class Employee extends AbstractEntity<String> {
 	private ZonedDateTime birthday;
 
 	@JsonManagedReference
-	@ManyToOne(optional = false, cascade = CascadeType.REFRESH)
+	@ManyToOne(cascade = CascadeType.REFRESH)
 	@JoinColumn(name = "DEPARTMENT_ID", nullable = false)
 	private Department department;
 
