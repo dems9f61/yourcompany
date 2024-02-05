@@ -20,6 +20,7 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -95,7 +96,6 @@ public class ArchUnitTests {
 					conditionEvents.add(SimpleConditionEvent.violated(field, message));
 				}
 			}
-
 		}
 	};
 
@@ -211,43 +211,49 @@ public class ArchUnitTests {
 		}
 	}
 
-	@DisplayName("All entities with fields annotated with @ManyToOne and @NotNull must have optional = true on  the @ManyToOne")
+	@DisplayName("ManyToOne and NotNull fields should always set Optional to true")
 	@Test
-	public void givenEntities_whenFieldsAnnotatedWithNotNullAndManyToOne_thenOptionalIsSetToFalse() {
-		ArchRuleDefinition.classes()
-			.should(HAVE_NOT_NULL_MANY_TO_ONE_ANNOTATION_CONDITION)
-			.allowEmptyShould(true)
-			.check(ENTITY_CLASSES);
+	public void givenEntitiesWithManyToOneAndNotNull_whenChecked_thenEnsureOptionalIsTrue() {
+		Assertions
+			.assertThatCode(() -> ArchRuleDefinition.classes()
+				.should(HAVE_NOT_NULL_MANY_TO_ONE_ANNOTATION_CONDITION)
+				.allowEmptyShould(true)
+				.check(ENTITY_CLASSES))
+			.doesNotThrowAnyException();
 	}
 
-	@DisplayName("All rest controller (post) methods must produce MediaType.APPLICATION_JSON_VALUE")
+	@DisplayName("POST methods in Rest-Controller classes should produce JSON")
 	@Test
-	void givenClasses_whenPostPutOrPatchMethod_thenProducesCorrectTypes() {
-		ArchRuleDefinition.classes()
-			.that()
-			.areAnnotatedWith(RestController.class)
-			.or()
-			.areAnnotatedWith(Controller.class)
-			.should(PRODUCES_METHOD_CONDITION)
-			.check(CLASSES);
+	void givenRestControllerClasses_whenCheckingPostMethods_thenShouldProduceJson() {
+		Assertions
+			.assertThatCode(() -> ArchRuleDefinition.classes()
+				.that()
+				.areAnnotatedWith(RestController.class)
+				.or()
+				.areAnnotatedWith(Controller.class)
+				.should(PRODUCES_METHOD_CONDITION)
+				.check(CLASSES))
+			.doesNotThrowAnyException();
 	}
 
-	@DisplayName("All rest controller class name must end with 'Controller'")
+	@DisplayName("Classes annotated with RestController or Controller should end with 'Controller'")
 	@Test
-	void givenClasses_whenNameEndingWithController_thenSuccess() {
-		ArchRuleDefinition.classes()
-			.that()
-			.areAnnotatedWith(RestController.class)
-			.or()
-			.areAnnotatedWith(Controller.class)
-			.should()
-			.haveSimpleNameEndingWith("Controller")
-			.check(CLASSES);
+	void givenRestControllerClasses_whenCheckedForNamingConvention_thenMustEndWithController() {
+		Assertions
+			.assertThatCode(() -> ArchRuleDefinition.classes()
+				.that()
+				.areAnnotatedWith(RestController.class)
+				.or()
+				.areAnnotatedWith(Controller.class)
+				.should()
+				.haveSimpleNameEndingWith("Controller")
+				.check(CLASSES))
+			.doesNotThrowAnyException();
 	}
 
-	@DisplayName("All methods annotated with @PostMapping, @RequestMapping, @PutMapping, @PatchMapping and @DeleteMapping must only be defined in a rest controller class")
+	@DisplayName("Methods annotated with mapping annotations should only be defined in Rest-Controller classes")
 	@Test
-	void givenMethods_whenAnnotatedWithAnyRequestMappingShouldOnlyBeInController_thenSuccess() {
+	void givenMethodsAnnotatedWithMappingAnnotations_whenChecked_thenShouldBeInRestControllerClasses() {
 		ArchRuleDefinition.methods()
 			.that()
 			.areAnnotatedWith(GetMapping.class)
@@ -270,9 +276,9 @@ public class ArchUnitTests {
 			.check(CLASSES);
 	}
 
-	@DisplayName("All methods returning a paginated list must be annotated with @PageableDefault")
+	@DisplayName("Mapping-annotated methods must be in RestControllers; methods returning paginated lists need @PageableDefault")
 	@Test
-	void givenMethods_whenReturningPageShouldHavePageableWithAnnotationPageableDefault_thenSuccess() {
+	void givenMappingMethodsAndPageReturn_whenChecked_thenShouldBeInControllersWithPageableDefault() {
 		ArchRuleDefinition.methods()
 			.that()
 			.areAnnotatedWith(GetMapping.class)

@@ -29,7 +29,7 @@
         <lombok.version>1.18.30</lombok.version>
         <mockito.java8.version>2.5.0</mockito.java8.version>
         <stacksrc-junit5.version>0.6.0</stacksrc-junit5.version>
-        <spring-javaformat-plugin.version>0.0.40</spring-javaformat-plugin.version>
+        <spring-javaformat-plugin.version>0.0.41</spring-javaformat-plugin.version>
         <micrometer.version>1.12.0</micrometer.version>
         <!-- Default Surefire Plugin activation -->
         <skipTests>false</skipTests>
@@ -153,8 +153,9 @@
                     </execution>
                     <execution>
                         <id>jacoco-check</id>
-                        <phase>test</phase>
-                        <!--                        <phase>verify</phase>-->
+<!--                        This provides you with immediate feedback if the tests do not achieve the required coverage-->
+<!--                        <phase>test</phase>-->
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -176,7 +177,7 @@
                 </executions>
             </plugin>
 
-            <!-- Sping Javaformat Validate -->
+            <!-- Spring Javaformat Validate -->
             <plugin>
                 <groupId>io.spring.javaformat</groupId>
                 <artifactId>spring-javaformat-maven-plugin</artifactId>
