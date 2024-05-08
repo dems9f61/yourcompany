@@ -106,7 +106,7 @@ class BeanToolTests {
 		Assertions.assertThat(ste.getByteProperty()).isEqualTo(sse.getByteProperty());
 		Assertions.assertThat(ste.getShortProperty()).isEqualTo(sse.getShortProperty());
 		Assertions.assertThat(ste.getIntProperty()).isEqualTo(sse.getIntProperty());
-		Assertions.assertThat(ste.getLongProperty()).isEqualTo(0L);
+		Assertions.assertThat(ste.getLongProperty()).isZero();
 		Assertions.assertThat(ste.getFloatProperty()).isEqualTo(sse.getFloatProperty());
 		Assertions.assertThat(ste.getDoubleProperty()).isEqualTo(sse.getDoubleProperty());
 		Assertions.assertThat(ste.getCharProperty()).isEqualTo(sse.getCharProperty());
@@ -133,11 +133,11 @@ class BeanToolTests {
 		BeanTool.copyNonNullProperties(sse, ste);
 
 		// Assert
-		Assertions.assertThat(ste.isBooleanProperty()).isEqualTo(false);
+		Assertions.assertThat(ste.isBooleanProperty()).isFalse();
 		Assertions.assertThat(ste.getByteProperty()).isEqualTo((byte) 0);
 		Assertions.assertThat(ste.getShortProperty()).isEqualTo((short) 0);
-		Assertions.assertThat(ste.getIntProperty()).isEqualTo(0);
-		Assertions.assertThat(ste.getLongProperty()).isEqualTo(0L);
+		Assertions.assertThat(ste.getIntProperty()).isZero();
+		Assertions.assertThat(ste.getLongProperty()).isZero();
 		Assertions.assertThat(ste.getFloatProperty()).isEqualTo(0f);
 		Assertions.assertThat(ste.getDoubleProperty()).isEqualTo(0.0);
 		Assertions.assertThat(ste.getCharProperty()).isEqualTo((char) 0);
@@ -152,22 +152,6 @@ class BeanToolTests {
 		Assertions.assertThat(ste.getCharObjectProperty()).isNotNull();
 		Assertions.assertThat(ste.getStringProperty()).isNotNull();
 		Assertions.assertThat(ste.getBigDecimalProperty()).isNotNull();
-	}
-
-	@Test
-	void givenPartiallyInitializedSourceAndFullyInitializedTarget_whenCopyNonNullPropertiesWithIgnoreProperties_thenSucceedAndTargetBlaBlaBla() {
-		// Arrange
-		SampleSourceEntity sse = SampleSourceEntity.sample();
-		sse.setZonedDateTimeProperty(null);
-		sse.setStringProperty(null);
-		SampleTargetEntity ste = SampleTargetEntity.sample();
-
-		// Act
-		BeanTool.copyNonNullProperties(sse, ste);
-
-		// Assert
-		Assertions.assertThat(ste.getZonedDateTimeProperty()).isNotNull();
-		Assertions.assertThat(ste.getStringProperty()).isNotNull();
 	}
 
 	@Test
