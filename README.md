@@ -77,7 +77,7 @@ through [rabbitmq](https://www.rabbitmq.com/).
 ## Running the databases and the message broker
 
 To have the both the databases and the message broker running, a docker daemon must have been started.
-Go to the project root folder and before doing anything else, be sure that your ports 15672, 5672, 5432 and 27017 have
+Go to the project root folder and before doing anything else, be sure that your ports 15679, 5679, 5439 and 27020 have
 not been allocated or map the exposed docker ports to others host ports in the in `docker-compose.yml`
 located in the project root folder.
 Then use the following command

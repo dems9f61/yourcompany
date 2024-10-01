@@ -48,7 +48,7 @@ amqp:
 
 rabbitMQ:
   host: localhost
-  port: 5672
+  port: 5679
   username: rabbitmq
   password: rabbitmq
 
@@ -56,7 +56,7 @@ rabbitMQ:
 spring.config.activate.on-profile: local
 database:
   host: localhost
-  port: 5432
+  port: 5439
   username: user
   password: pwd
   dbname: employee
@@ -72,7 +72,7 @@ spring.config.activate.on-profile: local-hibernate
 rest.controller.loggingInterceptor.enabled: false
 database:
   host: localhost
-  port: 5434
+  port: 5438
   username: user_hibernate
   password: pwd_hibernate
   dbname: employee_hibernate

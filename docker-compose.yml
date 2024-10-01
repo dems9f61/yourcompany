@@ -8,8 +8,8 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5679:5672"
+      - "15679:15672"
     environment:
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: pwd
       POSTGRES_DB: employee
     ports:
-      - "5432:5432"
+      - "5439:5432"
 
   employee_service_db_hibernate:
     image: postgres:alpine
@@ -39,7 +39,7 @@ services:
       POSTGRES_PASSWORD: pwd_hibernate
       POSTGRES_DB: employee_hibernate
     ports:
-      - "5434:5432"
+      - "5438:5432"
 
 
   event_service_db:
@@ -52,5 +52,5 @@ services:
       MONGO_INITDB_DATABASE: employeeevents
       
     ports:
-      - "27017:27017"
+      - "27020:27017"
 
